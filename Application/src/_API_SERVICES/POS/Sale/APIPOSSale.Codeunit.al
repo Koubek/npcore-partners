@@ -286,6 +286,64 @@ codeunit 6248632 "NPR API POS Sale"
         exit(Response.RespondCreated(Json));
     end;
 
+    [CommitBehavior(CommitBehavior::Ignore)]
+    procedure ResumeSale(var Request: Codeunit "NPR API Request") Response: Codeunit "NPR API Response"
+    var
+        SaleId: Text;
+        SaleSystemId: Guid;
+        POSQuoteEntry: Record "NPR POS Saved Sale Entry";
+        POSSaleRec: Record "NPR POS Sale";
+        POSSale: Codeunit "NPR POS Sale";
+        POSSession: Codeunit "NPR POS Session";
+        LoadPOSSvSl: Codeunit "NPR POS Action: LoadPOSSvSl B";
+        ResumeSaleMgt: Codeunit "NPR POS Resume Sale Mgt.";
+        POSUnit: Record "NPR POS Unit";
+        UserSetup: Record "User Setup";
+        POSUnitNo: Code[10];
+        Body: JsonToken;
+        TempText: Text;
+        OriginalTicketNo: Code[20];
+    begin
+        Request.SkipCacheIfNonStickyRequest(POSSaleTableIds());
+
+        SaleId := Request.Paths().Get(3);
+        if SaleId = '' then
+            exit(Response.RespondBadRequest('Missing required path parameter: saleId'));
+        if not Evaluate(SaleSystemId, SaleId) then
+            exit(Response.RespondBadRequest('Invalid saleId format'));
+
+        if not POSQuoteEntry.GetBySystemId(SaleSystemId) then
+            exit(Response.RespondResourceNotFound());
+
+        Body := Request.BodyJson();
+        if not GetJsonText(Body, 'posUnit', TempText) then
+            exit(Response.RespondBadRequest('Missing required field: posUnit'));
+        POSUnitNo := CopyStr(TempText, 1, MaxStrLen(POSUnitNo));
+
+        if not UserSetup.Get(UserId) then
+            exit(Response.RespondBadRequest('API user has no User Setup record. Add the API user to User Setup (with a POS Unit assigned) before calling the POS Sale API.'));
+        if UserSetup."NPR POS Unit No." = '' then
+            exit(Response.RespondBadRequest('API user has no POS Unit assigned in User Setup. Assign a POS Unit to the API user in User Setup before calling the POS Sale API.'));
+
+        if not AssertPOSUnitOpenForSale(POSUnitNo) then
+            exit(Response.RespondBadRequest('POS Unit is not open for sales'));
+        POSUnit.Get(POSUnitNo);
+
+        OriginalTicketNo := POSQuoteEntry."Sales Ticket No.";
+
+        POSSession.ConstructFromWebserviceSession(false, POSUnit."No.", '');
+        POSSession.StartTransaction(SaleSystemId);
+        POSSession.GetSale(POSSale);
+        POSSale.GetCurrentSale(POSSaleRec);
+
+        if not LoadPOSSvSl.LoadFromQuote(POSQuoteEntry, POSSaleRec) then
+            Error('Failed to resume POS sale — the saved sale data could not be loaded.');
+        ResumeSaleMgt.LogSaleResume(POSSaleRec, OriginalTicketNo);
+
+        POSSale.GetCurrentSale(POSSaleRec);
+        exit(Response.RespondCreated(POSSaleAsJson(POSSaleRec, true)));
+    end;
+
     local procedure POSSaleAsJson(POSSale: Record "NPR POS Sale"; WithLines: Boolean): Codeunit "NPR Json Builder"
     var
         EmptyList: List of [Text];
