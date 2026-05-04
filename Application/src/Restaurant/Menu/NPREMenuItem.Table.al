@@ -38,6 +38,13 @@ table 6151269 "NPR NPRE Menu Item"
             DataClassification = CustomerContent;
             TableRelation = Item;
             NotBlank = true;
+
+            trigger OnValidate()
+            begin
+                if xRec."Item No." = "Item No." then
+                    exit;
+                ValidateItemIsRestaurantItem();
+            end;
         }
         field(30; "Item Description"; Text[100])
         {
@@ -105,6 +112,8 @@ table 6151269 "NPR NPRE Menu Item"
     var
         MenuItem: Record "NPR NPRE Menu Item";
     begin
+        ValidateItemIsRestaurantItem();
+
         MenuItem.SetCurrentKey("Restaurant Code", "Menu Code", "Category Code", "Sort Key");
         MenuItem.Ascending(true);
         MenuItem.SetRange("Restaurant Code", Rec."Restaurant Code");
@@ -113,6 +122,19 @@ table 6151269 "NPR NPRE Menu Item"
         if MenuItem.FindLast() then;
 
         Rec."Sort Key" := MenuItem."Sort Key" + 10000;
+    end;
+
+    local procedure ValidateItemIsRestaurantItem()
+    var
+        Item: Record Item;
+        NotARestaurantItemErr: Label 'Item %1 cannot be added to a restaurant menu because its field ''%2'' is blank. Set the item''s routing profile before adding it to a menu.';
+    begin
+        if "Item No." = '' then
+            exit;
+        if not Item.Get("Item No.") then
+            exit;
+        if Item."NPR NPRE Item Routing Profile" = '' then
+            Error(NotARestaurantItemErr, "Item No.", Item.FieldCaption("NPR NPRE Item Routing Profile"));
     end;
 
     trigger OnDelete()
