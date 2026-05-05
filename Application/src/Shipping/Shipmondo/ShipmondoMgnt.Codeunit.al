@@ -676,8 +676,13 @@ codeunit 6014578 "NPR Shipmondo Mgnt." implements "NPR IShipping Provider Interf
         Response: JsonToken;
     begin
         Clear(ResponseMessage);
-        if not Client.Send(RequestMessage, ResponseMessage) then
-            Error(GetLastErrorText);
+        if not Client.Send(RequestMessage, ResponseMessage) then begin
+            if ResponseMessage.HttpStatusCode() <> 0 then begin
+                ErrorText := Format(ResponseMessage.HttpStatusCode(), 0, 9) + ': ' + ResponseMessage.ReasonPhrase;
+                Error(ErrorText);
+            end;
+            Error(GetLastErrorText());
+        end;
 
         if not ResponseMessage.IsSuccessStatusCode() then begin
             ErrorText := Format(ResponseMessage.HttpStatusCode(), 0, 9) + ': ' + ResponseMessage.ReasonPhrase;
