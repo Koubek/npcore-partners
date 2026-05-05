@@ -26,6 +26,7 @@ codeunit 6248482 "NPR MembershipSubscrAgent"
         Membership: Record "NPR MM Membership";
         Subscription: Record "NPR MM Subscription";
     begin
+        Membership.ReadIsolation := IsolationLevel::UpdLock;
         if (not MembershipApiAgent.GetMembershipById(Request, 2, Membership)) then
             exit(Response.RespondBadRequest('Invalid Membership - Membership Id not valid.'));
 
