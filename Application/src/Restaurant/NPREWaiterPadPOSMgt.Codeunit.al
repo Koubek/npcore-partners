@@ -352,9 +352,14 @@
             SaleLinePOS."NPRE Seating Code" := WaiterPad."Current Seating FF";
         end;
 
+        if WaiterPadLine."Attached to Line No." <> 0 then begin
+            SaleLinePOS.SetSkipCalcDiscount(true);
+            SaleLinePOS."Manual Item Sales Price" := true;
+        end;
         POSSaleLine.SetUseLinePriceVATParams(true);
         POSSaleLine.InsertLine(SaleLinePOS);
         POSSaleLine.SetUseLinePriceVATParams(false);
+        SaleLinePOS.SetSkipCalcDiscount(false);
         AddLineRelation(LineRelation, WaiterPadLine."Line No.", SaleLinePOS."Line No.");
         CopyPOSInfo(SaleLinePOS, WaiterPadLine."Waiter Pad No.", WaiterPadLine."Line No.", false);
         CopyItemAddOnLinkInfoFromWPLine(WaiterPadLine, SaleLinePOS, LineRelation);
