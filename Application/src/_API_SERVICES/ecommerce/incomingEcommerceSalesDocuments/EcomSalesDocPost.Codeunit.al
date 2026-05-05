@@ -72,6 +72,7 @@ codeunit 6248657 "NPR Ecom Sales Doc Post"
     local procedure PostSalesOrder(var EcomSalesHeader: Record "NPR Ecom Sales Header") Success: Boolean
     var
         SalesHeader: Record "Sales Header";
+        EcomSalesDocImplEvents: Codeunit "NPR EcomSalesDocImplEvents";
     begin
         EcomSalesHeader.ReadIsolation := EcomSalesHeader.ReadIsolation::UpdLock;
         EcomSalesHeader.Get(EcomSalesHeader.RecordId);
@@ -90,6 +91,7 @@ codeunit 6248657 "NPR Ecom Sales Doc Post"
 
         ResetPostingQuantityOnSalesOrders(SalesHeader);
         SalesOrderPrepareVirtualItemsForPosting(EcomSalesHeader, SalesHeader);
+        EcomSalesDocImplEvents.OnBeforePostEcomSalesDoc_AfterPrepareVirtualItemsForPosting(EcomSalesHeader, SalesHeader);
         PostSalesOrder(SalesHeader);
 
         Success := true;

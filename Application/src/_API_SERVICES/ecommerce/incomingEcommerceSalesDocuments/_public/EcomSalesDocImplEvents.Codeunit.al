@@ -159,5 +159,10 @@ codeunit 6248607 "NPR EcomSalesDocImplEvents"
     internal procedure OnBeforePostEcomSalesDoc(var EcomSalesHeader: Record "NPR Ecom Sales Header"; var SalesHeader: Record "Sales Header"; var Handled: Boolean)
     begin
     end;
+
+    [IntegrationEvent(false, false)]
+    internal procedure OnBeforePostEcomSalesDoc_AfterPrepareVirtualItemsForPosting(var EcomSalesHeader: Record "NPR Ecom Sales Header"; var SalesHeader: Record "Sales Header")
+    begin
+    end;
 }
 #endif
