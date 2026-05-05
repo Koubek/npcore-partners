@@ -121,7 +121,7 @@ EventDate: Date) ValidRequest: Boolean
         if (not Ticket.Get(TicketAccessEntry."Ticket No.")) then
             exit;
 
-        TicketType.SetLoadFields("Code", "Defer Revenue", "DeferRevenueProfileCode");
+        TicketType.SetLoadFields("Code", "Defer Revenue", "DeferRevenueProfileCode", "Admission Registration");
         if (not TicketType.Get(Ticket."Ticket Type Code")) then
             exit;
 
@@ -149,6 +149,7 @@ EventDate: Date) ValidRequest: Boolean
         DeferRevenueRequest.TicketValidUntil := Ticket."Valid To Date";
         DeferRevenueRequest.DeferRevenueProfileCode := TicketType.DeferRevenueProfileCode;
         DeferRevenueRequest.SalesDate := SalesDate;
+        DeferRevenueRequest.IsGroupTicket := TicketType."Admission Registration" = TicketType."Admission Registration"::GROUP;
 
         DetailedTicketEntry.SetCurrentKey("Ticket Access Entry No.", Type);
         DetailedTicketEntry.SetLoadFields("External Adm. Sch. Entry No.", Quantity);
@@ -414,6 +415,7 @@ EventDate: Date) ValidRequest: Boolean
         ValueEntry: Record "Value Entry";
         EntryCount: Integer;
         TicketCount: Integer;
+        DetailsPerLine: Integer;
     begin
 
         // First time, we create the revenue details entries
@@ -435,7 +437,11 @@ EventDate: Date) ValidRequest: Boolean
                 exit(false);
 
             repeat
-                for TicketCount := 1 to POSEntrySalesLine.Quantity do begin
+                DetailsPerLine := POSEntrySalesLine.Quantity;
+                if (DeferRevenueRequest.IsGroupTicket) then
+                    DetailsPerLine := 1;
+
+                for TicketCount := 1 to DetailsPerLine do begin
                     EntryCount += 1;
                     RevenueDetails.TokenID := TicketReservationRequest."Session Token ID";
                     RevenueDetails.ItemNo := TicketReservationRequest."Item No.";
@@ -485,6 +491,7 @@ EventDate: Date) ValidRequest: Boolean
         ValueEntry: Record "Value Entry";
         EntryCount: Integer;
         TicketCount: Integer;
+        DetailsPerLine: Integer;
     begin
 
         // First time, we create the revenue details entries
@@ -506,7 +513,11 @@ EventDate: Date) ValidRequest: Boolean
                 exit(false);
 
             repeat
-                for TicketCount := 1 to PostedSalesInvoiceLine.Quantity do begin
+                DetailsPerLine := PostedSalesInvoiceLine.Quantity;
+                if (DeferRevenueRequest.IsGroupTicket) then
+                    DetailsPerLine := 1;
+
+                for TicketCount := 1 to DetailsPerLine do begin
                     EntryCount += 1;
                     RevenueDetails.TokenID := TicketReservationRequest."Session Token ID";
                     RevenueDetails.ItemNo := TicketReservationRequest."Item No.";
@@ -560,7 +571,16 @@ EventDate: Date) ValidRequest: Boolean
         DeferRevenueRequest.GlobalDimension2Code := ValueEntry."Global Dimension 2 Code";
         DeferRevenueRequest.GenBusPostingGroup := ValueEntry."Gen. Bus. Posting Group";
         DeferRevenueRequest.GenProdPostingGroup := ValueEntry."Gen. Prod. Posting Group";
-        DeferRevenueRequest.AmountToDefer := -1 * ValueEntry."Sales Amount (Actual)" / ValueEntry."Item Ledger Entry Quantity";
+
+        if (ValueEntry."Item Ledger Entry Quantity" = 0) then
+            exit(false);
+
+        if (DeferRevenueRequest.IsGroupTicket) then begin
+            DeferRevenueRequest.AmountToDefer := ValueEntry."Sales Amount (Actual)";
+            if (ValueEntry."Item Ledger Entry Quantity" > 0) then // return sale
+                DeferRevenueRequest.AmountToDefer *= -1;
+        end else
+            DeferRevenueRequest.AmountToDefer := -1 * ValueEntry."Sales Amount (Actual)" / ValueEntry."Item Ledger Entry Quantity";
 
         SelectAccounts(DeferRevenueRequest);
         exit(true);

@@ -67,6 +67,11 @@ table 6150776 "NPR TM DeferRevenueRequest"
             Caption = 'Sales Date';
             DataClassification = CustomerContent;
         }
+        field(29; IsGroupTicket; Boolean)
+        {
+            Caption = 'Is Group Ticket';
+            DataClassification = CustomerContent;
+        }
         field(30; AchievedDate; Date)
         {
             Caption = 'Achieved Date';
