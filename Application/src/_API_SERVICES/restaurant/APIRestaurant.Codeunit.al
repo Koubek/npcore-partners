@@ -8,7 +8,9 @@ codeunit 6248641 "NPR API Restaurant"
         Restaurant: Record "NPR NPRE Restaurant";
         Json: Codeunit "NPR JSON Builder";
         LogoHandler: Codeunit "NPR NPRERestaurantLogoHandler";
+        BackgroundHandler: Codeunit "NPR NPRERestBackgroundHandler";
         LogoUrl: Text;
+        BackgroundUrl: Text;
     begin
         Request.SkipCacheIfNonStickyRequest(GetTableIds());
 
@@ -27,6 +29,9 @@ codeunit 6248641 "NPR API Restaurant"
 
                 if LogoHandler.GetLogoUrl(Restaurant.SystemId, Enum::"NPR CloudflareMediaVariants"::MEDIUM, 57600, LogoUrl) then
                     Json.AddProperty('logoUrl', LogoUrl);
+
+                if BackgroundHandler.GetBackgroundUrl(Restaurant.SystemId, Enum::"NPR CloudflareMediaVariants"::ORIGINAL, 57600, BackgroundUrl) then
+                    Json.AddProperty('backgroundUrl', BackgroundUrl);
 
                 Json.EndObject();
             until Restaurant.Next() = 0;

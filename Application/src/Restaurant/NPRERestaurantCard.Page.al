@@ -127,6 +127,11 @@
                 ApplicationArea = NPRRetail;
                 SubPageLink = Code = field(Code);
             }
+            part(RestaurantBackground; "NPR NPRERestBackgroundFactBox")
+            {
+                ApplicationArea = NPRRetail;
+                SubPageLink = Code = field(Code);
+            }
 #endif
             systempart(Control6014412; Notes)
             {

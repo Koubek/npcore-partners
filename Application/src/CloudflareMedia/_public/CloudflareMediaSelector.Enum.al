@@ -25,5 +25,11 @@ enum 6059923 "NPR CloudflareMediaSelector" implements "NPR CloudflareMigrationIn
         Caption = 'Menu Item Picture';
         Implementation = "NPR CloudflareMigrationInterface" = "NPR NPREMenuItemPictureHandler";
     }
+
+    value(202; RESTAURANT_BACKGROUND)
+    {
+        Caption = 'Restaurant Background';
+        Implementation = "NPR CloudflareMigrationInterface" = "NPR NPRERestBackgroundHandler";
+    }
 #endif
 }
