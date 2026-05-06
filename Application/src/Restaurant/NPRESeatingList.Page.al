@@ -73,7 +73,7 @@
                     Visible = false;
                     StyleExpr = ColorStyle;
                 }
-                field("Fixed Capasity"; Rec."Fixed Capasity")
+                field("Fixed Capacity"; Rec."Fixed Capasity")
                 {
                     ToolTip = 'Specifies if the seating has a fixed capacity.';
                     Visible = false;

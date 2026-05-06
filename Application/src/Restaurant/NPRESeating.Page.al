@@ -45,10 +45,10 @@
                     ApplicationArea = NPRRetail;
                 }
             }
-            group("Capasity Tab")
+            group("Capacity Tab")
             {
-                Caption = 'Capasity';
-                field("Fixed Capasity"; Rec."Fixed Capasity")
+                Caption = 'Capacity';
+                field("Fixed Capacity"; Rec."Fixed Capasity")
                 {
                     ToolTip = 'Specifies if the seating has a fixed capacity.';
                     Visible = false;

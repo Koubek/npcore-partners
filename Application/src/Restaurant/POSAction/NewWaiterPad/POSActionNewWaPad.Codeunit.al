@@ -38,6 +38,10 @@ codeunit 6150665 "NPR POSAction: New Wa. Pad" implements "NPR IPOS Workflow"
         ParamHideConfirmDialog_DescLbl: Label 'Hide the confirmation dialog about the number of existing waiter pads for the seating.';
         ParamHideCancel_CptLbl: Label 'No Cancel Button';
         ParamHideCancel_DescLbl: Label 'Hide the Cancel button to prevent the user from being able to cancel the process.';
+        ParamSeatingLookupBy_OptionLbl: Label 'SeatingCode,SeatingNo', locked = true;
+        ParamSeatingLookupBy_CptLbl: Label 'Seating Lookup By';
+        ParamSeatingLookupBy_DescLbl: Label 'Specifies whether user input is matched against Seating Code (default) or Seating No.';
+        ParamSeatingLookupBy_OptionCptLbl: Label 'Seating Code,Seating No.';
         ConfirmLbl: Label 'Open new waiter pad?';
         ActionMessageLbl: Label 'New Waiter Pad';
     begin
@@ -61,6 +65,12 @@ codeunit 6150665 "NPR POSAction: New Wa. Pad" implements "NPR IPOS Workflow"
         WorkflowConfig.AddBooleanParameter('UseSeatingFromContext', false, ParamUseSeatingFromContext_CptLbl, ParamUseSeatingFromContext_DescLbl);
         WorkflowConfig.AddBooleanParameter('HideConfirmDialog', false, ParamHideConfirmDialog_CptLbl, ParamHideConfirmDialog_DescLbl);
         WorkflowConfig.AddBooleanParameter('HideCancel', false, ParamHideCancel_CptLbl, ParamHideCancel_DescLbl);
+        WorkflowConfig.AddOptionParameter('SeatingLookupBy',
+                                        ParamSeatingLookupBy_OptionLbl,
+                                        CopyStr(SelectStr(1, ParamSeatingLookupBy_OptionLbl), 1, 250),
+                                        ParamSeatingLookupBy_CptLbl,
+                                        ParamSeatingLookupBy_DescLbl,
+                                        ParamSeatingLookupBy_OptionCptLbl);
         WorkflowConfig.AddLabel('InputTypeLabel', NPRESeating.TableCaption);
         WorkflowConfig.AddLabel('ConfirmLabel', ConfirmLbl);
         WorkflowConfig.AddLabel('ActionMessageLabel', ActionMessageLbl);
@@ -87,7 +97,10 @@ codeunit 6150665 "NPR POSAction: New Wa. Pad" implements "NPR IPOS Workflow"
         WaiterPadPOSMgt: Codeunit "NPR NPRE Waiter Pad POS Mgt.";
         ConfirmString: Text;
     begin
-        WaiterPadPOSMgt.FindSeating(Context, Seating);
+        if (Context.GetIntegerParameter('SeatingLookupBy') = 1) and (Context.GetIntegerParameter('InputType') <> 2) then
+            WaiterPadPOSMgt.FindSeatingByNo(Context, Seating)
+        else
+            WaiterPadPOSMgt.FindSeating(Context, Seating);
         Context.SetContext('seatingCode', Seating.Code);
         if HideConfirmDialog(Context) then
             exit;
@@ -295,7 +308,7 @@ codeunit 6150665 "NPR POSAction: New Wa. Pad" implements "NPR IPOS Workflow"
     begin
         exit(
         //###NPR_INJECT_FROM_FILE:POSActionNewWaPad.js###
-'let main=async({workflow:s,popup:a,parameters:e,context:i,captions:n})=>{if(await s.respond("addPresetValuesToContext"),!i.seatingCode||!e.UseSeatingFromContext)if(i.seatingCode="",e.FixedSeatingCode)i.seatingCode=e.FixedSeatingCode;else switch(e.InputType+""){case"0":i.seatingCode=await a.input({caption:n.InputTypeLabel});break;case"1":i.seatingCode=await a.numpad({caption:n.InputTypeLabel});break;case"2":await s.respond("seatingInput");break}!i.seatingCode||i.confirmString&&(result=await a.confirm({title:n.ConfirmLabel,caption:i.confirmString}),!result)||i.requestCustomerInfo&&(i.waiterpadInfo=await a.configuration(i.waiterpadInfoConfig),i.waiterpadInfo===null)||(i.seatingCode&&await s.respond("newWaiterPad"),i.actionMessage&&a.message({title:n.ActionMessageLabel,caption:i.actionMessage}))};'
+'let main=async({workflow:e,popup:n,parameters:a,context:i,captions:s})=>{if(await e.respond("addPresetValuesToContext"),!i.seatingCode||!a.UseSeatingFromContext)if(i.seatingCode="",a.FixedSeatingCode)i.seatingCode=a.FixedSeatingCode;else switch(a.InputType+""){case"0":i.seatingCode=await n.input({caption:s.InputTypeLabel}),i.seatingCode&&a.SeatingLookupBy+""=="1"&&await e.respond("seatingInput");break;case"1":i.seatingCode=await n.numpad({caption:s.InputTypeLabel}),i.seatingCode&&a.SeatingLookupBy+""=="1"&&await e.respond("seatingInput");break;case"2":await e.respond("seatingInput");break}i.seatingCode&&(i.confirmString&&(result=await n.confirm({title:s.ConfirmLabel,caption:i.confirmString}),!result)||i.requestCustomerInfo&&(i.waiterpadInfo=await n.configuration(i.waiterpadInfoConfig),i.waiterpadInfo===null)||(i.seatingCode&&await e.respond("newWaiterPad"),i.actionMessage&&n.message({title:s.ActionMessageLabel,caption:i.actionMessage})))};'
         );
     end;
 }

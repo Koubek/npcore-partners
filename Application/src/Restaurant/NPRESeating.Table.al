@@ -36,7 +36,7 @@
         }
         field(20; "Fixed Capasity"; Boolean)
         {
-            Caption = 'Fixed Capasity';
+            Caption = 'Fixed Capacity';
             DataClassification = CustomerContent;
         }
         field(21; Capacity; Integer)

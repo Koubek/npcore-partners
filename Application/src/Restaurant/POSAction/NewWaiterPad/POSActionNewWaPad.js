@@ -9,9 +9,11 @@ let main = async ({ workflow, popup, parameters, context, captions }) => {
             switch (parameters.InputType + "") {
                 case "0":
                     context.seatingCode = await popup.input({ caption: captions.InputTypeLabel });
+                    if (context.seatingCode && parameters.SeatingLookupBy + "" === "1") await workflow.respond("seatingInput");
                     break;
                 case "1":
                     context.seatingCode = await popup.numpad({ caption: captions.InputTypeLabel });
+                    if (context.seatingCode && parameters.SeatingLookupBy + "" === "1") await workflow.respond("seatingInput");
                     break;
                 case "2":
                     await workflow.respond("seatingInput");

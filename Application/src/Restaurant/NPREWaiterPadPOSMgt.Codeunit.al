@@ -512,7 +512,6 @@
 
     procedure FindSeating(JSON: Codeunit "NPR POS JSON Helper"; var NPRESeating: Record "NPR NPRE Seating")
     var
-        SeatingManagement: Codeunit "NPR NPRE Seating Mgt.";
         RestaurantCode: Code[20];
         SeatingCode: Code[20];
         OutText: text;
@@ -525,9 +524,7 @@
         NPRESeating.Get(SeatingCode);
 
         if JSON.GetStringParameter('SeatingFilter', SeatingFilter) then;
-        if JSON.GetStringParameter('LocationFilter', LocationFilter) then;
-        if LocationFilter = '' then
-            LocationFilter := SeatingManagement.RestaurantSeatingLocationFilter(RestaurantCode);
+        LocationFilter := ResolveLocationFilter(JSON, RestaurantCode);
         if (SeatingFilter <> '') or (LocationFilter <> '') then begin
             NPRESeating.SetRecFilter();
             NPRESeating.FilterGroup(2);
@@ -537,6 +534,49 @@
         end;
     end;
 
+    internal procedure FindSeatingByNo(JSON: Codeunit "NPR POS JSON Helper"; var NPRESeating: Record "NPR NPRE Seating")
+    var
+        SeatingManagement: Codeunit "NPR NPRE Seating Mgt.";
+        RestaurantCode: Code[20];
+        SeatingNo: Text[20];
+        LocationFilter: Text;
+        OutText: Text;
+        NoSeatingFoundErr: Label 'No %1 found with %2 ''%3''.', Comment = '%1 = Seating table caption, %2 = Seating No. field caption, %3 = entered value';
+    begin
+        if JSON.GetString('restaurantCode', OutText) then
+            RestaurantCode := CopyStr(OutText, 1, MaxStrLen(RestaurantCode));
+        if JSON.GetString('seatingCode', OutText) then
+            SeatingNo := CopyStr(OutText, 1, MaxStrLen(SeatingNo));
+        LocationFilter := ResolveLocationFilter(JSON, RestaurantCode);
+
+        NPRESeating.Reset();
+        if LocationFilter <> '' then
+            NPRESeating.SetFilter("Seating Location", LocationFilter);
+        NPRESeating.SetFilter("Seating No.", SeatingNo);
+
+        case NPRESeating.Count() of
+            0:
+                Error(NoSeatingFoundErr, NPRESeating.TableCaption(), NPRESeating.FieldCaption("Seating No."), SeatingNo);
+            1:
+                begin
+                    NPRESeating.FindFirst();
+                    exit;
+                end;
+        end;
+
+        SeatingManagement.SetAddSeatingFilters(NPRESeating);
+        NPRESeating.Get(SeatingManagement.UILookUpSeating('', LocationFilter));
+    end;
+
+    local procedure ResolveLocationFilter(JSON: Codeunit "NPR POS JSON Helper"; RestaurantCode: Code[20]) LocationFilter: Text
+    var
+        SeatingManagement: Codeunit "NPR NPRE Seating Mgt.";
+    begin
+        if JSON.GetStringParameter('LocationFilter', LocationFilter) then;
+        if LocationFilter = '' then
+            LocationFilter := SeatingManagement.RestaurantSeatingLocationFilter(RestaurantCode);
+    end;
+
     local procedure GetSeatingCode(JSON: Codeunit "NPR POS JSON Helper"; RestaurantCode: Code[20]) SeatingCode: Code[20]
     var
         NPRESeating: Record "NPR NPRE Seating";
@@ -544,7 +584,6 @@
         ShowOnlyActiveWaiPad: Boolean;
         OutText: text;
         SeatingFilter: Text;
-        LocationFilter: Text;
     begin
         if JSON.GetString('seatingCode', OutText) then
             SeatingCode := CopyStr(OutText, 1, MaxStrLen(SeatingCode));
@@ -560,10 +599,7 @@
             SeatingManagement.SetAddSeatingFilters(NPRESeating);
         end;
         SeatingFilter := JSON.GetStringParameter('SeatingFilter');
-        LocationFilter := JSON.GetStringParameter('LocationFilter');
-        if LocationFilter = '' then
-            LocationFilter := SeatingManagement.RestaurantSeatingLocationFilter(RestaurantCode);
-        SeatingCode := SeatingManagement.UILookUpSeating(SeatingFilter, LocationFilter);
+        SeatingCode := SeatingManagement.UILookUpSeating(SeatingFilter, ResolveLocationFilter(JSON, RestaurantCode));
         exit(SeatingCode);
     end;
 

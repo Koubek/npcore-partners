@@ -66,7 +66,7 @@ page 6150885 "NPR Seatings Step"
                     ToolTip = 'Specifies the maximal number of guests that potentially can be seated at the table, given there are chairs available for borrowing at other tables.';
                     ApplicationArea = NPRRetail;
                 }
-                field("Fixed Capasity"; Rec."Fixed Capasity")
+                field("Fixed Capacity"; Rec."Fixed Capasity")
                 {
                     ToolTip = 'Specifies if the seating has a fixed capacity.';
                     Visible = false;
