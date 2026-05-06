@@ -128,6 +128,11 @@
                     ToolTip = 'Specifies the value of the Create Auto-Renewal Disabled Notifications field.';
                     ApplicationArea = NPRMembershipEssential, NPRMembershipAdvanced;
                 }
+                field("Create Termination Req. Notif"; Rec."Create Termination Req. Notif")
+                {
+                    ToolTip = 'Specifies the value of the Create Termination Requested Notification field.';
+                    ApplicationArea = NPRMembershipEssential, NPRMembershipAdvanced;
+                }
                 field("Membership Member Cardinality"; Rec."Membership Member Cardinality")
                 {
                     ToolTip = 'Specifies the value of the Membership Member Cardinality field';

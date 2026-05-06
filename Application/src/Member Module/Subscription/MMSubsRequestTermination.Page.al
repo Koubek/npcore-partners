@@ -32,7 +32,7 @@ page 6185077 "NPR MM SubsRequestTermination"
 
                 trigger OnValidate()
                 begin
-                    CheckRefundAvailable();
+                    _RefundAvailable := CheckRefundAvailable();
                     CalculateRefundPrice();
                 end;
             }

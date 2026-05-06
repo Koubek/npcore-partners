@@ -222,6 +222,14 @@
 
                     exit(_NOTIFICATION_ACTION::SEND); // valid, send notification
                 end;
+            MembershipNotification."Notification Trigger"::TERMINATION_REQUESTED:
+                begin
+                    StartDate := MembershipNotification."Date To Notify";
+                    if (StartDate < Today()) then
+                        StartDate := Today();
+
+                    exit(_NOTIFICATION_ACTION::SEND); // valid, send notification
+                end;
         end;
 
         exit(_NOTIFICATION_ACTION::CANCEL);
@@ -580,6 +588,8 @@
                 FoundAddress := MembershipManagement.GetCommunicationMethod_PaymentMethodCollect(MemberEntryNo, MembershipEntryNo, Method, NotificationAddress, NotificationEngine);
             MembershipNotification."Notification Trigger"::MEMBERSHIP_CHANGE_ON_AGE_CONSTRAINT:
                 FoundAddress := MembershipManagement.GetCommunicationMethod_Renew(MemberEntryNo, MembershipEntryNo, Method, NotificationAddress, NotificationEngine);
+            MembershipNotification."Notification Trigger"::TERMINATION_REQUESTED:
+                FoundAddress := MembershipManagement.GetCommunicationMethod_TerminationRequested(MemberEntryNo, MembershipEntryNo, Method, NotificationAddress, NotificationEngine);
             else
                 Error(NOT_IMPLEMENTED, MembershipNotification.FieldCaption("Notification Trigger"), MembershipNotification."Notification Trigger");
         end;
@@ -1328,6 +1338,45 @@
         MembershipNotification."Template Filter Value" := NotificationSetup."Template Filter Value";
         MembershipNotification."Target Member Role" := NotificationSetup."Target Member Role";
         MembershipNotification."Processing Method" := NotificationSetup."Processing Method";
+        MembershipNotification.Insert();
+    end;
+
+    internal procedure AddTerminationRequestedNotification(MembershipEntryNo: Integer; MembershipCode: Code[20]; TerminateAtDate: Date)
+    var
+        MembershipSetup: Record "NPR MM Membership Setup";
+        CommunitySetup: Record "NPR MM Member Community";
+    begin
+        MembershipSetup.Get(MembershipCode);
+        CommunitySetup.Get(MembershipSetup."Community Code");
+
+        AddTerminationRequestedNotificationWorker(MembershipEntryNo, MembershipSetup, CommunitySetup, TerminateAtDate);
+    end;
+
+    local procedure AddTerminationRequestedNotificationWorker(MembershipEntryNo: Integer; MembershipSetup: Record "NPR MM Membership Setup"; CommunitySetup: Record "NPR MM Member Community"; TerminateAtDate: Date)
+    var
+        NotificationSetup: Record "NPR MM Member Notific. Setup";
+        MembershipNotification: Record "NPR MM Membership Notific.";
+    begin
+        CancelPendingNotification(MembershipEntryNo, MembershipNotification."Notification Trigger"::TERMINATION_REQUESTED);
+
+        if (not ((MembershipSetup."Create Termination Req. Notif") or (CommunitySetup."Create Termination Req. Notif"))) then
+            exit;
+
+        if (not GetNotificationSetupByTrigger(CommunitySetup.Code, MembershipSetup.Code, MembershipNotification."Notification Trigger"::TERMINATION_REQUESTED, NotificationSetup)) then
+            exit;
+
+        MembershipNotification.Reset();
+        MembershipNotification.Init();
+        MembershipNotification."Entry No." := 0;
+        MembershipNotification."Membership Entry No." := MembershipEntryNo;
+        MembershipNotification."Notification Status" := MembershipNotification."Notification Status"::PENDING;
+        MembershipNotification."Notification Code" := NotificationSetup.Code;
+        MembershipNotification."Date To Notify" := Today();
+        MembershipNotification."Notification Trigger" := MembershipNotification."Notification Trigger"::TERMINATION_REQUESTED;
+        MembershipNotification."Template Filter Value" := NotificationSetup."Template Filter Value";
+        MembershipNotification."Target Member Role" := NotificationSetup."Target Member Role";
+        MembershipNotification."Processing Method" := NotificationSetup."Processing Method";
+        MembershipNotification."Terminate At" := TerminateAtDate;
         MembershipNotification.Insert();
     end;
 

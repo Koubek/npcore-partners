@@ -67,7 +67,8 @@ codeunit 6248482 "NPR MembershipSubscrAgent"
 
         RequestedDate := JHelper.GetJDate(BodyJson, 'terminationDate', false);
         if (RequestedDate = 0D) then
-            RequestedDate := Today();
+            if (not SubscriptionMgtImpl.GetEarliestTerminationDate(Membership, RequestedDate)) then
+                RequestedDate := Today();
 
         if (not SubscriptionMgtImpl.RequestTermination(Membership, RequestedDate, Enum::"NPR MM Subs Termination Reason"::CUSTOMER_INITIATED)) then
             exit(Response.RespondBadRequest('Membership does not have a subscription associated with it or subscription could not be requested to terminate.'));

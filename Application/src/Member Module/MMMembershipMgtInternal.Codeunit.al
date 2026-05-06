@@ -3972,6 +3972,13 @@
         exit(GetCommunicationMethodWorker(MemberEntryNo, MembershipEntryNo, MemberCommunication."Message Type"::AUTORENEWAL_DISABLED, Method, Address, Engine));
     end;
 
+    internal procedure GetCommunicationMethod_TerminationRequested(MemberEntryNo: Integer; MembershipEntryNo: Integer; var Method: Code[10]; var Address: Text[100]; var Engine: Option): Boolean
+    var
+        MemberCommunication: Record "NPR MM Member Communication";
+    begin
+        exit(GetCommunicationMethodWorker(MemberEntryNo, MembershipEntryNo, MemberCommunication."Message Type"::TERMINATION_REQUESTED, Method, Address, Engine));
+    end;
+
     local procedure GetCommunicationMethodWorker(MemberEntryNo: Integer; MembershipEntryNo: Integer; MessageType: Option; var Method: Code[10]; var Address: Text[100]; var Engine: Option): Boolean
     var
         MemberCommunication: Record "NPR MM Member Communication";

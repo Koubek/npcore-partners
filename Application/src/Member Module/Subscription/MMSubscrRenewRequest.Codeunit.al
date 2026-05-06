@@ -36,6 +36,8 @@ codeunit 6185047 "NPR MM Subscr. Renew: Request"
             _RecurPaymentSetup.FieldError("Subscr. Auto-Renewal On");
 
         CheckSubscriptionCanBeProcessed(Subscription);
+        if IsTerminationDue(Subscription) then
+            exit;
         GetRenewalScheduleLine(Subscription);
         CalculateSubscriptionRenewal(Subscription, SubscriptionRequest, RenewWithItemNo);
 
@@ -361,5 +363,19 @@ codeunit 6185047 "NPR MM Subscr. Renew: Request"
 
         if not RenewalDateValid then
             Error(SubscriptionScheduleValidErrorLbl, Subscription."Entry No.");
+    end;
+
+    local procedure IsTerminationDue(Subscription: Record "NPR MM Subscription"): Boolean
+    var
+        TerminationRequest: Record "NPR MM Subscr. Request";
+    begin
+        if Subscription."Auto-Renew" <> Subscription."Auto-Renew"::TERMINATION_REQUESTED then
+            exit(false);
+
+        TerminationRequest.SetRange("Subscription Entry No.", Subscription."Entry No.");
+        TerminationRequest.SetRange(Type, TerminationRequest.Type::Terminate);
+        TerminationRequest.SetRange("Processing Status", TerminationRequest."Processing Status"::Pending);
+        TerminationRequest.SetFilter("Terminate At", '<=%1', Subscription."Valid Until Date");
+        exit(not TerminationRequest.IsEmpty());
     end;
 }

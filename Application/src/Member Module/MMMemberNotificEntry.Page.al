@@ -31,6 +31,11 @@
                     ToolTip = 'Specifies the value of the Date To Notify field';
                     ApplicationArea = NPRMembershipEssential, NPRMembershipAdvanced;
                 }
+                field("Terminate At"; Rec."Terminate At")
+                {
+                    ToolTip = 'Specifies the date the membership will be terminated.';
+                    ApplicationArea = NPRMembershipEssential, NPRMembershipAdvanced;
+                }
                 field("Notification Sent By User"; Rec."Notification Sent By User")
                 {
                     ToolTip = 'Specifies the value of the Notification Sent By User field';

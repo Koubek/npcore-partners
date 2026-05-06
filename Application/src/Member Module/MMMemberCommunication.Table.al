@@ -25,8 +25,8 @@
         {
             Caption = 'Message Type';
             DataClassification = CustomerContent;
-            OptionCaption = 'Welcome,For Renewal,Newsletter,Member Card,Tickets,Coupons,Renewal Success,Renewal Failure,Auto-Renewal Enabled,Auto-Renewal Disabled,Payment Method Collection';
-            OptionMembers = WELCOME,RENEW,NEWSLETTER,MEMBERCARD,TICKETS,COUPONS,RENEWAL_SUCCESS,RENEWAL_FAILURE,AUTORENEWAL_ENABLED,AUTORENEWAL_DISABLED,PAYMENT_METHOD_COLLECTION;
+            OptionCaption = 'Welcome,For Renewal,Newsletter,Member Card,Tickets,Coupons,Renewal Success,Renewal Failure,Auto-Renewal Enabled,Auto-Renewal Disabled,Payment Method Collection,Termination Requested';
+            OptionMembers = WELCOME,RENEW,NEWSLETTER,MEMBERCARD,TICKETS,COUPONS,RENEWAL_SUCCESS,RENEWAL_FAILURE,AUTORENEWAL_ENABLED,AUTORENEWAL_DISABLED,PAYMENT_METHOD_COLLECTION,TERMINATION_REQUESTED;
         }
         field(20; "Preferred Method"; Option)
         {

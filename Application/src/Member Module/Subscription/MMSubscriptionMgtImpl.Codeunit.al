@@ -13,12 +13,18 @@ codeunit 6185043 "NPR MM Subscription Mgt. Impl."
     internal procedure GetEarliestTerminationDate(Membership: Record "NPR MM Membership"; var EarliestDate: Date): Boolean
     var
         Subscription: Record "NPR MM Subscription";
+        NextPeriodEnd: Date;
     begin
         if (not GetSubscriptionFromMembership(Membership."Entry No.", Subscription)) then
             exit(false);
         EarliestDate := CalculateEarliestTerminationDate(Membership);
         if (EarliestDate < Subscription."Committed Until") then
             EarliestDate := Subscription."Committed Until";
+
+        if (EarliestDate > Subscription."Valid Until Date") then
+            if (TryCalculateNextPeriodEnd(Membership, Subscription, NextPeriodEnd)) then
+                EarliestDate := NextPeriodEnd;
+
         exit(true);
     end;
 
@@ -31,6 +37,36 @@ codeunit 6185043 "NPR MM Subscription Mgt. Impl."
         if (Format(RecurPaymtSetup.TerminationPeriod) = '') then
             exit;
         TerminationDate := CalcDate(RecurPaymtSetup.TerminationPeriod, WorkDate());
+    end;
+
+    local procedure TryCalculateNextPeriodEnd(Membership: Record "NPR MM Membership"; Subscription: Record "NPR MM Subscription"; var NextPeriodEnd: Date): Boolean
+    var
+        MembershipEntry: Record "NPR MM Membership Entry";
+        MembershipAlterationSetup: Record "NPR MM Members. Alter. Setup";
+        MembershipMgt: Codeunit "NPR MM MembershipMgtInternal";
+        RenewWithItemNo: Code[20];
+        AlterationRuleSystemId: Guid;
+        ReasonText: Text;
+        NextPeriodStart: Date;
+    begin
+        MembershipEntry.SetRange("Membership Entry No.", Membership."Entry No.");
+        MembershipEntry.SetRange(Blocked, false);
+        MembershipEntry.SetFilter(Context, '<>%1', MembershipEntry.Context::REGRET);
+        if (not MembershipEntry.FindLast()) then
+            exit(false);
+
+        if (not MembershipMgt.SelectAutoRenewRule(MembershipEntry, RenewWithItemNo, AlterationRuleSystemId, ReasonText)) then
+            exit(false);
+
+        if (not MembershipAlterationSetup.GetBySystemId(AlterationRuleSystemId)) then
+            exit(false);
+
+        if (Format(MembershipAlterationSetup."Membership Duration") = '') then
+            exit(false);
+
+        NextPeriodStart := CalcDate('<+1D>', Subscription."Valid Until Date");
+        NextPeriodEnd := CalcDate(MembershipAlterationSetup."Membership Duration", NextPeriodStart);
+        exit(true);
     end;
 
     internal procedure UpdateMembershipSubscriptionDetails(MembershipLedger: Record "NPR MM Membership Entry")
@@ -165,6 +201,7 @@ codeunit 6185043 "NPR MM Subscription Mgt. Impl."
     internal procedure RequestTermination(var Membership: Record "NPR MM Membership"; RequestedDate: Date; Reason: Enum "NPR MM Subs Termination Reason"; var TerminationRequest: Record "NPR MM Subscr. Request"): Boolean
     var
         Subscription: Record "NPR MM Subscription";
+        MemberNotification: Codeunit "NPR MM Member Notification";
     begin
         if (not GetSubscriptionFromMembership(Membership."Entry No.", Subscription)) then
             exit(false);
@@ -179,6 +216,8 @@ codeunit 6185043 "NPR MM Subscription Mgt. Impl."
 
         Membership.Validate("Auto-Renew", Membership."Auto-Renew"::TERMINATION_REQUESTED);
         Membership.Modify();
+
+        MemberNotification.AddTerminationRequestedNotification(Membership."Entry No.", Membership."Membership Code", RequestedDate);
 
         exit(true);
     end;
@@ -292,6 +331,7 @@ codeunit 6185043 "NPR MM Subscription Mgt. Impl."
     var
         Subscription: Record "NPR MM Subscription";
         TerminationRequest: Record "NPR MM Subscr. Request";
+        MemberNotification: Codeunit "NPR MM Member Notification";
     begin
         Subscription.SetCurrentKey("Membership Entry No.");
         Subscription.SetRange("Membership Entry No.", Membership."Entry No.");
@@ -312,8 +352,11 @@ codeunit 6185043 "NPR MM Subscription Mgt. Impl."
 
                 end;
             "NPR MM MembershipAutoRenew"::TERMINATION_REQUESTED:
-                // This is a catch all if somebody sets it directly on the membership. We make some assumptions here.
-                CreateTerminationSubsRequest(Subscription, Today(), "NPR MM Subs Termination Reason"::CUSTOMER_INITIATED, TerminationRequest);
+                begin
+                    // This is a catch all if somebody sets it directly on the membership. We make some assumptions here.
+                    CreateTerminationSubsRequest(Subscription, Today(), "NPR MM Subs Termination Reason"::CUSTOMER_INITIATED, TerminationRequest);
+                    MemberNotification.AddTerminationRequestedNotification(Membership."Entry No.", Membership."Membership Code", Today());
+                end;
 
         end;
 
@@ -382,7 +425,7 @@ codeunit 6185043 "NPR MM Subscription Mgt. Impl."
 
         EarliestTerminationDate := CalculateEarliestTerminationDate(Membership);
 
-        if (EarliestTerminationDate > Subscription."Valid Until Date") or (EarliestTerminationDate > RequestedDate) then
+        if (EarliestTerminationDate > RequestedDate) then
             if (not ConfirmMgt.GetResponseOrDefault(StrSubstNo(AllowBreakOfTerminationPeriodQst, EarliestTerminationDate), false)) then
                 Error(SubsCantBeTerminatedDueToTerminationPeriodErr, EarliestTerminationDate);
     end;

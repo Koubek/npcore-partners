@@ -27,7 +27,7 @@ codeunit 6248479 "NPR MM Subscr Termination JQ"
             SubscriptionRequest.SetRange("Subscription Entry No.", Subscription."Entry No.");
             SubscriptionRequest.SetRange(Type, SubscriptionRequest.Type::Terminate);
             SubscriptionRequest.SetRange("Processing Status", SubscriptionRequest."Processing Status"::Pending);
-            SubscriptionRequest.SetFilter("Terminate At", '<%1', WorkDate());
+            SubscriptionRequest.SetFilter("Terminate At", '<=%1', WorkDate());
             if SubscriptionRequest.FindLast() then
                 TryRenewProcess.ProcessTermination(SubscriptionRequest);
         until Subscription.Next() = 0;

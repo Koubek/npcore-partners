@@ -404,6 +404,11 @@
             Caption = 'Create Auto-Renewal Disabled Notifications';
             DataClassification = CustomerContent;
         }
+        field(640; "Create Termination Req. Notif"; Boolean)
+        {
+            Caption = 'Create Termination Requested Notification';
+            DataClassification = CustomerContent;
+        }
         field(800; "HeyLoyalty Name"; Text[50])
         {
             Caption = 'HeyLoyalty Name';

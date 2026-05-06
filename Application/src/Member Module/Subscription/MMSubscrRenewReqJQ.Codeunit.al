@@ -65,7 +65,7 @@ codeunit 6185033 "NPR MM Subscr. Renew Req. JQ"
                 Subscription.SetRange("Postpone Renewal Attempt Until", 0D, WorkDate());
                 Subscription.SetRange("Subscr. Request Type Filter", Subscription."Subscr. Request Type Filter"::Renew);
                 Subscription.SetRange("Outst. Subscr. Requests Exist", false);
-                Subscription.SetRange("Auto-Renew", Subscription."Auto-Renew"::YES_INTERNAL);
+                Subscription.SetFilter("Auto-Renew", '%1|%2', Subscription."Auto-Renew"::YES_INTERNAL, Subscription."Auto-Renew"::TERMINATION_REQUESTED);
                 Subscription.SetRange("Subscr Renew Sched Date Filter", WorkDate());
                 Subscription.SetRange("Subscr Renew Sched Id Filter", RenewalSchedLine.SystemId);
                 Subscription.SetRange("Subscr Renew Sched Req Exist", false);
@@ -97,7 +97,7 @@ codeunit 6185033 "NPR MM Subscr. Renew Req. JQ"
         Subscription.SetRange("Postpone Renewal Attempt Until", 0D, Today());
         Subscription.SetRange("Subscr. Request Type Filter", Subscription."Subscr. Request Type Filter"::Renew);
         Subscription.SetRange("Outst. Subscr. Requests Exist", false);
-        Subscription.SetRange("Auto-Renew", Subscription."Auto-Renew"::YES_INTERNAL);
+        Subscription.SetFilter("Auto-Renew", '%1|%2', Subscription."Auto-Renew"::YES_INTERNAL, Subscription."Auto-Renew"::TERMINATION_REQUESTED);
         Subscription.SetAutoCalcFields("Outst. Subscr. Requests Exist");
         if Subscription.FindSet() then
             repeat

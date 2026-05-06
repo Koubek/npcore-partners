@@ -120,6 +120,11 @@
             Caption = 'Create Auto-Renewal Disabled Notifications';
             DataClassification = CustomerContent;
         }
+        field(110; "Create Termination Req. Notif"; Boolean)
+        {
+            Caption = 'Create Termination Requested Notification';
+            DataClassification = CustomerContent;
+        }
     }
 
     keys

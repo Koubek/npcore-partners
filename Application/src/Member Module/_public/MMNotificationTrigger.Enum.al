@@ -50,5 +50,9 @@ enum 6059907 "NPR MM NotificationTrigger"
     {
         Caption = 'Membership Change (Age Constraint)';
     }
+    value(12; TERMINATION_REQUESTED)
+    {
+        Caption = 'Termination Requested';
+    }
 
 }

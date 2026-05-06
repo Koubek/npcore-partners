@@ -183,6 +183,11 @@
             Caption = 'Pay by Link URL';
             DataClassification = CustomerContent;
         }
+        field(560; "Terminate At"; Date)
+        {
+            Caption = 'Terminate At';
+            DataClassification = CustomerContent;
+        }
     }
 
     keys
