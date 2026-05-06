@@ -47,6 +47,40 @@ codeunit 6248434 "NPR APIPOSUnit"
         exit(Response.RespondOK(POSUnitToJson(POSUnit)));
     end;
 
+    internal procedure OpenPOSUnit(var Request: Codeunit "NPR API Request") Response: Codeunit "NPR API Response"
+    var
+        POSUnit: Record "NPR POS Unit";
+        ManagePOSUnit: Codeunit "NPR POS Manage POS Unit";
+        UnitId: Guid;
+        UnitIdText: Text;
+        InactiveErr: Label 'POS Unit ''%1'' is inactive and cannot be opened.';
+        EODErr: Label 'POS Unit ''%1'' is in End-of-Day and cannot be opened via API. Finish the attended End-of-Day procedure first.';
+        NotUnattendedErr: Label 'POS Unit ''%1'' is not an UNATTENDED unit; only UNATTENDED units can be opened via API.';
+    begin
+        UnitIdText := Request.Paths().Get(3);
+        if UnitIdText = '' then
+            exit(Response.RespondBadRequest('Missing required path parameter: unitId'));
+        if not Evaluate(UnitId, UnitIdText) then
+            exit(Response.RespondBadRequest('Invalid unitId format'));
+        if not POSUnit.GetBySystemId(UnitId) then
+            exit(Response.RespondResourceNotFound());
+
+        if POSUnit."POS Type" <> POSUnit."POS Type"::UNATTENDED then
+            exit(Response.RespondBadRequest(StrSubstNo(NotUnattendedErr, POSUnit."No.")));
+
+        case POSUnit.Status of
+            POSUnit.Status::INACTIVE:
+                exit(Response.RespondBadRequest(StrSubstNo(InactiveErr, POSUnit."No.")));
+            POSUnit.Status::EOD:
+                exit(Response.RespondBadRequest(StrSubstNo(EODErr, POSUnit."No.")));
+            POSUnit.Status::OPEN:
+                exit(Response.RespondOK(POSUnitToJson(POSUnit)));
+        end;
+
+        ManagePOSUnit.OpenPOSUnit(POSUnit);
+        exit(Response.RespondOK(POSUnitToJson(POSUnit)));
+    end;
+
     local procedure POSUnitToJson(POSUnit: Record "NPR POS Unit") Json: JsonObject
     var
         SSProfile: Record "NPR SS Profile";

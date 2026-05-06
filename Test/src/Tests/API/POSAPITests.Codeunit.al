@@ -1452,6 +1452,8 @@ codeunit 85157 "NPR POS API Tests"
         Headers: Dictionary of [Text, Text];
         NonUnattendedUnit: Record "NPR POS Unit";
         POSPostingProfile: Record "NPR POS Posting Profile";
+        JToken: JsonToken;
+        StatusCode: Integer;
     begin
         // [SCENARIO] Creating a sale on a non-UNATTENDED POS unit should fail
         Initialize();
@@ -1469,10 +1471,12 @@ codeunit 85157 "NPR POS API Tests"
 
         // [WHEN] Try to create a sale on non-UNATTENDED unit
         Body.Add('posUnit', NonUnattendedUnit."No.");
+        Response := LibraryNPRetailAPI.CallApi('POST', '/pos/sale/' + FormatGuid(SaleId), Body, QueryParams, Headers);
 
-        // [THEN] Should fail because POS Unit type is not UNATTENDED
-        asserterror Response := LibraryNPRetailAPI.CallApi('POST', '/pos/sale/' + FormatGuid(SaleId), Body, QueryParams, Headers);
-        Assert.ExpectedError('POS Type');
+        // [THEN] Should return 400 because POS Unit type is not UNATTENDED
+        Response.Get('statusCode', JToken);
+        StatusCode := JToken.AsValue().AsInteger();
+        Assert.AreEqual(400, StatusCode, 'Non-UNATTENDED unit should return 400');
     end;
 
     [Test]

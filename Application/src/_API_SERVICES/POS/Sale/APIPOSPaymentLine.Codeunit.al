@@ -104,6 +104,9 @@ codeunit 6248629 "NPR API POS Payment Line"
         if not POSSale.GetBySystemId(SaleSystemId) then
             exit(Response.RespondResourceNotFound());
 
+        if not APIPOSSale.AssertPOSUnitOpenForSale(POSSale."Register No.") then
+            exit(Response.RespondBadRequest(StrSubstNo('POS Unit ''%1'' is not open for sales.', POSSale."Register No.")));
+
         if not Evaluate(LineId, Request.Paths().Get(5)) then
             exit(Response.RespondBadRequest('Invalid paymentLineId format'));
 
@@ -170,6 +173,9 @@ codeunit 6248629 "NPR API POS Payment Line"
            (POSSaleLine."Sales Ticket No." <> POSSale."Sales Ticket No.") or
            (POSSaleLine."Line Type" <> POSSaleLine."Line Type"::"POS Payment") then
             exit(Response.RespondResourceNotFound());
+
+        if not APIPOSSale.AssertPOSUnitOpenForSale(POSSale."Register No.") then
+            exit(Response.RespondBadRequest(StrSubstNo('POS Unit ''%1'' is not open for sales.', POSSale."Register No.")));
 
         APIPOSSale.ReconstructSession(SaleSystemId);
         DeltaBuilder.StartDataCollection();

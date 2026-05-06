@@ -48,6 +48,9 @@ codeunit 6151089 "NPR API POS EFT Adyen Cloud"
         if POSUnit."POS Type" <> POSUnit."POS Type"::UNATTENDED then
             exit(Response.RespondBadRequest('EFT API is only supported on UNATTENDED POS units'));
 
+        if POSUnit.Status <> POSUnit.Status::OPEN then
+            exit(Response.RespondBadRequest(StrSubstNo('POS Unit ''%1'' is not open for sales (current status: %2).', POSUnit."No.", Format(POSUnit.Status))));
+
         // Resolve selfservice card payment method from POS Self Service Profile
         if POSUnit."POS Self Service Profile" = '' then
             exit(Response.RespondBadRequest('POS Unit has no Self Service Profile configured'));
@@ -142,6 +145,9 @@ codeunit 6151089 "NPR API POS EFT Adyen Cloud"
 
         if EFTTransactionRequest."External Result Known" and EFTTransactionRequest.Successful then
             exit(Response.RespondBadRequest('Transaction already completed successfully'));
+
+        if not APIPOSSale.AssertPOSUnitOpenForSale(POSSale."Register No.") then
+            exit(Response.RespondBadRequest(StrSubstNo('POS Unit ''%1'' is not open for sales.', POSSale."Register No.")));
 
         EFTSetup.FindSetup(EFTTransactionRequest."Register No.", EFTTransactionRequest."Original POS Payment Type Code");
 

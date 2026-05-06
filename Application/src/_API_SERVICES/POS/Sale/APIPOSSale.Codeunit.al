@@ -90,6 +90,7 @@ codeunit 6248632 "NPR API POS Sale"
         VATBusinessPostingGroup: Text;
         POSSession: Codeunit "NPR POS Session";
         UserSetup: Record "User Setup";
+        POSUnit: Record "NPR POS Unit";
     begin
         SaleId := Request.Paths().Get(3);
         if SaleId = '' then
@@ -114,6 +115,13 @@ codeunit 6248632 "NPR API POS Sale"
             exit(Response.RespondBadRequest('API user has no User Setup record. Add the API user to User Setup (with a POS Unit assigned) before calling the POS Sale API.'));
         if UserSetup."NPR POS Unit No." = '' then
             exit(Response.RespondBadRequest('API user has no POS Unit assigned in User Setup. Assign a POS Unit to the API user in User Setup before calling the POS Sale API.'));
+
+        if not AssertPOSUnitOpenForSale(POSUnitNo) then
+            exit(Response.RespondBadRequest(StrSubstNo('POS Unit ''%1'' is not open for sales.', POSUnitNo)));
+
+        POSUnit.Get(POSUnitNo);
+        if POSUnit."POS Type" <> POSUnit."POS Type"::UNATTENDED then
+            exit(Response.RespondBadRequest(StrSubstNo('POS Unit ''%1'' is not an UNATTENDED unit; the API can only create sales on unattended units.', POSUnitNo)));
 
         CreateSale(SaleSystemId, POSUnitNo);
         POSSession.GetSale(POSSale);
@@ -159,6 +167,9 @@ codeunit 6248632 "NPR API POS Sale"
         if not POSSaleRec.GetBySystemId(SaleSystemId) then
             exit(Response.RespondResourceNotFound());
 
+        if not AssertPOSUnitOpenForSale(POSSaleRec."Register No.") then
+            exit(Response.RespondBadRequest(StrSubstNo('POS Unit ''%1'' is not open for sales.', POSSaleRec."Register No.")));
+
         ReconstructSession(SaleSystemId);
         POSSession.GetSale(POSSale);
         DeltaBuilder.StartDataCollection();
@@ -202,6 +213,9 @@ codeunit 6248632 "NPR API POS Sale"
         if not POSSaleRec.GetBySystemId(SaleSystemId) then
             exit(Response.RespondResourceNotFound());
 
+        if not AssertPOSUnitOpenForSale(POSSaleRec."Register No.") then
+            exit(Response.RespondBadRequest(StrSubstNo('POS Unit ''%1'' is not open for sales.', POSSaleRec."Register No.")));
+
         ReconstructSession(SaleSystemId);
         POSSession.GetSale(POSSale);
         POSSale.GetCurrentSale(POSSaleRec);
@@ -232,6 +246,9 @@ codeunit 6248632 "NPR API POS Sale"
 
         if not POSSaleRec.GetBySystemId(SaleSystemId) then
             exit(Response.RespondResourceNotFound());
+
+        if not AssertPOSUnitOpenForSale(POSSaleRec."Register No.") then
+            exit(Response.RespondBadRequest(StrSubstNo('POS Unit ''%1'' is not open for sales.', POSSaleRec."Register No.")));
 
         ReconstructSession(SaleSystemId);
         POSSession.GetSale(POSSale);
@@ -604,14 +621,12 @@ codeunit 6248632 "NPR API POS Sale"
         POSSession.ConstructFromWebserviceSession(false, POSSaleRec."Register No.", POSSaleRec."Sales Ticket No.");
     end;
 
-    procedure CreateSale(SaleSystemId: Guid; POSUnitNo: Code[10])
+    local procedure CreateSale(SaleSystemId: Guid; POSUnitNo: Code[10])
     var
         POSUnit: Record "NPR POS Unit";
         POSSession: Codeunit "NPR POS Session";
     begin
         POSUnit.Get(POSUnitNo);
-        POSUnit.TestField("POS Type", POSUnit."POS Type"::UNATTENDED);
-        POSUnit.TestField(Status, POSUnit.Status::OPEN);
         VerifyCleanupJobIsScheduled();
 
         POSSession.ConstructFromWebserviceSession(false, POSUnit."No.", '');
