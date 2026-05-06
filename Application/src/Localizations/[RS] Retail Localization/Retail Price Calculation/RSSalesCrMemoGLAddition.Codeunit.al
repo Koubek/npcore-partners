@@ -471,8 +471,10 @@ codeunit 6184743 "NPR RS SalesCrMemo GL Addition"
 
         RSRLocalizationMgt.FindAppliedEntries(StdItemLedgerEntry, TempApplItemLedgerEntry);
 
-        if TempApplItemLedgerEntry.IsEmpty() then
+        if TempApplItemLedgerEntry.IsEmpty() then begin
+            InsertCOGSCorrectionFromStdCost(StdValueEntry, SumOfCOGSCostPerUnit, SumOfCOGSCostAmtAct, SalesCrMemoHeader);
             exit;
+        end;
 
         QtyNeeded := Abs(TempSalesCrMemoLine.Quantity);
 
@@ -491,9 +493,8 @@ codeunit 6184743 "NPR RS SalesCrMemo GL Addition"
     var
         COGSCorrectionValueEntry: Record "Value Entry";
         RSRetValueEntryMapp: Record "NPR RS Ret. Value Entry Mapp.";
-        COGSCorrectionValueEntryDescLbl: Label 'COGS Correction';
-        RSRetailCalculationType: Enum "NPR RS Retail Calculation Type";
         QtyTakenFromEntry: Decimal;
+        QtyToCreate: Decimal;
     begin
         if QtyNeeded <= 0 then
             exit;
@@ -505,22 +506,41 @@ codeunit 6184743 "NPR RS SalesCrMemo GL Addition"
             exit;
 
         QtyTakenFromEntry := RSRetValueEntryMapp."Remaining Quantity";
+        if QtyTakenFromEntry <= QtyNeeded then
+            QtyToCreate := QtyTakenFromEntry
+        else
+            QtyToCreate := QtyNeeded;
 
+        CreateCOGSCorrectionValueEntry(
+            COGSCorrectionValueEntry, StdValueEntry,
+            Abs(RSRLocalizationMgt.CalculateAppliedCostPerUnit(AppliedDocValueEntry)),
+            QtyToCreate, SumOfCOGSCostPerUnit, SumOfCOGSCostAmtAct, SalesCrMemoHeader);
+
+        RSRLocalizationMgt.SubRetValueEntryMappingRemainingQty(RSRetValueEntryMapp, COGSCorrectionValueEntry."Invoiced Quantity");
+        QtyNeeded := QtyNeeded - QtyToCreate;
+    end;
+
+    local procedure InsertCOGSCorrectionFromStdCost(StdValueEntry: Record "Value Entry"; var SumOfCOGSCostPerUnit: Decimal; var SumOfCOGSCostAmtAct: Decimal; SalesCrMemoHeader: Record "Sales Cr.Memo Header")
+    var
+        COGSCorrectionValueEntry: Record "Value Entry";
+    begin
+        CreateCOGSCorrectionValueEntry(
+            COGSCorrectionValueEntry, StdValueEntry,
+            Abs(StdValueEntry."Cost per Unit"),
+            Abs(TempSalesCrMemoLine.Quantity),
+            SumOfCOGSCostPerUnit, SumOfCOGSCostAmtAct, SalesCrMemoHeader);
+    end;
+
+    local procedure CreateCOGSCorrectionValueEntry(var COGSCorrectionValueEntry: Record "Value Entry"; StdValueEntry: Record "Value Entry"; CostPerUnit: Decimal; Quantity: Decimal; var SumOfCOGSCostPerUnit: Decimal; var SumOfCOGSCostAmtAct: Decimal; SalesCrMemoHeader: Record "Sales Cr.Memo Header")
+    var
+        RSRetailCalculationType: Enum "NPR RS Retail Calculation Type";
+    begin
         COGSCorrectionValueEntry.Init();
         COGSCorrectionValueEntry.Copy(StdValueEntry);
         COGSCorrectionValueEntry."Entry No." := COGSCorrectionValueEntry.GetLastEntryNo() + 1;
         RSRLocalizationMgt.ResetValueEntryAmounts(COGSCorrectionValueEntry);
-        COGSCorrectionValueEntry."Cost per Unit" := Abs(RSRLocalizationMgt.CalculateAppliedCostPerUnit(AppliedDocValueEntry));
-
-        case true of
-            (QtyTakenFromEntry < QtyNeeded) or (QtyTakenFromEntry = QtyNeeded):
-                SetValueEntryCostAmtActualAndQuantites(COGSCorrectionValueEntry, QtyTakenFromEntry);
-            QtyTakenFromEntry > QtyNeeded:
-                SetValueEntryCostAmtActualAndQuantites(COGSCorrectionValueEntry, QtyNeeded);
-        end;
-        RSRLocalizationMgt.SubRetValueEntryMappingRemainingQty(RSRetValueEntryMapp, COGSCorrectionValueEntry."Invoiced Quantity");
-
-        QtyNeeded := QtyNeeded - QtyTakenFromEntry;
+        COGSCorrectionValueEntry."Cost per Unit" := CostPerUnit;
+        SetValueEntryCostAmtActualAndQuantites(COGSCorrectionValueEntry, Quantity);
         COGSCorrectionValueEntry.Description := COGSCorrectionValueEntryDescLbl;
         COGSCorrectionValueEntry.Insert();
 
@@ -907,6 +927,7 @@ codeunit 6184743 "NPR RS SalesCrMemo GL Addition"
         CurrencyFactor: Decimal;
         NextEntryNo: Integer;
         NextTransactionNo: Integer;
+        COGSCorrectionValueEntryDescLbl: Label 'COGS Correction';
         NeedsRoundingErr: Label '%1 needs to be rounded', Comment = '%1 - amount';
 #endif
 }
