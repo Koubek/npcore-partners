@@ -35,6 +35,10 @@ page 6014470 "NPR APIV1 - Campaign Discount"
                 {
                     Caption = 'customerDiscGroupFilter', Locked = true;
                 }
+                field(discStoreGroupCode; Rec."Disc. Store Group Code")
+                {
+                    Caption = 'discStoreGroupCode', Locked = true;
+                }
                 field(description; Rec.Description)
                 {
                     Caption = 'description', Locked = true;

@@ -1216,9 +1216,15 @@ codeunit 6151077 "NPR Total Discount Management"
 
     local procedure TotalDiscountIsActive(NPRTotalDiscountHeader: Record "NPR Total Discount Header";
                                           SalePOS: Record "NPR POS Sale") IsActive: Boolean
+    var
+        DiscStoreGroupUtils: Codeunit "NPR Disc. Store Group Utils";
     begin
         IsActive := CustomerDiscountGroupFilterPassed(NPRTotalDiscountHeader,
                                                       SalePOS);
+        if not IsActive then
+            exit;
+
+        IsActive := DiscStoreGroupUtils.IsStoreValidForDiscount(NPRTotalDiscountHeader."Disc. Store Group Code", SalePOS."POS Store Code");
         if not IsActive then
             exit;
 

@@ -164,6 +164,12 @@ table 6059874 "NPR Total Discount Header"
             Caption = 'Discount Application';
             DataClassification = CustomerContent;
         }
+        field(18; "Disc. Store Group Code"; Code[20])
+        {
+            Caption = 'Disc. Store Group Code';
+            TableRelation = "NPR Disc. Store Group"."Code";
+            DataClassification = CustomerContent;
+        }
     }
 
     keys

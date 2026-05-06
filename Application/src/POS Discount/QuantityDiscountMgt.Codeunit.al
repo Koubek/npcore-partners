@@ -25,7 +25,7 @@
         if TempSaleLinePOS.IsEmpty then
             exit;
 
-        GetQuantityDiscounts(TempSaleLinePOS, TempQuantityDiscountHeader, TempQuantityDiscountLine);
+        GetQuantityDiscounts(TempSaleLinePOS, TempQuantityDiscountHeader, TempQuantityDiscountLine, SalePOS);
         if TempQuantityDiscountHeader.IsEmpty then
             exit;
         TempQuantityDiscountHeader.FindSet();
@@ -79,10 +79,11 @@
         until TempQuantityDiscountHeader.Next() = 0;
     end;
 
-    procedure GetQuantityDiscounts(var TempSaleLinePOS: Record "NPR POS Sale Line" temporary; var TempQuantityDiscountHeader: Record "NPR Quantity Discount Header" temporary; var TempQuantityDiscountLine: Record "NPR Quantity Discount Line")
+    procedure GetQuantityDiscounts(var TempSaleLinePOS: Record "NPR POS Sale Line" temporary; var TempQuantityDiscountHeader: Record "NPR Quantity Discount Header" temporary; var TempQuantityDiscountLine: Record "NPR Quantity Discount Line"; SalePOS: Record "NPR POS Sale")
     var
         QuantityDiscountLine: Record "NPR Quantity Discount Line";
         QuantityDiscountHeader: Record "NPR Quantity Discount Header";
+        DiscStoreGroupUtils: Codeunit "NPR Disc. Store Group Utils";
     begin
         if TempSaleLinePOS.FindSet() then
             repeat
@@ -100,19 +101,20 @@
                     TempSaleLinePOS."Discount Calculated" := true;
                     TempSaleLinePOS.Modify();
                     repeat
-                        QuantityDiscountLine.SetRange("Main no.", QuantityDiscountHeader."Main No.");
-                        QuantityDiscountLine.SetRange("Item No.", QuantityDiscountHeader."Item No.");
+                        if DiscStoreGroupUtils.IsStoreValidForDiscount(QuantityDiscountHeader."Disc. Store Group Code", SalePOS."POS Store Code") then begin
+                            QuantityDiscountLine.SetRange("Main no.", QuantityDiscountHeader."Main No.");
+                            QuantityDiscountLine.SetRange("Item No.", QuantityDiscountHeader."Item No.");
 
-                        TempQuantityDiscountHeader.Init();
-                        TempQuantityDiscountHeader.TransferFields(QuantityDiscountHeader);
+                            TempQuantityDiscountHeader.Init();
+                            TempQuantityDiscountHeader.TransferFields(QuantityDiscountHeader);
 
-                        if TempQuantityDiscountHeader.Insert() then begin
-                            if QuantityDiscountLine.FindSet() then
-                                repeat
-                                    TempQuantityDiscountLine.Init();
-                                    TempQuantityDiscountLine.TransferFields(QuantityDiscountLine);
-                                    TempQuantityDiscountLine.Insert();
-                                until QuantityDiscountLine.Next() = 0;
+                            if TempQuantityDiscountHeader.Insert() then
+                                if QuantityDiscountLine.FindSet() then
+                                    repeat
+                                        TempQuantityDiscountLine.Init();
+                                        TempQuantityDiscountLine.TransferFields(QuantityDiscountLine);
+                                        TempQuantityDiscountLine.Insert();
+                                    until QuantityDiscountLine.Next() = 0;
                         end;
                     until QuantityDiscountHeader.Next() = 0;
                 end;

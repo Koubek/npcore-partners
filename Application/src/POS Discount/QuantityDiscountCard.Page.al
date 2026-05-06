@@ -91,6 +91,11 @@
                     ToolTip = 'Specifies the value of the Global Dimension 2 Code field';
                     ApplicationArea = NPRRetail;
                 }
+                field("Disc. Store Group Code"; Rec."Disc. Store Group Code")
+                {
+                    ToolTip = 'Specifies the Discount Store Group that limits which stores this discount applies to. If empty, the discount applies to all stores.';
+                    ApplicationArea = NPRRetail;
+                }
             }
             part(QuantityDiscountLine1; "NPR Quantity Discount Line")
             {

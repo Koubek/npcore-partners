@@ -246,6 +246,34 @@ codeunit 6014608 "NPR Replication Register"
         #endregion
 
         #region NP RETAIL endpoints data
+        POSStoreGroupsEndPointIDLbl: Label 'GetPOSStoreGroups', Locked = true;
+        POSStoreGroupsEndPointDescriptionLbl: Label 'Gets POS Store Groups from related company.', Locked = true;
+#IF (BC17 or BC18 or BC19 or BC20)
+        POSStoreGroupsPathLbl: Label '/navipartner/core/v1.0/companies(%1)/posStoreGroups/', Locked = true;
+#ELSE
+        POSStoreGroupsPathLbl: Label '/navipartner/core/v1.0/companies(%1)/posStoreGroups/?$filter=systemRowVersion gt %2&$orderby=systemRowVersion', Locked = true;
+#ENDIF
+        POSStoreGroupLinesEndPointIDLbl: Label 'GetPOSStoreGroupLines', Locked = true;
+        POSStoreGroupLinesEndPointDescriptionLbl: Label 'Gets POS Store Group Lines from related company.', Locked = true;
+#IF (BC17 or BC18 or BC19 or BC20)
+        POSStoreGroupLinesPathLbl: Label '/navipartner/core/v1.0/companies(%1)/posStoreGroupLines/', Locked = true;
+#ELSE
+        POSStoreGroupLinesPathLbl: Label '/navipartner/core/v1.0/companies(%1)/posStoreGroupLines/?$filter=systemRowVersion gt %2&$orderby=systemRowVersion', Locked = true;
+#ENDIF
+        DiscStoreGroupsEndPointIDLbl: Label 'GetDiscountStoreGroups', Locked = true;
+        DiscStoreGroupsEndPointDescriptionLbl: Label 'Gets Discount Store Groups from related company.', Locked = true;
+#IF (BC17 or BC18 or BC19 or BC20)
+        DiscStoreGroupsPathLbl: Label '/navipartner/core/v1.0/companies(%1)/discountStoreGroups/', Locked = true;
+#ELSE
+        DiscStoreGroupsPathLbl: Label '/navipartner/core/v1.0/companies(%1)/discountStoreGroups/?$filter=systemRowVersion gt %2&$orderby=systemRowVersion', Locked = true;
+#ENDIF
+        DiscStoreGroupLinesEndPointIDLbl: Label 'GetDiscountStoreGroupLines', Locked = true;
+        DiscStoreGroupLinesEndPointDescriptionLbl: Label 'Gets Discount Store Group Lines from related company.', Locked = true;
+#IF (BC17 or BC18 or BC19 or BC20)
+        DiscStoreGroupLinesPathLbl: Label '/navipartner/core/v1.0/companies(%1)/discountStoreGroupLines/', Locked = true;
+#ELSE
+        DiscStoreGroupLinesPathLbl: Label '/navipartner/core/v1.0/companies(%1)/discountStoreGroupLines/?$filter=systemRowVersion gt %2&$orderby=systemRowVersion', Locked = true;
+#ENDIF
         PeriodDiscountsEndPointIDLbl: Label 'GetPeriodicDiscountHeaders', Locked = true;
         PeriodDiscountsEndPointDescriptionLbl: Label 'Gets Periodic Discount Headers from related company.', Locked = true;
 #IF (BC17 or BC18 or BC19 or BC20)
@@ -1436,6 +1464,22 @@ codeunit 6014608 "NPR Replication Register"
         if ServiceSetup.IsEmpty() then
             exit;
 
+        ServiceEndPoint.RegisterServiceEndPoint(NPRetailServiceCodeLbl, POSStoreGroupsEndPointIDLbl, POSStoreGroupsPathLbl,
+                            POSStoreGroupsEndPointDescriptionLbl, true, 200, "NPR Replication EndPoint Meth"::"Get BC Generic Data", 0,
+                            1000, Database::"NPR POS Store Group", false, false);
+
+        ServiceEndPoint.RegisterServiceEndPoint(NPRetailServiceCodeLbl, POSStoreGroupLinesEndPointIDLbl, POSStoreGroupLinesPathLbl,
+                            POSStoreGroupLinesEndPointDescriptionLbl, true, 210, "NPR Replication EndPoint Meth"::"Get BC Generic Data", 0,
+                            1000, Database::"NPR POS Store Group Line", false, false);
+
+        ServiceEndPoint.RegisterServiceEndPoint(NPRetailServiceCodeLbl, DiscStoreGroupsEndPointIDLbl, DiscStoreGroupsPathLbl,
+                            DiscStoreGroupsEndPointDescriptionLbl, true, 400, "NPR Replication EndPoint Meth"::"Get BC Generic Data", 0,
+                            1000, Database::"NPR Disc. Store Group", false, false);
+
+        ServiceEndPoint.RegisterServiceEndPoint(NPRetailServiceCodeLbl, DiscStoreGroupLinesEndPointIDLbl, DiscStoreGroupLinesPathLbl,
+                            DiscStoreGroupLinesEndPointDescriptionLbl, true, 410, "NPR Replication EndPoint Meth"::"Get BC Generic Data", 0,
+                            1000, Database::"NPR Disc. Store Group Line", false, false);
+
         ServiceEndPoint.RegisterServiceEndPoint(NPRetailServiceCodeLbl, PeriodDiscountsEndPointIDLbl, PeriodDiscountsPathLbl,
                             PeriodDiscountsEndPointDescriptionLbl, true, 500, "NPR Replication EndPoint Meth"::"Get BC Generic Data", 0,
                             1000, Database::"NPR Period Discount", false, false);
@@ -1586,6 +1630,58 @@ codeunit 6014608 "NPR Replication Register"
 
         Mapping.RegisterSpecialFieldMapping(sender."Service Code", sender."EndPoint ID", sender."Table ID",
            Rec.FieldNo("Unit price incl. VAT"), 'unitpriceinclVAT', 0, false, false);
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::"NPR Replication Endpoint", 'OnRegisterServiceEndPoint', '', true, true)]
+    local procedure RegisterPOSStoreGroupSpecialFieldMappings(sender: Record "NPR Replication Endpoint")
+    var
+        Mapping: Record "NPR Rep. Special Field Mapping";
+        Rec: Record "NPR POS Store Group";
+    begin
+        if sender."Table ID" <> Database::"NPR POS Store Group" then
+            exit;
+
+        Mapping.RegisterSpecialFieldMapping(sender."Service Code", sender."EndPoint ID", sender."Table ID",
+            Rec.FieldNo(SystemId), 'id', 0, false, false);
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::"NPR Replication Endpoint", 'OnRegisterServiceEndPoint', '', true, true)]
+    local procedure RegisterPOSStoreGroupLineSpecialFieldMappings(sender: Record "NPR Replication Endpoint")
+    var
+        Mapping: Record "NPR Rep. Special Field Mapping";
+        Rec: Record "NPR POS Store Group Line";
+    begin
+        if sender."Table ID" <> Database::"NPR POS Store Group Line" then
+            exit;
+
+        Mapping.RegisterSpecialFieldMapping(sender."Service Code", sender."EndPoint ID", sender."Table ID",
+            Rec.FieldNo(SystemId), 'id', 0, false, false);
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::"NPR Replication Endpoint", 'OnRegisterServiceEndPoint', '', true, true)]
+    local procedure RegisterDiscStoreGroupSpecialFieldMappings(sender: Record "NPR Replication Endpoint")
+    var
+        Mapping: Record "NPR Rep. Special Field Mapping";
+        Rec: Record "NPR Disc. Store Group";
+    begin
+        if sender."Table ID" <> Database::"NPR Disc. Store Group" then
+            exit;
+
+        Mapping.RegisterSpecialFieldMapping(sender."Service Code", sender."EndPoint ID", sender."Table ID",
+            Rec.FieldNo(SystemId), 'id', 0, false, false);
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::"NPR Replication Endpoint", 'OnRegisterServiceEndPoint', '', true, true)]
+    local procedure RegisterDiscStoreGroupLineSpecialFieldMappings(sender: Record "NPR Replication Endpoint")
+    var
+        Mapping: Record "NPR Rep. Special Field Mapping";
+        Rec: Record "NPR Disc. Store Group Line";
+    begin
+        if sender."Table ID" <> Database::"NPR Disc. Store Group Line" then
+            exit;
+
+        Mapping.RegisterSpecialFieldMapping(sender."Service Code", sender."EndPoint ID", sender."Table ID",
+            Rec.FieldNo(SystemId), 'id', 0, false, false);
     end;
 
     local procedure RegisterDimensionsServiceEndPoints()

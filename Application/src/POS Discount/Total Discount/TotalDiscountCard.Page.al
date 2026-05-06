@@ -130,6 +130,11 @@ page 6150909 "NPR Total Discount Card"
                         ApplicationArea = NPRRetail;
                         ToolTip = 'Defines the Customer Disc. Group Filter of the Total Discount. The disocunt is going to be applied to POS Sales that are part of the specified filter.';
                     }
+                    field("Disc. Store Group Code"; Rec."Disc. Store Group Code")
+                    {
+                        ToolTip = 'Specifies the Discount Store Group that limits which stores this discount applies to. If empty, the discount applies to all stores.';
+                        ApplicationArea = NPRRetail;
+                    }
                 }
             }
 

@@ -306,6 +306,12 @@
             TableRelation = Location;
             DataClassification = CustomerContent;
         }
+        field(320; "Disc. Store Group Code"; Code[20])
+        {
+            Caption = 'Disc. Store Group Code';
+            TableRelation = "NPR Disc. Store Group"."Code";
+            DataClassification = CustomerContent;
+        }
 
         field(6151479; "Replication Counter"; BigInteger)
         {

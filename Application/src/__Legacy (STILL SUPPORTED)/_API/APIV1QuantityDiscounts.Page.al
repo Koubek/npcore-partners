@@ -64,6 +64,10 @@ page 6184682 "NPR APIV1 Quantity Discounts"
                 {
                     Caption = 'Campaign Ref.', Locked = true;
                 }
+                field(discStoreGroupCode; Rec."Disc. Store Group Code")
+                {
+                    Caption = 'discStoreGroupCode', Locked = true;
+                }
                 field(lastModifiedDateTime; Rec.SystemModifiedAt)
                 {
                     Caption = 'System Modified At', Locked = true;

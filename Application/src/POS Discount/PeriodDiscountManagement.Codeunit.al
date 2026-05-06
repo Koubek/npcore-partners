@@ -197,6 +197,7 @@
     procedure PeriodDiscountLineIsValid(var PeriodDiscountLine: Record "NPR Period Discount Line"; var TempSaleLinePOS: Record "NPR POS Sale Line" temporary; SalePOS: Record "NPR POS Sale"): Boolean
     var
         PeriodDiscount: Record "NPR Period Discount";
+        DiscStoreGroupUtils: Codeunit "NPR Disc. Store Group Utils";
     begin
         if not PeriodDiscount.Get(PeriodDiscountLine.Code) then
             exit(false);
@@ -208,6 +209,9 @@
             exit(false);
 
         if not IsValidCustDiscGroup(PeriodDiscount, SalePOS) then
+            exit(false);
+
+        if not DiscStoreGroupUtils.IsStoreValidForDiscount(PeriodDiscount."Disc. Store Group Code", SalePOS."POS Store Code") then
             exit(false);
 
         exit(true);

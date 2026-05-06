@@ -169,6 +169,7 @@
     var
         MixedDiscount: Record "NPR Mixed Discount";
         MixedDiscountLine: Record "NPR Mixed Discount Line";
+        DiscStoreGroupUtils: Codeunit "NPR Disc. Store Group Utils";
         NPRDiscountCalcBufferUtils: Codeunit "NPR Discount Calc Buffer Utils";
         LastDiscountBufferEntryNo: Integer;
         SkipLine: Boolean;
@@ -205,6 +206,8 @@
                 SkipLine := not HasActiveTimeInterval(MixedDiscount);
                 if not SkipLine then
                     SkipLine := not CustomerDiscountFilterPassed(SalePOS, MixedDiscount);
+                if not SkipLine then
+                    SkipLine := not DiscStoreGroupUtils.IsStoreValidForDiscount(MixedDiscount."Disc. Store Group Code", SalePOS."POS Store Code");
 
                 if not SkipLine then begin
                     TempMixedDiscount.Init();

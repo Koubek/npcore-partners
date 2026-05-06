@@ -263,6 +263,12 @@
             TableRelation = "NPR Period Discount";
             DataClassification = CustomerContent;
         }
+        field(320; "Disc. Store Group Code"; Code[20])
+        {
+            Caption = 'Disc. Store Group Code';
+            TableRelation = "NPR Disc. Store Group"."Code";
+            DataClassification = CustomerContent;
+        }
         field(500; "Actual Discount Amount"; Decimal)
         {
             Caption = 'Actual Discount Amount';

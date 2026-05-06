@@ -86,6 +86,10 @@ page 6014477 "NPR APIV1 - Mixed Discounts"
                 {
                     Caption = 'customerDiscGroupFilter', Locked = true;
                 }
+                field(discStoreGroupCode; Rec."Disc. Store Group Code")
+                {
+                    Caption = 'discStoreGroupCode', Locked = true;
+                }
                 field(actualDiscountAmount; Rec."Actual Discount Amount")
                 {
                     Caption = 'actualDiscountAmount', Locked = true;
