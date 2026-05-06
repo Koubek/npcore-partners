@@ -50,7 +50,7 @@ report 6060127 "NPR MM Member Card Print QR"
                 Base64Convert: Codeunit "Base64 Convert";
                 OutStr: OutStream;
             begin
-                Base64Image := BarcodeFontProvider.GenerateQRCodeAZ("MM Member Card"."External Card No.", 'H', 'UTF8', true, true, 2);
+                Base64Image := BarcodeFontProvider.GenerateQRCodeAZ("MM Member Card"."External Card No.", 'H', 'UTF8', true, false, 2);
                 TmpQR.CreateOutStream(OutStr);
                 Base64Convert.FromBase64(Base64Image, OutStr);
                 TempBlobBuffer.GetFromTempBlob(TmpQR, 1);
