@@ -128,6 +128,10 @@ page 6151166 "NPR APIV2 PBIItem"
                 {
                     Caption = 'Item Status', Locked = true;
                 }
+                field(nprItemAddonNo; Rec."NPR Item Addon No.")
+                {
+                    Caption = 'Item AddOn No.', Locked = true;
+                }
                 field(description2; Rec."Description 2")
                 {
                     Caption = 'Description 2', Locked = true;

@@ -35,6 +35,9 @@ query 6014504 "NPR APIV1 PBI AttrWltAssets"
             column(walletPrintCount; PrintCount)
             {
             }
+            column(walletOriginatesFromItemNumber; OriginatesFromItemNo)
+            {
+            }
             column(count)
             {
                 // aggregate column to trigger the select distinct
