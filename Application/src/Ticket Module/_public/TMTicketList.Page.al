@@ -7,7 +7,7 @@
     PageType = List;
     CardPageId = "NPR TM Ticket Card";
     SourceTable = "NPR TM Ticket";
-    SourceTableView = ORDER(Descending);
+    SourceTableView = SORTING("Ticket Reservation Entry No.") ORDER(Descending);
     UsageCategory = Lists;
     ApplicationArea = NPRTicketEssential, NPRTicketAdvanced;
     AdditionalSearchTerms = 'Issued Tickets';
