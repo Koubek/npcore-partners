@@ -322,13 +322,13 @@ codeunit 6151089 "NPR API POS EFT Adyen Cloud"
 
     local procedure GetTransactionStatus(EFTTransactionRequest: Record "NPR EFT Transaction Request"): Text
     begin
-        if not EFTTransactionRequest."External Result Known" then begin
-            if EFTTransactionRequest.Started <> 0DT then
-                exit('Initiated');
-            exit('Prepared');
+        if EFTTransactionRequest.Finished = 0DT then begin
+            if EFTTransactionRequest.Started = 0DT then
+                exit('Prepared');
+            exit('Initiated');
         end;
 
-        if EFTTransactionRequest.Successful then
+        if EFTTransactionRequest."External Result Known" then
             exit('Completed');
 
         exit('Failed');

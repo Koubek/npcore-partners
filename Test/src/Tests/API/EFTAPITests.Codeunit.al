@@ -852,7 +852,7 @@ codeunit 85169 "NPR EFT API Tests"
     [Test]
     [TestPermissions(TestPermissions::Disabled)]
     [HandlerFunctions('MockAdyenCloudDeclinedResponse')]
-    procedure EFT_E2E_FailedPayment_StatusReturnsFailed()
+    procedure EFT_E2E_DeclinedPayment_StatusIsCompletedWithSuccessfulFalse()
     var
         LibraryNPRetailAPI: Codeunit "NPR Library - NPRetail API";
         Assert: Codeunit Assert;
@@ -867,7 +867,7 @@ codeunit 85169 "NPR EFT API Tests"
         TransactionId: Text;
         TransactionGuid: Guid;
     begin
-        // [SCENARIO] Full E2E: prepare -> start (mocked declined) -> poll (failed) -> verify no paymentDelta
+        // [SCENARIO] Full E2E: prepare -> start (mocked declined) -> poll (Completed + successful:false) -> verify no paymentDelta
         Initialize();
         InitializeAdyenPaymentTypeSetup();
 
@@ -899,29 +899,103 @@ codeunit 85169 "NPR EFT API Tests"
         Clear(QueryParams);
         Response := LibraryNPRetailAPI.CallApi('GET', '/pos/sale/' + FormatGuid(SaleId) + '/eft/' + TransactionId + '/cloud/status', Body, QueryParams, Headers);
 
-        // [THEN] Poll returns Failed status
+        // [THEN] Poll returns Completed status with successful=false (handled decline)
         Assert.IsTrue(LibraryNPRetailAPI.IsSuccessStatusCode(Response), 'Poll EFT should succeed');
         ResponseBody := LibraryNPRetailAPI.GetResponseBody(Response);
 
         Assert.IsTrue(ResponseBody.Get('status', JToken), 'Poll should return status');
-        Assert.AreEqual('Failed', JToken.AsValue().AsText(), 'Status should be Failed after declined payment');
+        Assert.AreEqual('Completed', JToken.AsValue().AsText(), 'Status should be Completed for a handled decline (terminal gave a clean negative result)');
 
         Assert.IsTrue(ResponseBody.Get('successful', JToken), 'Poll should return successful');
-        Assert.IsFalse(JToken.AsValue().AsBoolean(), 'successful should be false for declined payment');
+        Assert.IsFalse(JToken.AsValue().AsBoolean(), 'successful should be false for a handled decline');
 
-        Assert.IsTrue(ResponseBody.Get('resultCode', JToken), 'Failed poll should include resultCode');
-        Assert.IsTrue(ResponseBody.Get('resultMessage', JToken), 'Failed poll should include resultMessage');
+        Assert.IsTrue(ResponseBody.Get('resultCode', JToken), 'Declined poll should include resultCode');
+        Assert.IsTrue(ResponseBody.Get('resultMessage', JToken), 'Declined poll should include resultMessage');
 
-        // [THEN] Failed payment must NOT include delta fields
-        Assert.IsFalse(ResponseBody.Contains('refreshedSaleLines'), 'Failed payment should NOT include refreshedSaleLines');
-        Assert.IsFalse(ResponseBody.Contains('refreshedPaymentLines'), 'Failed payment should NOT include refreshedPaymentLines');
-        Assert.IsFalse(ResponseBody.Contains('totalSalesAmountInclVat'), 'Failed payment should NOT include totalSalesAmountInclVat');
+        // [THEN] Declined payment must NOT include delta fields
+        Assert.IsFalse(ResponseBody.Contains('refreshedSaleLines'), 'Declined payment should NOT include refreshedSaleLines');
+        Assert.IsFalse(ResponseBody.Contains('refreshedPaymentLines'), 'Declined payment should NOT include refreshedPaymentLines');
+        Assert.IsFalse(ResponseBody.Contains('totalSalesAmountInclVat'), 'Declined payment should NOT include totalSalesAmountInclVat');
 
         // [THEN] EFT Transaction Request reflects declined state
         Evaluate(TransactionGuid, TransactionId);
         EFTTransactionRequest.GetBySystemId(TransactionGuid);
-        Assert.IsTrue(EFTTransactionRequest."External Result Known", 'External Result Known should be true (result is known: declined)');
+        Assert.IsTrue(EFTTransactionRequest."External Result Known", 'External Result Known should be true - terminal returned a clean decline');
         Assert.IsFalse(EFTTransactionRequest.Successful, 'EFT Transaction should NOT be marked Successful');
+    end;
+
+    [Test]
+    [TestPermissions(TestPermissions::Disabled)]
+    [HandlerFunctions('MockAdyenCloudSystemErrorResponse')]
+    procedure EFT_E2E_SystemError_StatusReturnsFailed()
+    var
+        LibraryNPRetailAPI: Codeunit "NPR Library - NPRetail API";
+        Assert: Codeunit Assert;
+        EFTTransactionRequest: Record "NPR EFT Transaction Request";
+        Response: JsonObject;
+        Body: JsonObject;
+        QueryParams: Dictionary of [Text, Text];
+        Headers: Dictionary of [Text, Text];
+        ResponseBody: JsonObject;
+        JToken: JsonToken;
+        SaleId: Guid;
+        TransactionId: Text;
+        TransactionGuid: Guid;
+    begin
+        // [SCENARIO] Full E2E: prepare -> start (mocked HTTP 500, InvokeAPI TryFunction returns false)
+        //            -> poll returns Failed (system error, External Result Known = false)
+        Initialize();
+        InitializeAdyenPaymentTypeSetup();
+
+        // [GIVEN] A sale with one item line (100.00)
+        SaleId := CreateTestSale();
+
+        // [WHEN] POST /pos/sale/:saleId/eft/prepare
+        Body.Add('amount', _Item."Unit Price");
+        Response := LibraryNPRetailAPI.CallApi('POST', '/pos/sale/' + FormatGuid(SaleId) + '/eft/prepare', Body, QueryParams, Headers);
+
+        // [THEN] Prepare returns OK
+        Assert.IsTrue(LibraryNPRetailAPI.IsSuccessStatusCode(Response), 'Prepare EFT should succeed');
+        ResponseBody := LibraryNPRetailAPI.GetResponseBody(Response);
+        Assert.IsTrue(ResponseBody.Get('transactionId', JToken), 'Prepare should return transactionId');
+        TransactionId := JToken.AsValue().AsText();
+
+        // [WHEN] POST /pos/sale/:saleId/eft/:transactionId/cloud/start (mocked HTTP 500)
+        Clear(Body);
+        Response := LibraryNPRetailAPI.CallApi('POST', '/pos/sale/' + FormatGuid(SaleId) + '/eft/' + TransactionId + '/cloud/start', Body, QueryParams, Headers);
+
+        // [THEN] Start still returns OK with processed=true
+        Assert.IsTrue(LibraryNPRetailAPI.IsSuccessStatusCode(Response), 'Start EFT should respond 200 even on system error');
+        ResponseBody := LibraryNPRetailAPI.GetResponseBody(Response);
+        Assert.IsTrue(ResponseBody.Get('processed', JToken), 'Start should return processed');
+        Assert.IsTrue(JToken.AsValue().AsBoolean(), 'processed should be true');
+
+        // [WHEN] GET /pos/sale/:saleId/eft/:transactionId/cloud/status
+        Clear(Body);
+        Clear(QueryParams);
+        Response := LibraryNPRetailAPI.CallApi('GET', '/pos/sale/' + FormatGuid(SaleId) + '/eft/' + TransactionId + '/cloud/status', Body, QueryParams, Headers);
+
+        // [THEN] Poll returns Failed - this is the "unknown state, lock the station" case
+        Assert.IsTrue(LibraryNPRetailAPI.IsSuccessStatusCode(Response), 'Poll EFT should succeed');
+        ResponseBody := LibraryNPRetailAPI.GetResponseBody(Response);
+
+        Assert.IsTrue(ResponseBody.Get('status', JToken), 'Poll should return status');
+        Assert.AreEqual('Failed', JToken.AsValue().AsText(), 'Status should be Failed only for unhandled system errors');
+
+        Assert.IsTrue(ResponseBody.Get('successful', JToken), 'Poll should return successful');
+        Assert.IsFalse(JToken.AsValue().AsBoolean(), 'successful should be false');
+
+        // [THEN] System error must NOT include delta fields
+        Assert.IsFalse(ResponseBody.Contains('refreshedSaleLines'), 'System-error payment should NOT include refreshedSaleLines');
+        Assert.IsFalse(ResponseBody.Contains('refreshedPaymentLines'), 'System-error payment should NOT include refreshedPaymentLines');
+        Assert.IsFalse(ResponseBody.Contains('totalSalesAmountInclVat'), 'System-error payment should NOT include totalSalesAmountInclVat');
+
+        // [THEN] EFT Transaction Request reflects unknown-outcome state
+        Evaluate(TransactionGuid, TransactionId);
+        EFTTransactionRequest.GetBySystemId(TransactionGuid);
+        Assert.IsFalse(EFTTransactionRequest."External Result Known", 'External Result Known should be false - HTTP failed');
+        Assert.IsFalse(EFTTransactionRequest.Successful, 'EFT Transaction should NOT be marked Successful');
+        Assert.AreNotEqual(0DT, EFTTransactionRequest.Finished, 'Finished should be set - system error is a terminal state');
     end;
 
     [HttpClientHandler]
@@ -948,6 +1022,15 @@ codeunit 85169 "NPR EFT API Tests"
         Response.Content.WriteFrom(GetMockAdyenDeclinedResponse(ServiceID));
         Response.HttpStatusCode := 200;
         Response.ReasonPhrase := 'OK';
+        exit(false);
+    end;
+
+    [HttpClientHandler]
+    procedure MockAdyenCloudSystemErrorResponse(Request: TestHttpRequestMessage; var Response: TestHttpResponseMessage): Boolean
+    begin
+        Response.Content.WriteFrom('{"error":"Adyen terminal unreachable"}');
+        Response.HttpStatusCode := 500;
+        Response.ReasonPhrase := 'Internal Server Error';
         exit(false);
     end;
 
