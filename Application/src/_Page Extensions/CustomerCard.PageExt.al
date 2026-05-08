@@ -38,7 +38,7 @@ pageextension 6014425 "NPR Customer Card" extends "Customer Card"
                 field("NPR Magento Store Code"; Rec."NPR Magento Store Code")
                 {
 
-                    Visible = (MagentoVersion >= 2);
+                    Visible = (MagentoVersion >= 2) and MagentoEnabled;
                     ToolTip = 'View of the Magento store codes on webstore e.g Default,DK, EN.';
                     ApplicationArea = NPRMagento;
                 }
@@ -367,6 +367,7 @@ pageextension 6014425 "NPR Customer Card" extends "Customer Card"
         RSEIAuxCustomer: Record "NPR RS EI Aux Customer";
 #endif
         AddInfoRequestVisible: Boolean;
+        MagentoEnabled: Boolean;
 #if not BC17
         ShopifyIntegrationIsEnabled: Boolean;
         ShopifyStoreListGenerated: Boolean;
@@ -418,6 +419,7 @@ pageextension 6014425 "NPR Customer Card" extends "Customer Card"
         if not MagentoSetup.Get() then
             exit;
 
+        MagentoEnabled := MagentoSetup."Magento Enabled";
         case MagentoSetup."Magento Version" of
             MagentoSetup."Magento Version"::"1":
                 MagentoVersion := 1;

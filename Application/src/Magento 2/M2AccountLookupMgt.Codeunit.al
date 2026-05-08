@@ -339,7 +339,10 @@
         TempM2ValueBuffer: Record "NPR M2 Value Buffer" temporary;
         M2ValueBufferList: Page "NPR M2 Value Buffer List";
     begin
-        MagentoSetup.Get();
+        if not MagentoFeatureIsEnabled() then
+            exit;
+        if not MagentoSetup.Get() then
+            exit;
         if MagentoSetup."Magento Version" = MagentoSetup."Magento Version"::"1" then begin
             if MagentoStore.Get(Customer."NPR Magento Store Code") then;
             if PAGE.RunModal(0, MagentoStore) = ACTION::LookupOK then
@@ -420,8 +423,10 @@
     begin
         if Customer."NPR Magento Store Code" = '' then
             exit;
-
-        MagentoSetup.Get();
+        if not MagentoFeatureIsEnabled() then
+            exit;
+        if not MagentoSetup.Get() then
+            exit;
         if MagentoSetup."Magento Version" = MagentoSetup."Magento Version"::"1" then begin
             MagentoStore.Get(Customer."NPR Magento Store Code");
             exit;
@@ -488,6 +493,15 @@
 
         Value := JToken2.AsValue().AsText();
         exit(Value);
+    end;
+
+    local procedure MagentoFeatureIsEnabled(): Boolean
+    var
+        FeatureManagement: Interface "NPR Feature Management";
+        Feature: Enum "NPR Feature";
+    begin
+        FeatureManagement := Feature::Magento;
+        exit(FeatureManagement.IsFeatureEnabled());
     end;
 }
 
