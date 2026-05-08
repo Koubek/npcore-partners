@@ -186,8 +186,14 @@ codeunit 6151490 "NPR RS R Localization Mgt."
     internal procedure SubRetValueEntryMappingRemainingQty(var RSRetValueEntryMapp: Record "NPR RS Ret. Value Entry Mapp."; QuantityToSubtract: Decimal)
     begin
         RSRetValueEntryMapp."Remaining Quantity" -= QuantityToSubtract;
-        if RSRetValueEntryMapp."Remaining Quantity" = 0 then
-            RSRetValueEntryMapp.Open := false;
+        RSRetValueEntryMapp.Open := RSRetValueEntryMapp."Remaining Quantity" > 0;
+        RSRetValueEntryMapp.Modify();
+    end;
+
+    internal procedure AddRetValueEntryMappingRemainingQty(var RSRetValueEntryMapp: Record "NPR RS Ret. Value Entry Mapp."; QuantityToAdd: Decimal)
+    begin
+        RSRetValueEntryMapp."Remaining Quantity" += QuantityToAdd;
+        RSRetValueEntryMapp.Open := RSRetValueEntryMapp."Remaining Quantity" > 0;
         RSRetValueEntryMapp.Modify();
     end;
 

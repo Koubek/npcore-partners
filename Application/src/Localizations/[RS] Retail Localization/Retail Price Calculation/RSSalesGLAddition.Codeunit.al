@@ -469,12 +469,17 @@ codeunit 6151094 "NPR RS Sales GL Addition"
         if not StdItemLedgerEntry.Get(StdValueEntry."Item Ledger Entry No.") then
             exit;
 
-        CorrectStdValueEntry(StdCorrectionValueEntry, StdValueEntry, SalesInvoiceHeader);
-
         RSRLocalizationMgt.FindAppliedEntries(StdItemLedgerEntry, TempApplicationItemLedgerEntry);
 
-        if TempApplicationItemLedgerEntry.IsEmpty() then
+        if TempApplicationItemLedgerEntry.IsEmpty() then begin
+            if Abs(StdValueEntry."Cost per Unit") > 0 then begin
+                CorrectStdValueEntry(StdCorrectionValueEntry, StdValueEntry, SalesInvoiceHeader);
+                InsertCOGSCorrectionValueEntry(SumOfCOGSCostPerUnit, SumOfCOGSCostAmtAct, StdValueEntry, SalesInvoiceHeader, Abs(StdValueEntry."Cost per Unit"), TempSalesInvoiceLine.Quantity);
+            end;
             exit;
+        end;
+
+        CorrectStdValueEntry(StdCorrectionValueEntry, StdValueEntry, SalesInvoiceHeader);
 
         QtyNeeded := TempSalesInvoiceLine.Quantity;
 
@@ -485,13 +490,23 @@ codeunit 6151094 "NPR RS Sales GL Addition"
                 repeat
                     HandleApplicationValueEntry(ApplValueEntry, SumOfCOGSCostPerUnit, SumOfCOGSCostAmtAct, QtyNeeded, QtyTakenFromEntry, StdValueEntry, SalesInvoiceHeader);
                 until (ApplValueEntry.Next() = 0) or (QtyNeeded <= 0);
-        until TempApplicationItemLedgerEntry.Next() = 0;
+        until (TempApplicationItemLedgerEntry.Next() = 0) or (QtyNeeded <= 0);
+
+        if Abs(StdValueEntry."Cost per Unit") > 0 then
+            if QtyNeeded > 0 then
+                InsertCOGSCorrectionValueEntry(SumOfCOGSCostPerUnit, SumOfCOGSCostAmtAct, StdValueEntry, SalesInvoiceHeader, Abs(StdValueEntry."Cost per Unit"), QtyNeeded)
+            else
+                if SumOfCOGSCostPerUnit = 0 then
+                    InsertCOGSCorrectionValueEntry(SumOfCOGSCostPerUnit, SumOfCOGSCostAmtAct, StdValueEntry, SalesInvoiceHeader, Abs(StdValueEntry."Cost per Unit"), TempSalesInvoiceLine.Quantity);
     end;
 
     local procedure HandleApplicationValueEntry(ApplValueEntry: Record "Value Entry"; var SumOfCOGSCostPerUnit: Decimal; var SumOfCOGSCostAmtAct: Decimal; var QtyNeeded: Decimal; QtyTakenFromEntry: Decimal; StdValueEntry: Record "Value Entry"; SalesInvoiceHeader: Record "Sales Invoice Header")
     var
         RSRetValueEntryMapp: Record "NPR RS Ret. Value Entry Mapp.";
+        ApplCostPerUnit: Decimal;
     begin
+        if QtyNeeded <= 0 then
+            exit;
         if not RSRetValueEntryMapp.Get(ApplValueEntry."Entry No.") then begin
             RSRLocalizationMgt.AccumulateUnmappedAppliedEntryCost(ApplValueEntry, SumOfCOGSCostPerUnit, SumOfCOGSCostAmtAct, QtyNeeded);
             exit;
@@ -500,19 +515,18 @@ codeunit 6151094 "NPR RS Sales GL Addition"
             exit;
 
         QtyTakenFromEntry := RSRetValueEntryMapp."Remaining Quantity";
-        case true of
-            (QtyTakenFromEntry < QtyNeeded) or (QtyTakenFromEntry = QtyNeeded):
-                begin
-                    InsertCOGSCorrectionValueEntry(SumOfCOGSCostPerUnit, SumOfCOGSCostAmtAct, StdValueEntry, SalesInvoiceHeader, RSRLocalizationMgt.CalculateAppliedCostPerUnit(ApplValueEntry), QtyTakenFromEntry);
-                    RSRLocalizationMgt.SubRetValueEntryMappingRemainingQty(RSRetValueEntryMapp, QtyTakenFromEntry);
-                end;
-            QtyTakenFromEntry > QtyNeeded:
-                begin
-                    InsertCOGSCorrectionValueEntry(SumOfCOGSCostPerUnit, SumOfCOGSCostAmtAct, StdValueEntry, SalesInvoiceHeader, RSRLocalizationMgt.CalculateAppliedCostPerUnit(ApplValueEntry), QtyNeeded);
-                    RSRLocalizationMgt.SubRetValueEntryMappingRemainingQty(RSRetValueEntryMapp, QtyNeeded);
-                end;
-        end;
-        QtyNeeded := QtyNeeded - QtyTakenFromEntry;
+        if QtyTakenFromEntry > QtyNeeded then
+            QtyTakenFromEntry := QtyNeeded;
+        if QtyTakenFromEntry <= 0 then
+            exit;
+
+        ApplCostPerUnit := RSRLocalizationMgt.CalculateAppliedCostPerUnit(ApplValueEntry);
+        if ApplCostPerUnit = 0 then
+            exit;
+
+        InsertCOGSCorrectionValueEntry(SumOfCOGSCostPerUnit, SumOfCOGSCostAmtAct, StdValueEntry, SalesInvoiceHeader, ApplCostPerUnit, QtyTakenFromEntry);
+        RSRLocalizationMgt.SubRetValueEntryMappingRemainingQty(RSRetValueEntryMapp, QtyTakenFromEntry);
+        QtyNeeded -= QtyTakenFromEntry;
     end;
 
     local procedure InsertCOGSCorrectionValueEntry(var SumOfCOGSCostPerUnit: Decimal; var SumOfCOGSCostAmtAct: Decimal; StdValueEntry: Record "Value Entry"; SalesInvoiceHeader: Record "Sales Invoice Header"; ApplCostPerUnit: Decimal; ApplQty: Decimal)

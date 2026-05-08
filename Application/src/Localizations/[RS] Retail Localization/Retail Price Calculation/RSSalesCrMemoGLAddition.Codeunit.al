@@ -454,7 +454,78 @@ codeunit 6184743 "NPR RS SalesCrMemo GL Addition"
 
         InsertAppliedValueEntryAdjust(StdCorrectionValueEntry, SumOfCOGSCostPerUnit, SumOfCOGSCostAmtAct, StdValueEntry, SalesCrMemoHeader);
 
+        RestorePurchaseLotMappings(StdValueEntry);
+
         InsertRetailValueEntry(RetailValueEntry, SalesCrMemoHeader, StdValueEntry, StdCorrectionValueEntry, SumOfCOGSCostPerUnit, SumOfCOGSCostAmtAct)
+    end;
+
+    local procedure RestorePurchaseLotMappings(StdValueEntry: Record "Value Entry")
+    var
+        CrMemoItemLedgerEntry: Record "Item Ledger Entry";
+        SaleItemLedgerEntry: Record "Item Ledger Entry";
+        TempAppliedSaleILE: Record "Item Ledger Entry" temporary;
+        QtyRemainingForCM: Decimal;
+    begin
+        CrMemoItemLedgerEntry.SetLoadFields("Entry No.", Positive);
+        if not CrMemoItemLedgerEntry.Get(StdValueEntry."Item Ledger Entry No.") then
+            exit;
+        if not CrMemoItemLedgerEntry.Positive then
+            exit;
+
+        QtyRemainingForCM := Abs(StdValueEntry."Invoiced Quantity");
+        if QtyRemainingForCM <= 0 then
+            exit;
+
+        RSRLocalizationMgt.FindAppliedEntries(CrMemoItemLedgerEntry, TempAppliedSaleILE);
+        if TempAppliedSaleILE.IsEmpty() then
+            exit;
+
+        TempAppliedSaleILE.FindSet();
+        repeat
+            SaleItemLedgerEntry.SetLoadFields("Entry No.", Positive);
+            if SaleItemLedgerEntry.Get(TempAppliedSaleILE."Entry No.") then
+                RestorePurchaseLotsAppliedToSale(SaleItemLedgerEntry, QtyRemainingForCM);
+        until (TempAppliedSaleILE.Next() = 0) or (QtyRemainingForCM <= 0);
+    end;
+
+    local procedure RestorePurchaseLotsAppliedToSale(SaleItemLedgerEntry: Record "Item Ledger Entry"; var QtyRemainingForCM: Decimal)
+    var
+        TempAppliedPurchaseILE: Record "Item Ledger Entry" temporary;
+    begin
+        RSRLocalizationMgt.FindAppliedEntries(SaleItemLedgerEntry, TempAppliedPurchaseILE);
+        if not TempAppliedPurchaseILE.FindSet() then
+            exit;
+
+        repeat
+            RestoreMappingForAppliedPurchaseILE(TempAppliedPurchaseILE."Entry No.", Abs(TempAppliedPurchaseILE.Quantity), QtyRemainingForCM);
+        until (TempAppliedPurchaseILE.Next() = 0) or (QtyRemainingForCM <= 0);
+    end;
+
+    local procedure RestoreMappingForAppliedPurchaseILE(PurchaseILEEntryNo: Integer; AppliedQty: Decimal; var QtyRemainingForCM: Decimal)
+    var
+        PurchaseValueEntry: Record "Value Entry";
+        PurchaseMapping: Record "NPR RS Ret. Value Entry Mapp.";
+        QtyToRestore: Decimal;
+    begin
+        PurchaseValueEntry.SetLoadFields("Entry No.");
+        PurchaseValueEntry.SetRange("Item Ledger Entry No.", PurchaseILEEntryNo);
+        PurchaseValueEntry.SetRange("Entry Type", PurchaseValueEntry."Entry Type"::"Direct Cost");
+        PurchaseValueEntry.SetRange("Item Charge No.", '');
+        if not PurchaseValueEntry.FindFirst() then
+            exit;
+        if not PurchaseMapping.Get(PurchaseValueEntry."Entry No.") then
+            exit;
+        if not PurchaseMapping."COGS Correction" then
+            exit;
+
+        QtyToRestore := AppliedQty;
+        if QtyToRestore > QtyRemainingForCM then
+            QtyToRestore := QtyRemainingForCM;
+        if QtyToRestore <= 0 then
+            exit;
+
+        RSRLocalizationMgt.AddRetValueEntryMappingRemainingQty(PurchaseMapping, QtyToRestore);
+        QtyRemainingForCM -= QtyToRestore;
     end;
 
     local procedure InsertAppliedValueEntryAdjust(var StdCorrectionValueEntry: Record "Value Entry"; var SumOfCOGSCostPerUnit: Decimal; var SumOfCOGSCostAmtAct: Decimal; StdValueEntry: Record "Value Entry"; SalesCrMemoHeader: Record "Sales Cr.Memo Header")
