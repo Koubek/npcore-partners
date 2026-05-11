@@ -160,7 +160,45 @@ codeunit 85011 "NPR Library - Ticket Module"
         ItemNo := CreateItem('', TicketTypeCode, Random(200) + 100);
         CreateTicketBOM(ItemNo, '', AdmissionCode, '', 1, true, '<+7D>', 0, "NPR TM ActivationMethod_Bom"::SCAN, TicketBom."Admission Entry Validation"::SINGLE);
 
-        ScheduleManager.CreateAdmissionScheduleTestFramework(AdmissionCode, true, Today);
+        ScheduleManager.CreateAdmissionScheduleTestFramework(AdmissionCode, true, Today());
+
+        exit(ItemNo)
+    end;
+
+    procedure SelectSmokeTestScenario(AdmissionScheduleEntryGenerateFromDate: Date) SalesItemNo: Code[20]
+    var
+        TicketSetup: Record "NPR TM Ticket Setup";
+        TicketType: Record "NPR TM Ticket Type";
+        TicketBom: Record "NPR TM Ticket Admission BOM";
+        Admission: Record "NPR TM Admission";
+        AdmissionSchedule: Record "NPR TM Admis. Schedule";
+        ScheduleLine: Record "NPR TM Admis. Schedule Lines";
+        POSPostingProfile: Record "NPR POS Posting Profile";
+        NprMasterData: Codeunit "NPR Library - POS Master Data";
+        ScheduleManager: Codeunit "NPR TM Admission Sch. Mgt.";
+        AdmissionCode: Code[20];
+        ScheduleCode: Code[20];
+        ItemNo: Code[20];
+        TicketTypeCode: Code[10];
+    begin
+
+        CreateMinimalSetup();
+
+        // Used for smoke testing
+        // This scenario creates a ticket which is always available today.
+        TicketSetup.Init();
+        if (not TicketSetup.Insert()) then
+            TicketSetup.Get();
+
+        TicketTypeCode := CreateTicketType(GenerateCode10(), '<+7D>', 0, TicketType."Admission Registration"::INDIVIDUAL, "NPR TM ActivationMethod_Type"::SCAN, TicketType."Ticket Entry Validation"::SINGLE, TicketType."Ticket Configuration Source"::TICKET_BOM);
+        AdmissionCode := (CreateAdmissionCode(GenerateCode20(), Admission.Type::LOCATION, Admission."Capacity Limits By"::OVERRIDE, Admission."Default Schedule"::TODAY, '', ''));
+        ScheduleCode := CreateSchedule(GenerateCode20(), AdmissionSchedule."Schedule Type"::LOCATION, AdmissionSchedule."Admission Is"::OPEN, AdmissionScheduleEntryGenerateFromDate, AdmissionSchedule."Recurrence Until Pattern"::NO_END_DATE, 000000.010T, 235959.990T, true, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, '');
+        CreateScheduleLine(AdmissionCode, ScheduleCode, 1, false, 1000, ScheduleLine."Capacity Control"::ADMITTED, '<+5D>', 0, 0, '');
+
+        ItemNo := CreateItem('', TicketTypeCode, Random(200) + 100);
+        CreateTicketBOM(ItemNo, '', AdmissionCode, '', 1, true, '<+7D>', 0, "NPR TM ActivationMethod_Bom"::SCAN, TicketBom."Admission Entry Validation"::SINGLE);
+
+        ScheduleManager.CreateAdmissionScheduleTestFramework(AdmissionCode, true, AdmissionScheduleEntryGenerateFromDate, AdmissionScheduleEntryGenerateFromDate);
 
         exit(ItemNo)
     end;
@@ -210,6 +248,11 @@ codeunit 85011 "NPR Library - Ticket Module"
     end;
 
     procedure CreateScenario_ReservationRequired(NumberOfTimeSlots: Integer) SalesItemNo: Code[20]
+    begin
+        exit(CreateScenario_ReservationRequired(NumberOfTimeSlots, Today()));
+    end;
+
+    procedure CreateScenario_ReservationRequired(NumberOfTimeSlots: Integer; GenerateAdmissionScheduleFromDate: Date) SalesItemNo: Code[20]
     var
         TicketType: Record "NPR TM Ticket Type";
         TicketBom: Record "NPR TM Ticket Admission BOM";
@@ -233,7 +276,7 @@ codeunit 85011 "NPR Library - Ticket Module"
 
         SlotSize := Round((24 * 60 * 60) / NumberOfTimeSlots, 1);
         TicketTypeCode := CreateTicketType(GenerateCode10(), '<+7D>', 0, TicketType."Admission Registration"::INDIVIDUAL, "NPR TM ActivationMethod_Type"::SCAN, TicketType."Ticket Entry Validation"::SINGLE, TicketType."Ticket Configuration Source"::TICKET_BOM);
-        AdmissionCode := (CreateAdmissionCode(GenerateCode20(), Admission.Type::OCCASION, Admission."Capacity Limits By"::OVERRIDE, Admission."Default Schedule"::SCHEDULE_ENTRY, '', ''));
+        AdmissionCode := (CreateAdmissionCodeReservation(GenerateCode20(), Admission.Type::OCCASION, Admission."Capacity Limits By"::OVERRIDE, Admission."Default Schedule"::SCHEDULE_ENTRY, '', '', '<+5D>'));
         for i := 1 to NumberOfTimeSlots do begin
             StartTime := 000001T + (SlotSize * (i - 1) * 1000);
             EndTime := StartTime + (SlotSize * 1000) - 1000;
@@ -241,14 +284,14 @@ codeunit 85011 "NPR Library - Ticket Module"
             if (i = NumberOfTimeSlots) then
                 EndTime := 235959T;
 
-            ScheduleCode := CreateSchedule(GenerateCode20(), AdmissionSchedule."Schedule Type"::"EVENT", AdmissionSchedule."Admission Is"::OPEN, TODAY, AdmissionSchedule."Recurrence Until Pattern"::NO_END_DATE, StartTime, EndTime, true, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, '');
+            ScheduleCode := CreateSchedule(GenerateCode20(), AdmissionSchedule."Schedule Type"::"EVENT", AdmissionSchedule."Admission Is"::OPEN, GenerateAdmissionScheduleFromDate, AdmissionSchedule."Recurrence Until Pattern"::NO_END_DATE, StartTime, EndTime, true, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, '');
             CreateScheduleLine(AdmissionCode, ScheduleCode, 1, true, 1000, ScheduleLine."Capacity Control"::ADMITTED, '<+5D>', 0, 0, '');
         end;
 
         ItemNo := CreateItem('', TicketTypeCode, Random(200) + 100);
         CreateTicketBOM(ItemNo, '', AdmissionCode, '', 1, true, '<+7D>', 0, "NPR TM ActivationMethod_Bom"::SCAN, TicketBom."Admission Entry Validation"::SINGLE);
 
-        ScheduleManager.CreateAdmissionScheduleTestFramework(AdmissionCode, true, Today);
+        ScheduleManager.CreateAdmissionScheduleTestFramework(AdmissionCode, true, GenerateAdmissionScheduleFromDate, GenerateAdmissionScheduleFromDate);
 
         exit(ItemNo)
     end;
@@ -834,6 +877,301 @@ codeunit 85011 "NPR Library - Ticket Module"
     begin
         exit(GetNextNoFromSeries('TM'));
     end;
+
+#if not (BC17 or BC18 or BC19 or BC20 or BC21 or BC22 or BC23 or BC24)
+    procedure CreateTicketIssuedToday(ValidateArrival: Boolean) Ticket: Record "NPR TM Ticket"
+    var
+        ItemNo: Code[20];
+    begin
+        ItemNo := SelectSmokeTestScenario(Today());
+
+        Ticket := MintAndConfirmTicket(ItemNo, 0);
+
+        if (ValidateArrival) then
+            ValidateArrivalExpectingSuccess(Ticket);
+    end;
+
+    procedure CreateReservationTicketIssuedTodayValidToday(ValidateArrival: Boolean) Ticket: Record "NPR TM Ticket"
+    var
+        ItemNo: Code[20];
+    begin
+        ItemNo := CreateScenario_ReservationRequired(1);
+
+        Ticket := MintAndConfirmTicket(ItemNo, LookupAdmissionScheduleEntryNo(ItemNo, Today()));
+
+        if (ValidateArrival) then
+            ValidateArrivalExpectingSuccess(Ticket);
+    end;
+
+    procedure CreateReservationTicketIssuedTodayValidTomorrow(ValidateArrival: Boolean) Ticket: Record "NPR TM Ticket"
+    var
+        ItemNo: Code[20];
+        Tomorrow: Date;
+    begin
+        Tomorrow := CalcDate('<+1D>', Today());
+        ItemNo := CreateScenario_ReservationRequired(1);
+
+        Ticket := MintAndConfirmTicket(ItemNo, LookupAdmissionScheduleEntryNo(ItemNo, Tomorrow));
+
+        if (not ValidateArrival) then
+            exit(Ticket);
+
+        ValidateArrivalExpectingFailure(Ticket, 'Hard fallback: reservation for tomorrow can not be VALID for admit today.');
+    end;
+
+    procedure CreateReservationTicketIssuedYesterdayValidToday(ValidateArrival: Boolean) Ticket: Record "NPR TM Ticket"
+    var
+        ItemNo: Code[20];
+        Yesterday: Date;
+    begin
+        Yesterday := CalcDate('<-1D>', Today());
+        ItemNo := CreateScenario_ReservationRequired(1, Yesterday);
+
+        Ticket := MintAndConfirmTicket(ItemNo, LookupAdmissionScheduleEntryNo(ItemNo, Today()));
+        PatchTicketIssuedDate(Ticket."No.", Yesterday);
+        Ticket.Get(Ticket."No.");
+
+        if (ValidateArrival) then
+            ValidateArrivalExpectingSuccess(Ticket);
+    end;
+
+    procedure CreateReservationTicketIssuedYesterdayValidTomorrow(ValidateArrival: Boolean) Ticket: Record "NPR TM Ticket"
+    var
+        ItemNo: Code[20];
+        Yesterday: Date;
+        Tomorrow: Date;
+    begin
+        Tomorrow := CalcDate('<+1D>', Today());
+        Yesterday := CalcDate('<-1D>', Today());
+        ItemNo := CreateScenario_ReservationRequired(1, Yesterday);
+
+        Ticket := MintAndConfirmTicket(ItemNo, LookupAdmissionScheduleEntryNo(ItemNo, Tomorrow));
+        PatchTicketIssuedDate(Ticket."No.", Yesterday);
+        Ticket.Get(Ticket."No.");
+
+        if (not ValidateArrival) then
+            exit(Ticket);
+
+        ValidateArrivalExpectingFailure(Ticket, 'Hard fallback: reservation for tomorrow can not be VALID for admit today.');
+    end;
+
+    procedure CreateReservationTicketIssuedYesterdayValidYesterday(ValidateArrival: Boolean) Ticket: Record "NPR TM Ticket"
+    var
+        ItemNo: Code[20];
+        Yesterday: Date;
+    begin
+        Yesterday := CalcDate('<-1D>');
+        ItemNo := CreateScenario_ReservationRequired(1, Yesterday);
+
+        // Can not create a reservation directly for yesterday, but we can create one for today and then patch its schedule entries to yesterday.
+        Ticket := MintAndConfirmTicket(ItemNo, LookupAdmissionScheduleEntryNo(ItemNo, Today()));
+        PatchTicketIssuedDate(Ticket."No.", Yesterday);
+        PatchTicketReservationDate(Ticket."No.", Yesterday);
+        Ticket.Get(Ticket."No.");
+
+        if (not ValidateArrival) then
+            exit(Ticket);
+
+        ValidateArrivalExpectingFailure(Ticket, 'Hard fallback: reservation for yesterday can not be VALID for admit today.');
+    end;
+
+    procedure CreateTicketIssuedTomorrow(ValidateArrival: Boolean) Ticket: Record "NPR TM Ticket"
+    var
+        ItemNo: Code[20];
+        Tomorrow: Date;
+    begin
+        Tomorrow := CalcDate('<+1D>');
+        ItemNo := SelectSmokeTestScenario(Today());
+
+        Ticket := MintAndConfirmTicket(ItemNo, 0);
+        PatchTicketIssuedDate(Ticket."No.", Tomorrow);
+        Ticket.Get(Ticket."No.");
+
+        if (not ValidateArrival) then
+            exit(Ticket);
+
+        ValidateArrivalExpectingFailure(Ticket, 'Hard fallback: ticket issued tomorrow can not be VALID for admit today.');
+    end;
+
+    [Normal]
+    procedure CreateTicketIssuedYesterday(ValidateArrival: Boolean) Ticket: Record "NPR TM Ticket"
+    var
+        ItemNo: Code[20];
+        Yesterday: Date;
+    begin
+        Yesterday := CalcDate('<-1D>');
+        ItemNo := SelectSmokeTestScenario(Yesterday);
+
+        Ticket := MintAndConfirmTicket(ItemNo, 0);
+        PatchTicketIssuedDate(Ticket."No.", Yesterday);
+        Ticket.Get(Ticket."No.");
+
+        if (ValidateArrival) then
+            ValidateArrivalExpectingSuccess(Ticket);
+    end;
+
+    local procedure PatchTicketIssuedDate(TicketNo: Code[20]; IssuedDate: Date)
+    var
+        Ticket: Record "NPR TM Ticket";
+        AccessEntry: Record "NPR TM Ticket Access Entry";
+        AdmissionScheduleEntry: Record "NPR TM Admis. Schedule Entry";
+        DetailedAccessEntry: Record "NPR TM Det. Ticket AccessEntry";
+    begin
+        // Patch the ticket to be minted on issued date instead of today
+        Ticket.Get(TicketNo);
+        Ticket."Document Date" := IssuedDate;
+        Ticket."Valid From Date" := IssuedDate;
+        Ticket.Modify();
+
+        AccessEntry.SetCurrentKey("Ticket No.");
+        AccessEntry.SetFilter("Ticket No.", '=%1', Ticket."No.");
+        AccessEntry.FindFirst();
+
+        DetailedAccessEntry.SetCurrentKey("Ticket Access Entry No.");
+        DetailedAccessEntry.SetFilter("Ticket Access Entry No.", '=%1', AccessEntry."Entry No.");
+        DetailedAccessEntry.SetFilter(Type, '=%1', DetailedAccessEntry.Type::INITIAL_ENTRY);
+        DetailedAccessEntry.FindFirst();
+
+        AdmissionScheduleEntry.Reset();
+        AdmissionScheduleEntry.SetFilter("Admission Code", '=%1', AccessEntry."Admission Code");
+        AdmissionScheduleEntry.SetFilter("Admission Start Date", '=%1', IssuedDate);
+        AdmissionScheduleEntry.SetFilter(Cancelled, '=%1', false);
+        AdmissionScheduleEntry.FindFirst();
+
+        DetailedAccessEntry."External Adm. Sch. Entry No." := AdmissionScheduleEntry."External Schedule Entry No.";
+        DetailedAccessEntry.Modify();
+    end;
+
+    local procedure PatchTicketReservationDate(TicketNo: Code[20]; IssuedDate: Date)
+    var
+        Ticket: Record "NPR TM Ticket";
+        AccessEntry: Record "NPR TM Ticket Access Entry";
+        AdmissionScheduleEntry: Record "NPR TM Admis. Schedule Entry";
+        DetailedAccessEntry: Record "NPR TM Det. Ticket AccessEntry";
+    begin
+        // Patch the ticket to have yesterday's date
+        Ticket.Get(TicketNo);
+        Ticket."Document Date" := IssuedDate;
+        Ticket."Valid From Date" := IssuedDate;
+        Ticket.Modify();
+
+        AccessEntry.SetCurrentKey("Ticket No.");
+        AccessEntry.SetFilter("Ticket No.", '=%1', Ticket."No.");
+        AccessEntry.FindFirst();
+
+        DetailedAccessEntry.SetCurrentKey("Ticket Access Entry No.");
+        DetailedAccessEntry.SetFilter("Ticket Access Entry No.", '=%1', AccessEntry."Entry No.");
+        DetailedAccessEntry.SetFilter(Type, '=%1', DetailedAccessEntry.Type::RESERVATION);
+        DetailedAccessEntry.FindFirst();
+
+        AdmissionScheduleEntry.Reset();
+        AdmissionScheduleEntry.SetFilter("Admission Code", '=%1', AccessEntry."Admission Code");
+        AdmissionScheduleEntry.SetFilter("Admission Start Date", '=%1', IssuedDate);
+        AdmissionScheduleEntry.SetFilter(Cancelled, '=%1', false);
+        AdmissionScheduleEntry.FindFirst();
+
+        DetailedAccessEntry."External Adm. Sch. Entry No." := AdmissionScheduleEntry."External Schedule Entry No.";
+        DetailedAccessEntry.Modify();
+    end;
+
+    procedure GetReservationAdmissionDate(TicketNo: Code[20]) AdmissionDate: Date
+    var
+        AccessEntry: Record "NPR TM Ticket Access Entry";
+        AdmissionScheduleEntry: Record "NPR TM Admis. Schedule Entry";
+        DetailedAccessEntry: Record "NPR TM Det. Ticket AccessEntry";
+    begin
+        AccessEntry.SetCurrentKey("Ticket No.");
+        AccessEntry.SetFilter("Ticket No.", '=%1', TicketNo);
+        AccessEntry.FindFirst();
+
+        DetailedAccessEntry.SetCurrentKey("Ticket Access Entry No.");
+        DetailedAccessEntry.SetFilter("Ticket Access Entry No.", '=%1', AccessEntry."Entry No.");
+        DetailedAccessEntry.SetFilter(Type, '=%1', DetailedAccessEntry.Type::RESERVATION);
+        DetailedAccessEntry.FindFirst();
+
+        AdmissionScheduleEntry.SetFilter("External Schedule Entry No.", '=%1', DetailedAccessEntry."External Adm. Sch. Entry No.");
+        AdmissionScheduleEntry.SetFilter(Cancelled, '=%1', false);
+        AdmissionScheduleEntry.FindFirst();
+
+        AdmissionDate := AdmissionScheduleEntry."Admission Start Date";
+    end;
+
+    local procedure MintAndConfirmTicket(ItemNo: Code[20]; AdmissionScheduleEntryNo: Integer) Ticket: Record "NPR TM Ticket"
+    var
+        TmpCreatedTickets: Record "NPR TM Ticket" temporary;
+        TicketApiLibrary: Codeunit "NPR Library - Ticket XML API";
+        Assert: Codeunit "Assert";
+        ResponseToken: Text;
+        ResponseMessage: Text;
+        ApiOk: Boolean;
+        NumberOfTicketOrders: Integer;
+        TicketQuantityPerOrder: Integer;
+        MemberNumber: Code[20];
+        ScannerStation: Code[10];
+        SendNotificationTo: Text;
+        ExternalOrderNo: Text;
+    begin
+        NumberOfTicketOrders := 1;
+        TicketQuantityPerOrder := 1;
+
+        if (AdmissionScheduleEntryNo = 0) then
+            ApiOk := TicketApiLibrary.MakeReservation(NumberOfTicketOrders, ItemNo, TicketQuantityPerOrder, MemberNumber, ScannerStation, ResponseToken, ResponseMessage)
+        else
+            ApiOk := TicketApiLibrary.MakeReservation(NumberOfTicketOrders, ItemNo, TicketQuantityPerOrder, AdmissionScheduleEntryNo, MemberNumber, ScannerStation, ResponseToken, ResponseMessage);
+        Assert.IsTrue(ApiOk, ResponseMessage);
+
+        ExternalOrderNo := 'abc'; // Without an External Order No, the ticket reserves capacity but is not valid for arrival.
+        ApiOk := TicketApiLibrary.ConfirmTicketReservation(ResponseToken, SendNotificationTo, ExternalOrderNo, ScannerStation, TmpCreatedTickets, ResponseMessage);
+        Assert.IsTrue(ApiOk, ResponseMessage);
+        Assert.AreEqual(NumberOfTicketOrders * TicketQuantityPerOrder, TmpCreatedTickets.Count(), 'Number of tickets confirmed does not match number of tickets requested.');
+
+        TmpCreatedTickets.FindFirst();
+        Ticket.Get(TmpCreatedTickets."No.");
+    end;
+
+    local procedure LookupAdmissionScheduleEntryNo(ItemNo: Code[20]; AdmissionStartDate: Date): Integer
+    var
+        TicketBom: Record "NPR TM Ticket Admission BOM";
+        AdmissionScheduleEntry: Record "NPR TM Admis. Schedule Entry";
+    begin
+        TicketBom.SetFilter("Item No.", '=%1', ItemNo);
+        TicketBom.FindFirst();
+
+        AdmissionScheduleEntry.SetFilter("Admission Code", '=%1', TicketBom."Admission Code");
+        AdmissionScheduleEntry.SetFilter("Admission Start Date", '=%1', AdmissionStartDate);
+        AdmissionScheduleEntry.FindFirst();
+
+        exit(AdmissionScheduleEntry."External Schedule Entry No.");
+    end;
+
+    local procedure ValidateArrivalExpectingSuccess(Ticket: Record "NPR TM Ticket")
+    var
+        TicketApiLibrary: Codeunit "NPR Library - Ticket XML API";
+        ScannerStation: Code[10];
+        ResponseMessage: Text;
+        ApiOk: Boolean;
+    begin
+        ApiOk := TicketApiLibrary.ValidateTicketArrival(Ticket."External Ticket No.", '', ScannerStation, ResponseMessage);
+        if (not ApiOk) then
+            Error('Ticket arrival validation should have succeeded but failed: %1.', ResponseMessage);
+    end;
+
+    local procedure ValidateArrivalExpectingFailure(Ticket: Record "NPR TM Ticket"; HardFallbackMessage: Text)
+    var
+        TicketApiLibrary: Codeunit "NPR Library - Ticket XML API";
+        ScannerStation: Code[10];
+        ResponseMessage: Text;
+        ApiOk: Boolean;
+    begin
+        // Must always raise. Two distinguishable reasons:
+        //   Path A (expected): validation correctly rejected; we surface its message prefixed with 'Expected failure message:' for the test marker.
+        //   Path B (hard fallback / bug case): validation incorrectly let the ticket through — surface the caller-supplied bug message.
+        ApiOk := TicketApiLibrary.ValidateTicketArrival(Ticket."External Ticket No.", '', ScannerStation, ResponseMessage);
+        if (ApiOk) then
+            Error('%1', HardFallbackMessage);
+        Error('Expected failure message: %1', ResponseMessage);
+    end;
+#endif
 
     local procedure GetNextNoFromSeries(FromSeries: Code[2]): Code[20]
     var
