@@ -408,6 +408,16 @@ table 6151238 "NPR MMMemberNotificEntryBuf"
             Caption = 'Pay by Link URL';
             DataClassification = CustomerContent;
         }
+        field(560; "Terminate At"; Date)
+        {
+            Caption = 'Terminate At';
+            DataClassification = CustomerContent;
+        }
+        field(570; "Termination Requested At"; DateTime)
+        {
+            Caption = 'Termination Requested At';
+            DataClassification = CustomerContent;
+        }
     }
 
     keys

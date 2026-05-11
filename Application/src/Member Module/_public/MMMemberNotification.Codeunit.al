@@ -1341,7 +1341,7 @@
         MembershipNotification.Insert();
     end;
 
-    internal procedure AddTerminationRequestedNotification(MembershipEntryNo: Integer; MembershipCode: Code[20]; TerminateAtDate: Date)
+    internal procedure AddTerminationRequestedNotification(MembershipEntryNo: Integer; MembershipCode: Code[20]; TerminateAtDate: Date; TerminationRequestedAt: DateTime)
     var
         MembershipSetup: Record "NPR MM Membership Setup";
         CommunitySetup: Record "NPR MM Member Community";
@@ -1349,10 +1349,10 @@
         MembershipSetup.Get(MembershipCode);
         CommunitySetup.Get(MembershipSetup."Community Code");
 
-        AddTerminationRequestedNotificationWorker(MembershipEntryNo, MembershipSetup, CommunitySetup, TerminateAtDate);
+        AddTerminationRequestedNotificationWorker(MembershipEntryNo, MembershipSetup, CommunitySetup, TerminateAtDate, TerminationRequestedAt);
     end;
 
-    local procedure AddTerminationRequestedNotificationWorker(MembershipEntryNo: Integer; MembershipSetup: Record "NPR MM Membership Setup"; CommunitySetup: Record "NPR MM Member Community"; TerminateAtDate: Date)
+    local procedure AddTerminationRequestedNotificationWorker(MembershipEntryNo: Integer; MembershipSetup: Record "NPR MM Membership Setup"; CommunitySetup: Record "NPR MM Member Community"; TerminateAtDate: Date; TerminationRequestedAt: DateTime)
     var
         NotificationSetup: Record "NPR MM Member Notific. Setup";
         MembershipNotification: Record "NPR MM Membership Notific.";
@@ -1377,6 +1377,7 @@
         MembershipNotification."Target Member Role" := NotificationSetup."Target Member Role";
         MembershipNotification."Processing Method" := NotificationSetup."Processing Method";
         MembershipNotification."Terminate At" := TerminateAtDate;
+        MembershipNotification."Termination Requested At" := TerminationRequestedAt;
         MembershipNotification.Insert();
     end;
 

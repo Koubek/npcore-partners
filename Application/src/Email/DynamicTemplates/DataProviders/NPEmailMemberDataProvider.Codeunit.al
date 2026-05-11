@@ -61,6 +61,10 @@ codeunit 6248377 "NPR NPEmailMemberDataProvider" implements "NPR IDynamicTemplat
         JObject.Add('wallet_pass_id', Entry."Wallet Pass Id");
         JObject.Add('wallet_url', Entry."Wallet Pass Landing URL");
         JObject.Add('manifest_url', GetManifestUrl(Entry.ManifestId));
+        JObject.Add('terminate_at', Entry."Terminate At");
+        JObject.Add('terminate_at_formatted', DataProviderHelper.FormatToTextFromLanguage(Entry."Terminate At", Entry.PreferredLanguageCode));
+        JObject.Add('termination_requested_at', Entry."Termination Requested At");
+        JObject.Add('termination_requested_at_formatted', DataProviderHelper.FormatToTextFromLanguage(Entry."Termination Requested At", Entry.PreferredLanguageCode));
 
         EntryBuffer.TransferFields(Entry, true);
         EntryBuffer.SystemId := Entry.SystemId;
@@ -117,6 +121,10 @@ codeunit 6248377 "NPR NPEmailMemberDataProvider" implements "NPR IDynamicTemplat
         JObject.Add('wallet_pass_id', 'ABCD1234');
         JObject.Add('wallet_url', 'https://passes.example.com');
         JObject.Add('manifest_url', 'https://designer.example.com/manifest/abcd1234-ef56-7890-ab12-cd34ef567890');
+        JObject.Add('terminate_at', 20251130D);
+        JObject.Add('terminate_at_formatted', Format(20251130D, 0, '<Standard Format,0>'));
+        JObject.Add('termination_requested_at', 20251101D);
+        JObject.Add('termination_requested_at_formatted', Format(20251101D, 0, '<Standard Format,0>'));
 
         _DynTempDataProvSubs.OnAfterMemberGenerateContentExample(CustomJObject);
         JObject.Add('custom_fields', CustomJObject);

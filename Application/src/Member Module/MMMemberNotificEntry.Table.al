@@ -422,6 +422,11 @@
             Caption = 'Terminate At';
             DataClassification = CustomerContent;
         }
+        field(570; "Termination Requested At"; DateTime)
+        {
+            Caption = 'Termination Requested At';
+            DataClassification = CustomerContent;
+        }
     }
 
     keys

@@ -217,7 +217,7 @@ codeunit 6185043 "NPR MM Subscription Mgt. Impl."
         Membership.Validate("Auto-Renew", Membership."Auto-Renew"::TERMINATION_REQUESTED);
         Membership.Modify();
 
-        MemberNotification.AddTerminationRequestedNotification(Membership."Entry No.", Membership."Membership Code", RequestedDate);
+        MemberNotification.AddTerminationRequestedNotification(Membership."Entry No.", Membership."Membership Code", TerminationRequest."Terminate At", TerminationRequest."Termination Requested At");
 
         exit(true);
     end;
@@ -355,7 +355,7 @@ codeunit 6185043 "NPR MM Subscription Mgt. Impl."
                 begin
                     // This is a catch all if somebody sets it directly on the membership. We make some assumptions here.
                     CreateTerminationSubsRequest(Subscription, Today(), "NPR MM Subs Termination Reason"::CUSTOMER_INITIATED, TerminationRequest);
-                    MemberNotification.AddTerminationRequestedNotification(Membership."Entry No.", Membership."Membership Code", Today());
+                    MemberNotification.AddTerminationRequestedNotification(Membership."Entry No.", Membership."Membership Code", TerminationRequest."Terminate At", TerminationRequest."Termination Requested At");
                 end;
 
         end;
