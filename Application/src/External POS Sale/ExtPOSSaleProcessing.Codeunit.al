@@ -127,7 +127,7 @@ codeunit 6248233 "NPR Ext. POS Sale Processing"
                         if (POSUnit.Get(ExternalPOSSale."Register No.")) then
                             if (POSStore.Get(POSUnit."POS Store Code")) then
                                 if (POSPostingProfile.Get(POSStore."POS Posting Profile")) then begin
-                                    ExternalPOSSaleLine."No." := POSPostingProfile."POS Sales Rounding Account";
+                                    ExternalPOSSaleLine.Validate("No.", POSPostingProfile."POS Sales Rounding Account");
                                 end
 
 

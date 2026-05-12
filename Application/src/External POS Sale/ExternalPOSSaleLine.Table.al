@@ -112,6 +112,8 @@
                         begin
                             InitFromCustomer();
                         end;
+                    "Line Type"::Rounding:
+                        ;
                     else
                         exit;
                 end;
