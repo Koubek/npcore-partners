@@ -56,7 +56,7 @@ table 6059793 "NPR POS Layout"
             Error(LayoutIsInUseErr, TableCaption, Code);
     end;
 
-    procedure GetLayot(ReadFromDB: Boolean) Text: Text
+    procedure GetLayout(ReadFromDB: Boolean) Text: Text
     begin
         if not "Frontend Properties".HasValue() then
             exit;

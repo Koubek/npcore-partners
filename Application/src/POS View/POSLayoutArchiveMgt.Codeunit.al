@@ -95,7 +95,7 @@ codeunit 6060009 "NPR POS Layout Archive Mgt."
 
         LayoutChanged := Format(xRec) <> Format(Rec);
         if not LayoutChanged then
-            LayoutChanged := xRec.GetLayot(true) <> Rec.GetLayot(false);
+            LayoutChanged := xRec.GetLayout(true) <> Rec.GetLayout(false);
         if not LayoutChanged then
             exit;
         CreateArchivedVersion(xRec);

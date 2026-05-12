@@ -173,7 +173,7 @@ page 6060102 "NPR POS Layouts"
 #if DEBUG
     trigger OnAfterGetCurrRecord()
     begin
-        CurrPage.Editor.Invoke('setJson', Rec.GetLayot(true));
+        CurrPage.Editor.Invoke('setJson', Rec.GetLayout(true));
     end;
 
     trigger OnNewRecord(BelowxRec: Boolean)

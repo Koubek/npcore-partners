@@ -144,13 +144,10 @@ codeunit 6059925 "NPR POS Layout Assistant"
     end;
 
     local procedure TransferToPosLayout(POSLayoutJToken: JsonToken; var POSLayout: Record "NPR POS Layout")
-    var
-        OutStr: OutStream;
     begin
         POSLayout.Description := CopyStr(_JsonHelper.GetJText(POSLayoutJToken, 'caption', false), 1, MaxStrLen(POSLayout.Description));
         POSLayout."Template Name" := CopyStr(_JsonHelper.GetJText(POSLayoutJToken, 'template', false), 1, MaxStrLen(POSLayout."Template Name"));
-        POSLayout."Frontend Properties".CreateOutStream(OutStr, TextEncoding::UTF8);
-        OutStr.Write(_JsonHelper.GetJsonToken(POSLayoutJToken, 'blob').AsValue().AsText());
+        POSLayout.SetLayout(_JsonHelper.GetJsonToken(POSLayoutJToken, 'blob').AsValue().AsText());
     end;
 
     local procedure AssignPOSLayout(Context: JsonObject)
