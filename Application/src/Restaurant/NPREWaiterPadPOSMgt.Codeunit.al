@@ -357,7 +357,9 @@
             SaleLinePOS."Manual Item Sales Price" := true;
         end;
         POSSaleLine.SetUseLinePriceVATParams(true);
+        POSSaleLine.SetSkipPOSInfo(true);
         POSSaleLine.InsertLine(SaleLinePOS);
+        POSSaleLine.SetSkipPOSInfo(false);
         POSSaleLine.SetUseLinePriceVATParams(false);
         SaleLinePOS.SetSkipCalcDiscount(false);
         AddLineRelation(LineRelation, WaiterPadLine."Line No.", SaleLinePOS."Line No.");
