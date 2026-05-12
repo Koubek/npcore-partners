@@ -99,11 +99,19 @@ codeunit 6248560 "NPR Ecom Job Management"
         ///Job Queue will still run in background until loop finishes or exits on its own.
         ///This way, we’ll exit the loop and stop further execution.
         ///The Error status is handled in case of unexpected behavior after an app upgrade — the JQ might get stuck in an error state while the log still shows it as being in process.
+        ///Orphan-session detection: BC's Job Queue Dispatcher stamps "User Session ID" with the current SessionId() each
+        ///time it starts a session for this JQE. If a second session is started for the same JQE (republish, restart,
+        ///scheduler quirk), the stamp gets overwritten with the new session's ID. An old session detects it has been
+        ///superseded by comparing the stamped value to its own SessionId() and exits cleanly.
         if not JobQueueEntry.Get(JobQueueEntryId) then
             exit(true);
 
         if JobQueueEntry.Status in [JobQueueEntry.Status::"On Hold", JobQueueEntry.Status::Error] then
             exit(true);
+
+        if (JobQueueEntry."User Session ID" <> 0) and (JobQueueEntry."User Session ID" <> SessionId()) then
+            exit(true);
+
         exit(false);
     end;
 }
