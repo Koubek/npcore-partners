@@ -1505,4 +1505,10 @@
     internal procedure OnBeforeRestoreJobQueueEntryFromMonitored(var JobQueueEntry: Record "Job Queue Entry"; MonitoredJQEntry: Record "NPR Monitored Job Queue Entry")
     begin
     end;
+
+    [IntegrationEvent(false, false)]
+    internal procedure OnBeforeValidateCreateMissingCustomJQs(JobQueueEntry: Record "Job Queue Entry"; var SkipValidation: Boolean)
+    begin
+    end;
+
 }

@@ -239,6 +239,17 @@ table 6059870 "NPR Job Queue Refresh Setup"
         exit(Create);
     end;
 
+    internal procedure CreateMissingCustomJQs(JobQueueEntry: Record "Job Queue Entry"): Boolean
+    var
+        JobQueueMgt: Codeunit "NPR Job Queue Management";
+        Skip: Boolean;
+    begin
+        JobQueueMgt.OnBeforeValidateCreateMissingCustomJQs(JobQueueEntry, Skip);
+        if Skip then
+            exit(true);
+        exit(CreateMissingCustomJQs());
+    end;
+
     internal procedure GetTimeZoneName(): Text
 #if not (BC17 or BC18)
     var

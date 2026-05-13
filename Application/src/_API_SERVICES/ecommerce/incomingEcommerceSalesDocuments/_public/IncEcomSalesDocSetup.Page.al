@@ -305,6 +305,12 @@ page 6185067 "NPR Inc Ecom Sales Doc Setup"
                 actionref(PaymentMethodMapping_Promoted; PaymentMethodMapping) { }
                 actionref(ShipmentMethodMapping_Promoted; ShipmentMethodMapping) { }
                 actionref(JobQueueList_Promoted; JobQueueList) { }
+            }
+            group("Configure Job Queues")
+            {
+                Caption = 'Configure Job Queues';
+                ShowAs = SplitButton;
+
                 actionref(ConfigureEcomCaptureJobQueue_Promoted; ConfigureEcomCaptureJobQueue) { }
                 actionref(ConfigureEcomVoucherProcessingJobQueue_Promoted; ConfigureEcomVoucherProcessingJobQueue) { }
                 actionref(ConfigureEcomSalesOrderProcessingJobQueue_Promoted; ConfigureEcomSalesOrderProcessingJobQueue) { }

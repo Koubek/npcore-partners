@@ -69,6 +69,7 @@ codeunit 6248560 "NPR Ecom Job Management"
     local procedure ScheduleJobQueue(var JobQueueEntry: Record "Job Queue Entry")
     var
         JobQueueMgt: Codeunit "NPR Job Queue Management";
+        MonitoredJQMgt: Codeunit "NPR Monitored Job Queue Mgt.";
     begin
         JobQueueMgt.SetJobTimeout(7, 0); //shouldn't be less than loop in the specific job queue
         JobQueueMgt.SetAutoRescheduleAndNotifyOnError(true, 30, '');
@@ -84,6 +85,7 @@ codeunit 6248560 "NPR Ecom Job Management"
         then
             JobQueueMgt.StartJobQueueEntry(JobQueueEntry);
 
+        MonitoredJQMgt.AssignJobQueueEntryToManagedAndMonitored(false, true, JobQueueEntry);
     end;
 
     internal procedure DurationLimitReached(StartDateTime: DateTime; DurationLimit: Duration): Boolean

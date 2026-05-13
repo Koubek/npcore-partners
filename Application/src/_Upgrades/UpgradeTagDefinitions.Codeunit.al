@@ -311,6 +311,13 @@
         PerCompanyUpgradeTags.Add(GetUpgradeTag(Codeunit::"NPR UPG Inc Ecom Sales Docs", 'UpgradeSalesLineSubtype'));
         PerCompanyUpgradeTags.Add(GetUpgradeTag(Codeunit::"NPR UPG Ecom Sales Docs", 'UpgradeEcomSalesDocJQ'));
         PerCompanyUpgradeTags.Add(GetUpgradeTag(Codeunit::"NPR UPG Ecom Sales Docs", 'UpgradeEcomSalesReturnDocJQ'));
+        PerCompanyUpgradeTags.Add(GetUpgradeTag(Codeunit::"NPR UPG Ecom Sales Docs", 'UpgradeEcomSaleCaptureJQ'));
+        PerCompanyUpgradeTags.Add(GetUpgradeTag(Codeunit::"NPR UPG Ecom Sales Docs", 'UpgradeEcomCreateVoucherJQ'));
+        PerCompanyUpgradeTags.Add(GetUpgradeTag(Codeunit::"NPR UPG Ecom Sales Docs", 'UpgradeEcomCreateTicketJQ'));
+        PerCompanyUpgradeTags.Add(GetUpgradeTag(Codeunit::"NPR UPG Ecom Sales Docs", 'UpgradeEcomCreateMembershipJQ'));
+        PerCompanyUpgradeTags.Add(GetUpgradeTag(Codeunit::"NPR UPG Ecom Sales Docs", 'UpgradeEcomCreateCouponJQ'));
+        PerCompanyUpgradeTags.Add(GetUpgradeTag(Codeunit::"NPR UPG Ecom Sales Docs", 'UpgradeEcomProcessWalletsJQ'));
+        PerCompanyUpgradeTags.Add(GetUpgradeTag(Codeunit::"NPR UPG Ecom Sales Docs", 'UpgradeEcomDigitalNotifJQ'));
         PerCompanyUpgradeTags.Add(GetUpgradeTag(Codeunit::"NPR UPG Ecom Sales Docs", 'UpgradeBucketId'));
         PerCompanyUpgradeTags.Add(GetUpgradeTag(Codeunit::"NPR UPG Ecom Sales Docs", 'UpdateJobTimeout'));
         PerCompanyUpgradeTags.Add(GetUpgradeTag(Codeunit::"NPR UPG Ecom Sales Docs", 'UpdateLastOrdersImportedAt'));
@@ -1177,6 +1184,20 @@
                         exit('NPR-UpgradeEcomSalesDocJQ-20260420');
                     'UpgradeEcomSalesReturnDocJQ':
                         exit('NPR-UpgradeEcomSalesReturnDocJQ-20260420');
+                    'UpgradeEcomSaleCaptureJQ':
+                        exit('NPR-UpgradeEcomSaleCaptureJQ-20260505');
+                    'UpgradeEcomCreateVoucherJQ':
+                        exit('NPR-UpgradeEcomCreateVoucherJQ-20260505');
+                    'UpgradeEcomCreateTicketJQ':
+                        exit('NPR-UpgradeEcomCreateTicketJQ-20260505');
+                    'UpgradeEcomCreateMembershipJQ':
+                        exit('NPR-UpgradeEcomCreateMembershipJQ-20260505');
+                    'UpgradeEcomCreateCouponJQ':
+                        exit('NPR-UpgradeEcomCreateCouponJQ-20260505');
+                    'UpgradeEcomProcessWalletsJQ':
+                        exit('NPR-UpgradeEcomProcessWalletsJQ-20260505');
+                    'UpgradeEcomDigitalNotifJQ':
+                        exit('NPR-UpgradeEcomDigitalNotifJQ-20260505');
                     'UpgradeBucketId':
                         exit('NPR-UpgradeBucketId-20251117');
                     'UpdateJobTimeout':

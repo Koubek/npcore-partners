@@ -66,7 +66,7 @@ codeunit 6248511 "NPR EcomCreateTicketJQ"
             until EcomSalesHeader.Next() = 0;
     end;
 #endif
-    local procedure SetJQDescription(): Text;
+    internal procedure GetJQDescription(): Text;
     var
         JobDescriptionLbl: label 'Process Ticket From Ecommerce Document';
     begin
@@ -78,22 +78,23 @@ codeunit 6248511 "NPR EcomCreateTicketJQ"
         exit(codeunit::"NPR EcomCreateTicketJQ");
     end;
 
-    local procedure ScheduleJobQueue()
+    internal procedure ScheduleJobQueue(var JobQueueEntry: Record "Job Queue Entry")
     var
         EcomJobManagement: Codeunit "NPR Ecom Job Management";
     begin
-        EcomJobManagement.ScheduleJobQueue(GetCodeunitId(), SetJQDescription());
+        EcomJobManagement.ScheduleJobQueue(GetCodeunitId(), GetJQDescription(), JobQueueEntry);
     end;
 
     internal procedure ScheduleJobQueueWithConfirmation()
     var
+        JobQueueEntry: Record "Job Queue Entry";
         ConfirmManagement: Codeunit "Confirm Management";
         ScheduleJobQueueConfirmLbl: Label 'Are you sure you want to configure the job queue for ecommerce document ticket processing?';
     begin
         if not ConfirmManagement.GetResponseOrDefault(ScheduleJobQueueConfirmLbl, true) then
             exit;
 
-        ScheduleJobQueue();
+        ScheduleJobQueue(JobQueueEntry);
     end;
 
 #if not BC17 and not BC18 and not BC19 and not BC20 and not BC21 and not BC22
@@ -108,11 +109,17 @@ codeunit 6248511 "NPR EcomCreateTicketJQ"
         if Rec."Object ID to Run" <> GetCodeunitId() then
             exit;
         if Rec.Description = '' then
-            Rec.Description := CopyStr(SetJQDescription(), 1, MaxStrLen(Rec.Description));
+            Rec.Description := CopyStr(GetJQDescription(), 1, MaxStrLen(Rec.Description));
 
         if Rec."Parameter String" = '' then
             Rec."Parameter String" := CopyStr((EcomJobManagement.ParamBucketFilter() + '='), 1, MaxStrLen(Rec."Parameter String"));
     end;
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"NPR Job Queue Management", OnBeforeValidateCreateMissingCustomJQs, '', false, false)]
+    local procedure SkipValidateCreateMissingCustomJQs(JobQueueEntry: Record "Job Queue Entry"; var SkipValidation: Boolean)
+    begin
+        if (JobQueueEntry."Object Type to Run" = JobQueueEntry."Object Type to Run"::Codeunit) and (JobQueueEntry."Object ID to Run" = GetCodeunitId()) then
+            SkipValidation := true;
+    end;
 #endif
 }

@@ -12,60 +12,60 @@ codeunit 6248652 "NPR UPG Ecom Sales Docs"
 
     trigger OnUpgradePerCompany()
     begin
-        UpgradeEcomSalesDocJQ();
-        UpgradeEcomSalesReturnDocJQ();
+        UpgradeEcomJQs();
         UpgradeBucketId();
         UpdateJobTimeout();
         UpdateLastOrdersImportedAt();
     end;
 
-    local procedure UpgradeEcomSalesDocJQ()
+    local procedure UpgradeEcomJQs()
     var
-        JobQueueEntry: Record "Job Queue Entry";
+        // EcomCreateCouponJQ: Codeunit "NPR EcomCreateCouponJQ";
+        // EcomCreateMembershipJQ: Codeunit "NPR EcomCreateMembershipJQ";
+        // EcomCreateTicketJQ: Codeunit "NPR EcomCreateTicketJQ";
+        // EcomCreateVoucherJQ: Codeunit "NPR EcomCreateVoucherJQ";
+        // EcomDigitalNotifJQ: Codeunit "NPR EcomDigitalNotifJQ";
+        // EcomProcessWalletsJQ: Codeunit "NPR EcomProcessWalletsJQ";
+        // EcomSaleCaptureJQ: Codeunit "NPR EcomSaleCaptureJQ";
         EcomSalesOrderProcJQ: Codeunit "NPR EcomSalesOrderProcJQ";
+        EcomSalesRetOrderProcJQ: Codeunit "NPR EcomSalesRetOrderProcJQ";
         EcomDocsExist: Boolean;
     begin
-        UpgradeStep := 'UpgradeEcomSalesDocJQ';
-        if HasUpgradeTag() then
-            exit;
-
         EcomDocsExist := CheckIfEcomDocsExist();
-        JobQueueEntry.SetRange("Object ID to Run", Codeunit::"NPR EcomSalesOrderProcJQ");
-        JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Codeunit);
-        if not EcomDocsExist then begin
-            if JobQueueEntry.FindFirst() then
-                DeleteMonitoredJobQueueEntry(JobQueueEntry);
-        end else begin
-            if not JobQueueEntry.FindFirst() then
-                EcomSalesOrderProcJQ.ScheduleJobQueue(JobQueueEntry);
-            SetBucketParameterString(JobQueueEntry);
-            SetMonitoredJobQueueEntry(JobQueueEntry);
-        end;
 
-        SetUpgradeTag();
+        // UpgradeEcomJQ('UpgradeEcomCreateCouponJQ', EcomCreateCouponJQ.GetCodeunitId(), EcomCreateCouponJQ.GetJQDescription(), EcomDocsExist);
+        // UpgradeEcomJQ('UpgradeEcomCreateMembershipJQ', EcomCreateMembershipJQ.GetCodeunitId(), EcomCreateMembershipJQ.GetJQDescription(), EcomDocsExist);
+        // UpgradeEcomJQ('UpgradeEcomCreateTicketJQ', EcomCreateTicketJQ.GetCodeunitId(), EcomCreateTicketJQ.GetJQDescription(), EcomDocsExist);
+        // UpgradeEcomJQ('UpgradeEcomCreateVoucherJQ', EcomCreateVoucherJQ.GetCodeunitId(), EcomCreateVoucherJQ.GetJQDescription(), EcomDocsExist);
+        // UpgradeEcomJQ('UpgradeEcomDigitalNotifJQ', EcomDigitalNotifJQ.GetCodeunitId(), EcomDigitalNotifJQ.GetJQDescription(), EcomDocsExist);
+        // UpgradeEcomJQ('UpgradeEcomProcessWalletsJQ', EcomProcessWalletsJQ.GetCodeunitId(), EcomProcessWalletsJQ.GetJQDescription(), EcomDocsExist);
+        // UpgradeEcomJQ('UpgradeEcomSaleCaptureJQ', EcomSaleCaptureJQ.GetCodeunitId(), EcomSaleCaptureJQ.GetJQDescription(), EcomDocsExist);
+        UpgradeEcomJQ('UpgradeEcomSalesDocJQ', EcomSalesOrderProcJQ.GetCodeunitId(), EcomSalesOrderProcJQ.GetJQDescription(), EcomDocsExist);
+        UpgradeEcomJQ('UpgradeEcomSalesReturnDocJQ', EcomSalesRetOrderProcJQ.GetCodeunitId(), EcomSalesRetOrderProcJQ.GetJQDescription(), EcomDocsExist);
     end;
 
-    local procedure UpgradeEcomSalesReturnDocJQ()
+    local procedure UpgradeEcomJQ(UpgradeStepName: Text; CodeunitId: Integer; JQDescription: Text; EcomDocsExist: Boolean)
     var
         JobQueueEntry: Record "Job Queue Entry";
-        EcomSalesReturnProcJQ: Codeunit "NPR EcomSalesRetOrderProcJQ";
-        EcomDocsExist: Boolean;
+        EcomJobManagement: Codeunit "NPR Ecom Job Management";
     begin
-        UpgradeStep := 'UpgradeEcomSalesReturnDocJQ';
+        UpgradeStep := UpgradeStepName;
         if HasUpgradeTag() then
             exit;
 
-        EcomDocsExist := CheckIfEcomDocsExist();
-        JobQueueEntry.SetRange("Object ID to Run", Codeunit::"NPR EcomSalesRetOrderProcJQ");
+        JobQueueEntry.SetRange("Object ID to Run", CodeunitId);
         JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Codeunit);
+
         if not EcomDocsExist then begin
             if JobQueueEntry.FindFirst() then
                 DeleteMonitoredJobQueueEntry(JobQueueEntry);
         end else begin
             if not JobQueueEntry.FindFirst() then
-                EcomSalesReturnProcJQ.ScheduleJobQueue(JobQueueEntry);
-            SetBucketParameterString(JobQueueEntry);
-            SetMonitoredJobQueueEntry(JobQueueEntry);
+                EcomJobManagement.ScheduleJobQueue(CodeunitId, JQDescription, JobQueueEntry)
+            else begin
+                SetBucketParameterString(JobQueueEntry);
+                SetMonitoredJobQueueEntry(JobQueueEntry);
+            end;
         end;
 
         SetUpgradeTag();

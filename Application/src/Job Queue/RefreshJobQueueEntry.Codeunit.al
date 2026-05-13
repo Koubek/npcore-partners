@@ -34,7 +34,7 @@ codeunit 6248478 "NPR Refresh Job Queue Entry"
         if not ProcessMonitoredJob then begin
             ProcessMonitoredJob := JobQueueMgt.JobQueueIsNPProtected(JobQueueEntry);
             if not ProcessMonitoredJob then
-                ProcessMonitoredJob := JQRefreshSetup.CreateMissingCustomJQs();
+                ProcessMonitoredJob := JQRefreshSetup.CreateMissingCustomJQs(JobQueueEntry);
             if not ProcessMonitoredJob then
                 Error(RelatedJobQueueEntryNotFoundErr);
         end;

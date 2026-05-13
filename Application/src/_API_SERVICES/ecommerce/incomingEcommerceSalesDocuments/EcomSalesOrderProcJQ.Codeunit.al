@@ -101,7 +101,7 @@ codeunit 6248612 "NPR EcomSalesOrderProcJQ"
         exit(Timeout);
     end;
 
-    local procedure SetJQDescription(): Text;
+    internal procedure GetJQDescription(): Text;
     var
         JobDescriptionLbl: label 'Process Ecommerce Sales Orders';
     begin
@@ -117,7 +117,7 @@ codeunit 6248612 "NPR EcomSalesOrderProcJQ"
     var
         EcomJobManagement: Codeunit "NPR Ecom Job Management";
     begin
-        EcomJobManagement.ScheduleJobQueue(GetCodeunitId(), SetJQDescription(), JobQueueEntry);
+        EcomJobManagement.ScheduleJobQueue(GetCodeunitId(), GetJQDescription(), JobQueueEntry);
     end;
 
     internal procedure ScheduleJobQueueWithConfirmation()
@@ -142,10 +142,17 @@ codeunit 6248612 "NPR EcomSalesOrderProcJQ"
         if Rec."Object ID to Run" <> GetCodeunitId() then
             exit;
         if Rec.Description = '' then
-            Rec.Description := CopyStr(SetJQDescription(), 1, MaxStrLen(Rec.Description));
+            Rec.Description := CopyStr(GetJQDescription(), 1, MaxStrLen(Rec.Description));
 
         if Rec."Parameter String" = '' then
             Rec."Parameter String" := CopyStr((EcomJobManagement.ParamBucketFilter() + '='), 1, MaxStrLen(Rec."Parameter String"));
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"NPR Job Queue Management", OnBeforeValidateCreateMissingCustomJQs, '', false, false)]
+    local procedure SkipValidateCreateMissingCustomJQs(JobQueueEntry: Record "Job Queue Entry"; var SkipValidation: Boolean)
+    begin
+        if (JobQueueEntry."Object Type to Run" = JobQueueEntry."Object Type to Run"::Codeunit) and (JobQueueEntry."Object ID to Run" = GetCodeunitId()) then
+            SkipValidation := true;
     end;
 }
 #endif
