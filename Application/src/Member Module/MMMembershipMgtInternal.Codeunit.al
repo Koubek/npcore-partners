@@ -6909,6 +6909,8 @@
     internal procedure CancelAutoRenew(ExternalMemberCardNo: Text[100])
     var
         Membership: Record "NPR MM Membership";
+        Subscription: Record "NPR MM Subscription";
+        SubscriptionMgtImpl: Codeunit "NPR MM Subscription Mgt. Impl.";
         NotFoundReasonText: Text;
     begin
         if (not (Membership.Get(GetMembershipFromExtCardNo(ExternalMemberCardNo, Today, NotFoundReasonText)))) then
@@ -6916,6 +6918,9 @@
 
         DisableMembershipAutoRenewal(Membership, true, false);
         RegretSubscription(Membership);
+
+        if SubscriptionMgtImpl.GetSubscriptionFromMembership(Membership."Entry No.", Subscription) then
+            CreateEnableDisableSubsRequest(Subscription, Enum::"NPR MM Subscr. Request Type"::Disable);
     end;
 
     internal procedure CheckMembershipAutoRenewStatusYesInternal(CustomerNo: Code[20]): Boolean
