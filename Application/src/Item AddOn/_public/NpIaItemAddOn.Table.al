@@ -38,6 +38,9 @@
         {
             Caption = 'Simplified Descriptions on POS';
             DataClassification = CustomerContent;
+            ObsoleteState = Pending;
+            ObsoleteTag = '2026-05-12';
+            ObsoleteReason = 'Reverted - setting added unnecessary configuration complexity for users.';
         }
         field(210; NPDesignerTemplateId; Text[40])
         {
