@@ -190,4 +190,19 @@ codeunit 6060127 "NPR MM Membership Mgt."
         exit(MergeHandler.CompactMembersOnUniqueIdChange(MemberToKeep, ConflictExists, ConflictingMembersMerged, Explanation));
     end;
 
+    /// <summary>
+    /// Returns the consecutive (contiguous) active timeframe of a membership around the given reference date,
+    /// by walking through linked membership ledger entries to find the earliest start and latest end of an uninterrupted span.
+    /// </summary>
+    /// <param name="MembershipEntryNo">The membership to evaluate.</param>
+    /// <param name="ReferenceDate">The reference date used to anchor the timeframe lookup. If 0D, defaults to today.</param>
+    /// <param name="FromDate">Output parameter set to the start of the consecutive timeframe.</param>
+    /// <param name="UntilDate">Output parameter set to the end of the consecutive timeframe. For perpetual memberships this is set to 31-12-9999.</param>
+    /// <returns>True if a consecutive timeframe was found, false otherwise.</returns>
+    procedure GetConsecutiveTimeFrame(MembershipEntryNo: Integer; ReferenceDate: Date; var FromDate: Date; var UntilDate: Date): Boolean
+    var
+        MembershipManagement: Codeunit "NPR MM MembershipMgtInternal";
+    begin
+        exit(MembershipManagement.GetConsecutiveTimeFrame(MembershipEntryNo, ReferenceDate, FromDate, UntilDate));
+    end;
 }
