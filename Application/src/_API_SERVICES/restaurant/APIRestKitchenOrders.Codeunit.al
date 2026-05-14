@@ -47,9 +47,10 @@ codeunit 6248638 "NPR API Rest. Kitchen Orders"
         end;
 
         // Pagination with pageKey
-        if Params.ContainsKey('pageSize') then
-            Evaluate(PageSize, Params.Get('pageSize'))
-        else
+        if Params.ContainsKey('pageSize') then begin
+            if not Evaluate(PageSize, Params.Get('pageSize')) then
+                exit(Response.RespondBadRequest('Invalid pageSize format'));
+        end else
             PageSize := 50;
 
         if PageSize > 100 then

@@ -290,6 +290,7 @@
     var
         SeatingLocation: Record "NPR NPRE Seating Location";
     begin
+        SeatingLocation.SetLoadFields("Restaurant Code");
         if not SeatingLocation.Get("Seating Location") then
             exit('');
         exit(SeatingLocation."Restaurant Code");

@@ -43,8 +43,16 @@ codeunit 6248216 "NPR API External POS Sale" implements "NPR API Request Handler
         if (Params.Get('receiptNo', ReceiptNoFilter)) then
             ExternalPOSSale.SetRange("Sales Ticket No.", ReceiptNoFilter);
 
-        if (Params.ContainsKey('pageSize')) then
-            Evaluate(PageSize, Params.Get('pageSize'));
+        if (Params.ContainsKey('pageSize')) then begin
+            if not Evaluate(PageSize, Params.Get('pageSize')) then
+                exit(Response.RespondBadRequest('Invalid pageSize format'));
+        end else
+            PageSize := 50;
+
+        if PageSize > 100 then
+            PageSize := 100;
+        if PageSize < 1 then
+            PageSize := 1;
 
         if (Params.ContainsKey('pageKey')) then begin
             ExternalPOSSale.Reset();

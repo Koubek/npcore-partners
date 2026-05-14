@@ -7,6 +7,8 @@ codeunit 6248640 "NPR API Restaurant Handler" implements "NPR API Request Handle
     var
         APIRestaurant: Codeunit "NPR API Restaurant";
         APIRestaurantMenu: Codeunit "NPR API Restaurant Menu";
+        APIRestaurantLocation: Codeunit "NPR API Restaurant Location";
+        APIRestaurantSeating: Codeunit "NPR API Restaurant Seating";
         APIKitchenOrders: Codeunit "NPR API Rest. Kitchen Orders";
     begin
         case true of
@@ -20,6 +22,14 @@ codeunit 6248640 "NPR API Restaurant Handler" implements "NPR API Request Handle
                 exit(APIKitchenOrders.GetKitchenOrder(Request));
             Request.Match('GET', '/restaurant/:restaurantId/orders'):
                 exit(APIKitchenOrders.GetKitchenOrders(Request));
+            Request.Match('GET', '/restaurant/:restaurantId/location/:locationId'):
+                exit(APIRestaurantLocation.GetLocation(Request));
+            Request.Match('GET', '/restaurant/:restaurantId/location'):
+                exit(APIRestaurantLocation.GetLocations(Request));
+            Request.Match('GET', '/restaurant/:restaurantId/seating/:seatingId'):
+                exit(APIRestaurantSeating.GetSeating(Request));
+            Request.Match('GET', '/restaurant/:restaurantId/seating'):
+                exit(APIRestaurantSeating.GetSeatings(Request));
         end;
     end;
 }

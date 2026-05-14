@@ -49,9 +49,10 @@ codeunit 6248620 "NPR API POS Entry"
             POSEntry.SetFilter(SystemRowVersion, '>%1', LastRowVersion);
         end;
 
-        if (Params.ContainsKey('pageSize')) then
-            Evaluate(PageSize, Params.Get('pageSize'))
-        else
+        if (Params.ContainsKey('pageSize')) then begin
+            if not Evaluate(PageSize, Params.Get('pageSize')) then
+                exit(Response.RespondBadRequest('Invalid pageSize format'));
+        end else
             PageSize := 50;
 
         if PageSize > 100 then
