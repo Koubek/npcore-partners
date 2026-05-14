@@ -23,10 +23,10 @@ codeunit 6151497 "NPR CRO Tax Communication Mgt."
     var
         POSEntry: Record "NPR POS Entry";
         POSEntryTaxLine: Record "NPR POS Entry Tax Line";
+        TempPOSEntryTaxLine: Record "NPR POS Entry Tax Line" temporary;
         Document: XmlDocument;
         Body: XmlElement;
         Content: XmlElement;
-        VATElements: XmlElement;
         VATSection: XmlElement;
         XmlWriteOpts: XmlWriteOptions;
     begin
@@ -39,17 +39,15 @@ codeunit 6151497 "NPR CRO Tax Communication Mgt."
             POSEntryTaxLine.SetRange("POS Entry No.", POSEntry."Entry No.");
             if POSEntryTaxLine.FindSet() then
                 repeat
-                    VATElements := XmlElement.Create('Porez');
-                    VATElements.Add(CreateXmlElement('Stopa', CROAuditMgt.FormatDecimal(POSEntryTaxLine."Tax %")));
-                    VATElements.Add(CreateXmlElement('Osnovica', CROAuditMgt.FormatDecimal(POSEntryTaxLine."Tax Base Amount")));
-                    VATElements.Add(CreateXmlElement('Iznos', CROAuditMgt.FormatDecimal(POSEntryTaxLine."Tax Amount")));
-                    VATSection.Add(VATElements);
+                    AggregateTaxBuffer(TempPOSEntryTaxLine, POSEntryTaxLine."Tax %", POSEntryTaxLine."Tax Base Amount", POSEntryTaxLine."Tax Amount");
                 until POSEntryTaxLine.Next() = 0;
 
             if CROPOSAuditLogAuxInfo."Collect in Store" then
-                AddCollectInStoreVATSection(POSEntry."Entry No.", VATElements, VATSection);
+                AddCollectInStoreVATSection(POSEntry."Entry No.", TempPOSEntryTaxLine);
 
-            AddVoucherVATSection(CROPOSAuditLogAuxInfo, VATElements, VATSection);
+            AddVoucherVATSection(CROPOSAuditLogAuxInfo, TempPOSEntryTaxLine);
+
+            EmitVATSection(VATSection, TempPOSEntryTaxLine);
 
             Content.Add(VATSection);
 
@@ -75,10 +73,10 @@ codeunit 6151497 "NPR CRO Tax Communication Mgt."
     local procedure CreateAndFiscalizeSalesInvSale(var CROPOSAuditLogAuxInfo: Record "NPR CRO POS Aud. Log Aux. Info"; Subsequent: Boolean)
     var
         SalesInvLines: Record "Sales Invoice Line";
+        TempPOSEntryTaxLine: Record "NPR POS Entry Tax Line" temporary;
         Document: XmlDocument;
         Body: XmlElement;
         Content: XmlElement;
-        VATElements: XmlElement;
         VATSection: XmlElement;
         XmlWriteOpts: XmlWriteOptions;
     begin
@@ -93,14 +91,15 @@ codeunit 6151497 "NPR CRO Tax Communication Mgt."
 
         VATSection := XmlElement.Create('Pdv');
         repeat
-            VATElements := XmlElement.Create('Porez');
-            VATElements.Add(CreateXmlElement('Stopa', CROAuditMgt.FormatDecimal(SalesInvLines."VAT %")));
-            VATElements.Add(CreateXmlElement('Osnovica', CROAuditMgt.FormatDecimal(SalesInvLines."VAT Base Amount")));
-            VATElements.Add(CreateXmlElement('Iznos', CROAuditMgt.FormatDecimal(SalesInvLines."Amount Including VAT" - SalesInvLines."VAT Base Amount")));
-            VATSection.Add(VATElements);
+            AggregateTaxBuffer(TempPOSEntryTaxLine,
+                SalesInvLines."VAT %",
+                SalesInvLines."VAT Base Amount",
+                SalesInvLines."Amount Including VAT" - SalesInvLines."VAT Base Amount");
         until SalesInvLines.Next() = 0;
 
-        AddVoucherVATSection(CROPOSAuditLogAuxInfo, VATElements, VATSection);
+        AddVoucherVATSection(CROPOSAuditLogAuxInfo, TempPOSEntryTaxLine);
+
+        EmitVATSection(VATSection, TempPOSEntryTaxLine);
 
         Content.Add(VATSection);
 
@@ -122,10 +121,10 @@ codeunit 6151497 "NPR CRO Tax Communication Mgt."
     local procedure CreateAndFiscalizeSalesCrMemoRefund(var CROPOSAuditLogAuxInfo: Record "NPR CRO POS Aud. Log Aux. Info"; Subsequent: Boolean)
     var
         SalesCrMemoLines: Record "Sales Cr.Memo Line";
+        TempPOSEntryTaxLine: Record "NPR POS Entry Tax Line" temporary;
         Document: XmlDocument;
         Body: XmlElement;
         Content: XmlElement;
-        VATElements: XmlElement;
         VATSection: XmlElement;
         XmlWriteOpts: XmlWriteOptions;
     begin
@@ -140,14 +139,15 @@ codeunit 6151497 "NPR CRO Tax Communication Mgt."
 
         VATSection := XmlElement.Create('Pdv');
         repeat
-            VATElements := XmlElement.Create('Porez');
-            VATElements.Add(CreateXmlElement('Stopa', CROAuditMgt.FormatDecimal(SalesCrMemoLines."VAT %")));
-            VATElements.Add(CreateXmlElement('Osnovica', CROAuditMgt.FormatDecimal(-SalesCrMemoLines."VAT Base Amount")));
-            VATElements.Add(CreateXmlElement('Iznos', CROAuditMgt.FormatDecimal(-(SalesCrMemoLines."Amount Including VAT" - SalesCrMemoLines."VAT Base Amount"))));
-            VATSection.Add(VATElements);
+            AggregateTaxBuffer(TempPOSEntryTaxLine,
+                SalesCrMemoLines."VAT %",
+                -SalesCrMemoLines."VAT Base Amount",
+                -(SalesCrMemoLines."Amount Including VAT" - SalesCrMemoLines."VAT Base Amount"));
         until SalesCrMemoLines.Next() = 0;
 
-        AddVoucherVATSection(CROPOSAuditLogAuxInfo, VATElements, VATSection);
+        AddVoucherVATSection(CROPOSAuditLogAuxInfo, TempPOSEntryTaxLine);
+
+        EmitVATSection(VATSection, TempPOSEntryTaxLine);
 
         Content.Add(VATSection);
 
@@ -231,7 +231,7 @@ codeunit 6151497 "NPR CRO Tax Communication Mgt."
             Content.Add(CreateXmlElement('NakDost', 'false'));
     end;
 
-    local procedure AddCollectInStoreVATSection(POSEntryNo: Integer; var VATElements: XmlElement; var VATSection: XmlElement)
+    local procedure AddCollectInStoreVATSection(POSEntryNo: Integer; var TempPOSEntryTaxLine: Record "NPR POS Entry Tax Line" temporary)
     var
         SalesInvoiceLine: Record "Sales Invoice Line";
         SalesLine: Record "Sales Line";
@@ -250,11 +250,10 @@ codeunit 6151497 "NPR CRO Tax Communication Mgt."
             SalesLine.SetFilter(Type, '<>%1', SalesLine.Type::" ");
             if SalesLine.FindSet() then
                 repeat
-                    VATElements := XmlElement.Create('Porez');
-                    VATElements.Add(CreateXmlElement('Stopa', CROAuditMgt.FormatDecimal(SalesLine."VAT %")));
-                    VATElements.Add(CreateXmlElement('Osnovica', CROAuditMgt.FormatDecimal(SalesLine."VAT Base Amount")));
-                    VATElements.Add(CreateXmlElement('Iznos', CROAuditMgt.FormatDecimal(SalesLine."Amount Including VAT" - SalesLine."VAT Base Amount")));
-                    VATSection.Add(VATElements);
+                    AggregateTaxBuffer(TempPOSEntryTaxLine,
+                        SalesLine."VAT %",
+                        SalesLine."VAT Base Amount",
+                        SalesLine."Amount Including VAT" - SalesLine."VAT Base Amount");
                 until SalesLine.Next() = 0
         end;
 
@@ -264,16 +263,15 @@ codeunit 6151497 "NPR CRO Tax Communication Mgt."
             SalesInvoiceLine.SetFilter(Type, '<>%1', SalesInvoiceLine.Type::" ");
             if SalesInvoiceLine.FindSet() then
                 repeat
-                    VATElements := XmlElement.Create('Porez');
-                    VATElements.Add(CreateXmlElement('Stopa', CROAuditMgt.FormatDecimal(SalesInvoiceLine."VAT %")));
-                    VATElements.Add(CreateXmlElement('Osnovica', CROAuditMgt.FormatDecimal(SalesInvoiceLine."VAT Base Amount")));
-                    VATElements.Add(CreateXmlElement('Iznos', CROAuditMgt.FormatDecimal(SalesInvoiceLine."Amount Including VAT" - SalesInvoiceLine."VAT Base Amount")));
-                    VATSection.Add(VATElements);
+                    AggregateTaxBuffer(TempPOSEntryTaxLine,
+                        SalesInvoiceLine."VAT %",
+                        SalesInvoiceLine."VAT Base Amount",
+                        SalesInvoiceLine."Amount Including VAT" - SalesInvoiceLine."VAT Base Amount");
                 until SalesInvoiceLine.Next() = 0;
         end;
     end;
 
-    local procedure AddVoucherVATSection(CROPOSAuditLogAuxInfo: Record "NPR CRO POS Aud. Log Aux. Info"; var VATElements: XmlElement; var VATSection: XmlElement)
+    local procedure AddVoucherVATSection(CROPOSAuditLogAuxInfo: Record "NPR CRO POS Aud. Log Aux. Info"; var TempPOSEntryTaxLine: Record "NPR POS Entry Tax Line" temporary)
     var
         NpRvArchVoucherEntry: Record "NPR NpRv Arch. Voucher Entry";
         NpRvArchVoucherEntry2: Record "NPR NpRv Arch. Voucher Entry";
@@ -296,11 +294,10 @@ codeunit 6151497 "NPR CRO Tax Communication Mgt."
         if not POSEntrySalesLines.FindFirst() then
             exit;
         repeat
-            VATElements := XmlElement.Create('Porez');
-            VATElements.Add(CreateXmlElement('Stopa', CROAuditMgt.FormatDecimal(POSEntrySalesLines."VAT %")));
-            VATElements.Add(CreateXmlElement('Osnovica', CROAuditMgt.FormatDecimal(-POSEntrySalesLines."Amount Excl. VAT")));
-            VATElements.Add(CreateXmlElement('Iznos', CROAuditMgt.FormatDecimal(-(POSEntrySalesLines."Amount Incl. VAT" - POSEntrySalesLines."Amount Excl. VAT"))));
-            VATSection.Add(VATElements);
+            AggregateTaxBuffer(TempPOSEntryTaxLine,
+                POSEntrySalesLines."VAT %",
+                -POSEntrySalesLines."Amount Excl. VAT",
+                -(POSEntrySalesLines."Amount Incl. VAT" - POSEntrySalesLines."Amount Excl. VAT"));
         until POSEntrySalesLines.Next() = 0;
     end;
 
@@ -421,6 +418,39 @@ codeunit 6151497 "NPR CRO Tax Communication Mgt."
     #endregion
 
     #region CRO Tax Communication - Helper Functions
+
+    local procedure AggregateTaxBuffer(var TempPOSEntryTaxLine: Record "NPR POS Entry Tax Line" temporary; TaxPercent: Decimal; TaxBaseAmount: Decimal; TaxAmount: Decimal)
+    begin
+        TempPOSEntryTaxLine.Reset();
+        TempPOSEntryTaxLine.SetRange("Tax %", TaxPercent);
+        if TempPOSEntryTaxLine.FindFirst() then begin
+            TempPOSEntryTaxLine."Tax Base Amount" += TaxBaseAmount;
+            TempPOSEntryTaxLine."Tax Amount" += TaxAmount;
+            TempPOSEntryTaxLine.Modify();
+        end else begin
+            TempPOSEntryTaxLine.Init();
+            TempPOSEntryTaxLine."Tax %" := TaxPercent;
+            TempPOSEntryTaxLine."Tax Base Amount" := TaxBaseAmount;
+            TempPOSEntryTaxLine."Tax Amount" := TaxAmount;
+            TempPOSEntryTaxLine.Insert();
+        end;
+    end;
+
+    local procedure EmitVATSection(var VATSection: XmlElement; var TempPOSEntryTaxLine: Record "NPR POS Entry Tax Line" temporary)
+    var
+        VATElements: XmlElement;
+    begin
+        TempPOSEntryTaxLine.Reset();
+        if not TempPOSEntryTaxLine.FindSet() then
+            exit;
+        repeat
+            VATElements := XmlElement.Create('Porez');
+            VATElements.Add(CreateXmlElement('Stopa', CROAuditMgt.FormatDecimal(TempPOSEntryTaxLine."Tax %")));
+            VATElements.Add(CreateXmlElement('Osnovica', CROAuditMgt.FormatDecimal(TempPOSEntryTaxLine."Tax Base Amount")));
+            VATElements.Add(CreateXmlElement('Iznos', CROAuditMgt.FormatDecimal(TempPOSEntryTaxLine."Tax Amount")));
+            VATSection.Add(VATElements);
+        until TempPOSEntryTaxLine.Next() = 0;
+    end;
 
     local procedure CreateXmlElement(Name: Text; Content: Text) Element: XmlElement
     begin
