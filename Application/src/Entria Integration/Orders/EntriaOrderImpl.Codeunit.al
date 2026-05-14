@@ -73,6 +73,8 @@ codeunit 6151027 "NPR Entria Order Impl."
             EcomCreateTicketImpl.UpdateExpiryTimeBasedOnCapturedStatus(EcomSalesHeader);
         EcomSalesHeader."External Document Id" := _JsonHelper.GetJText(RequestBody, 'id', MaxStrLen(EcomSalesHeader."External Document Id"), true, true);
         EcomSalesHeader."Your Reference" := _JsonHelper.GetJText(RequestBody, 'display_id', MaxStrLen(EcomSalesHeader."Your Reference"), true, false);
+        EcomSalesHeader."Language Tag" := _JsonHelper.GetJText(RequestBody, 'locale', MaxStrLen(EcomSalesHeader."Language Tag"), true, false);
+        EcomSalesHeader."Language Code" := _EcomSalesDocUtils.LanguageTagToLanguageCode(EcomSalesHeader."Language Tag");
         EcomSalesHeader."Sell-to Name" := BuildFullName(_JsonHelper.GetJText(RequestBody, 'billing_address.first_name', MaxStrLen(EcomSalesHeader."Sell-to Name"), true, false), _JsonHelper.GetJText(RequestBody, 'billing_address.last_name', MaxStrLen(EcomSalesHeader."Sell-to Name"), true, false), MaxStrLen(EcomSalesHeader."Sell-to Name"));
         //billing adress
         EcomSalesHeader."Sell-to Address" := _JsonHelper.GetJText(RequestBody, 'billing_address.address_1', MaxStrLen(EcomSalesHeader."Sell-to Address"), true, false);

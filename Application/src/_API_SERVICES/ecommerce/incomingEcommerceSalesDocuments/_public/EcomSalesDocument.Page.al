@@ -77,6 +77,22 @@ page 6248188 "NPR Ecom Sales Document"
                     ApplicationArea = NPRRetail;
                     ToolTip = 'Specifies whether a digital notification entry has been created for this document.';
                 }
+
+                group(CultureAndLanguage)
+                {
+                    ShowCaption = false;
+                    Visible = Rec."Language Tag" <> '';
+                    field("Language Code"; Rec."Language Code")
+                    {
+                        ApplicationArea = NPRRetail;
+                        ToolTip = 'Specifies the value of the Language Code field.';
+                    }
+                    field("Language Tag"; Rec."Language Tag")
+                    {
+                        ApplicationArea = NPRRetail;
+                        ToolTip = 'Specifies the value of the IETF language tag (RFC 5646) field.';
+                    }
+                }
             }
             group(sellToCustomer)
             {
@@ -503,11 +519,9 @@ page 6248188 "NPR Ecom Sales Document"
         ShowCustomerTypeField: Boolean;
         ShowCustomerTemplateFields: Boolean;
 
-
     trigger OnOpenPage()
     begin
         HandleCustomerTypeAndTemplatesVisiblityFields();
-
     end;
 
     trigger OnAfterGetRecord()

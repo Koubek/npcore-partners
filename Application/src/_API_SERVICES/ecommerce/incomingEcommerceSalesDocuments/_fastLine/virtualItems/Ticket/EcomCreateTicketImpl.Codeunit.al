@@ -165,9 +165,11 @@ codeunit 6248517 "NPR EcomCreateTicketImpl"
         TicketRequest.Quantity := EcommSalesLine.Quantity;
         TicketRequest."Admission Code" := TicketManager.GetDefaultAdmissionCode(ItemNoCode, EcommSalesLine."Variant Code");
 #pragma warning disable AA0139, AL0432
-        if FeatureFlag.IsEnabled(RemoveEcomTicketHolderNameAndLanguage()) then
-            TicketRequest.TicketHolderName := CopyStr(EcomSalesHeader."Sell-to Name", 1, 100)
-        else begin
+        if FeatureFlag.IsEnabled(RemoveEcomTicketHolderNameAndLanguage()) then begin
+            TicketRequest.TicketHolderName := CopyStr(EcomSalesHeader."Sell-to Name", 1, 100);
+            if EcomSalesHeader."Language Code" <> '' then
+                TicketRequest.TicketHolderPreferredLanguage := EcomSalesHeader."Language Code";
+        end else begin
             TicketRequest.TicketHolderName := EcomSalesHeader."Ticket Holder Name";
             TicketRequest.TicketHolderPreferredLanguage := EcomSalesHeader."Ticket Holder Preferred Lang";
         end;
