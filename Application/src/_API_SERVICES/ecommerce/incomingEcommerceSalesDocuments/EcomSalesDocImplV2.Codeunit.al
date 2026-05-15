@@ -238,6 +238,9 @@ codeunit 6248609 "NPR Ecom Sales Doc Impl V2"
                     SalesHeader.Validate("Currency Factor", EcomSalesHeader."Currency Exchange Rate");
             end;
 
+        if EcomSalesHeader."Language Code" <> '' then
+            SalesHeader.Validate("Language Code", EcomSalesHeader."Language Code");
+
         if IsShopifyDocument then
             SpfyEcomSalesDocPrcssr.AssignShopifyIDAndRefreshShopifySalesHeaderDimensions(SalesHeader, EcomSalesHeader);
 

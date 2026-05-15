@@ -8,6 +8,12 @@ tableextension 6014403 "NPR Sales Shipment Header" extends "Sales Shipment Heade
             Description = 'NPR7.100.000';
             DataClassification = CustomerContent;
         }
+        field(6014410; "NPR Bill-to Phone No."; Text[30])
+        {
+            Caption = 'Bill-to Phone No.';
+            DataClassification = CustomerContent;
+            ExtendedDatatype = PhoneNo;
+        }
         field(6014414; "NPR Bill-to E-mail"; Text[80])
         {
             Caption = 'Bill-to E-mail';

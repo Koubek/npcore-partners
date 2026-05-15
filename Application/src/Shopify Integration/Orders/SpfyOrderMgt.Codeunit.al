@@ -990,9 +990,27 @@ codeunit 6184814 "NPR Spfy Order Mgt."
         SalesHeader."Ship-to Address 2" := JsonHelper.GetJText(ShippingAddress, 'address2', MaxStrLen(SalesHeader."Ship-to Address 2"), false);
         SalesHeader."Ship-to Post Code" := JsonHelper.GetJCode(ShippingAddress, 'zip', MaxStrLen(SalesHeader."Ship-to Post Code"), false);
         SalesHeader."Ship-to City" := JsonHelper.GetJText(ShippingAddress, 'city', MaxStrLen(SalesHeader."Ship-to City"), false);
+#if not (BC18 or BC19 or BC20 or BC21 or BC22 or BC23 or BC24)
+        SalesHeader."Ship-to Phone No." := ResolveShipToPhoneNo(ShippingAddress, Order, SalesHeader."NPR Bill-to Phone No.");
+#endif
 #pragma warning restore AA0139
         SalesHeader.Validate("Ship-to Country/Region Code", GetCountryCode(NpEcStore, ShippingAddress, 'country_code', false));
     end;
+
+#if not (BC18 or BC19 or BC20 or BC21 or BC22 or BC23 or BC24)
+    local procedure ResolveShipToPhoneNo(ShippingAddress: JsonToken; Order: JsonToken; FallbackPhoneNo: Text[30]) PhoneNo: Text[30]
+    begin
+#pragma warning disable AA0139
+        PhoneNo := JsonHelper.GetJText(ShippingAddress, 'phone', MaxStrLen(PhoneNo), false);
+        if PhoneNo <> '' then
+            exit;
+        PhoneNo := JsonHelper.GetJText(Order, 'phone', MaxStrLen(PhoneNo), false);
+        if PhoneNo <> '' then
+            exit;
+#pragma warning restore AA0139
+        PhoneNo := FallbackPhoneNo;
+    end;
+#endif
 
     internal procedure GetCountryCode(NpEcStore: Record "NPR NpEc Store"; Token: JsonToken; Path: Text; MustExistInJson: Boolean) CountryCode: Code[10]
     begin

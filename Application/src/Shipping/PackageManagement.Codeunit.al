@@ -126,6 +126,19 @@ codeunit 6059947 "NPR Package Management"
         end;
     end;
 
+    local procedure ResolveReceiverPhoneNo(SalesShipmentHeader: Record "Sales Shipment Header"; Customer: Record Customer): Text[30]
+    begin
+#if not (BC17 or BC18 or BC19 or BC20 or BC21 or BC22 or BC23 or BC24)
+        if SalesShipmentHeader."Ship-to Phone No." <> '' then
+            exit(SalesShipmentHeader."Ship-to Phone No.");
+#endif
+        if SalesShipmentHeader."Sell-to Phone No." <> '' then
+            exit(SalesShipmentHeader."Sell-to Phone No.");
+        if SalesShipmentHeader."NPR Bill-to Phone No." <> '' then
+            exit(SalesShipmentHeader."NPR Bill-to Phone No.");
+        exit(Customer."Phone No.");
+    end;
+
     local procedure CheckNetWeight(SalesShipmentHeader: Record "Sales Shipment Header"): Boolean;
     var
         SalesShipmentLine: Record "Sales Shipment Line";
@@ -186,8 +199,8 @@ codeunit 6059947 "NPR Package Management"
                             ShipmentDocument."Fax No." := ShipToAddress."Fax No.";
                         end else begin
                             ShipmentDocument."E-Mail" := Customer."E-Mail";
-                            ShipmentDocument."SMS No." := Customer."Phone No.";
-                            ShipmentDocument."Phone No." := Customer."Phone No.";
+                            ShipmentDocument."Phone No." := ResolveReceiverPhoneNo(SalesShipmentHeader, Customer);
+                            ShipmentDocument."SMS No." := ShipmentDocument."Phone No.";
                             ShipmentDocument."Fax No." := Customer."Fax No.";
                         end;
 
@@ -282,6 +295,7 @@ codeunit 6059947 "NPR Package Management"
         PackageDimensionDetails: Record "NPR Package Dimension Details";
         PostPackageDimensionDetails: Record "NPR Package Dimension Details";
         SalesShipmentHeader: Record "Sales Shipment Header";
+        DeletePackages: Boolean;
     begin
         RecRef.SetTable(SalesShipmentHeader);
         PackageDimension.SetRange("Document Type", PackageDimension."Document Type"::Shipment);
@@ -292,7 +306,8 @@ codeunit 6059947 "NPR Package Management"
         PackageDimension.SetRange("Document Type", PackageDimension."Document Type"::Order);
         PackageDimension.SetRange("Document No.", SalesShipmentHeader."Order No.");
         PackageDimension.SetFilter(Quantity, '<>0');
-        if PackageDimension.FindSet() then
+        if PackageDimension.FindSet() then begin
+            DeletePackages := not HasRemainingLinesToShip(SalesShipmentHeader."Order No.");
             repeat
                 PackageDimension1.Init();
                 PackageDimension1.TransferFields(PackageDimension);
@@ -313,9 +328,22 @@ codeunit 6059947 "NPR Package Management"
                         PostPackageDimensionDetails.Insert();
                     until PackageDimensionDetails.Next() = 0;
 
-                PackageDimension.Delete();
+                if DeletePackages then
+                    PackageDimension.Delete();
             until PackageDimension.Next() = 0;
+        end;
         Commit();
+    end;
+
+    local procedure HasRemainingLinesToShip(OrderNo: Code[20]): Boolean
+    var
+        SalesLine: Record "Sales Line";
+    begin
+        SalesLine.SetRange("Document Type", SalesLine."Document Type"::Order);
+        SalesLine.SetRange("Document No.", OrderNo);
+        SalesLine.SetRange(Type, SalesLine.Type::Item);
+        SalesLine.SetFilter("Outstanding Quantity", '>0');
+        exit(not SalesLine.IsEmpty());
     end;
 
 

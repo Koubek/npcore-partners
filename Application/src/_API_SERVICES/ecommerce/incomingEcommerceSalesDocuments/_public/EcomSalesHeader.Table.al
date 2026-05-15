@@ -494,6 +494,17 @@ table 6151258 "NPR Ecom Sales Header"
             CalcFormula = exist("NPR Digital Notification Entry" where("Source Document Id" = field(SystemId)));
         }
 #endif
+        field(5260; "Language Tag"; Text[80])
+        {
+            Caption = 'Language Tag';
+            DataClassification = CustomerContent;
+        }
+        field(5270; "Language Code"; Code[10])
+        {
+            Caption = 'Language Code';
+            DataClassification = CustomerContent;
+            TableRelation = Language.Code;
+        }
     }
     keys
     {

@@ -36,4 +36,20 @@ codeunit 6248443 "NPR ReceiptPrintUtilities"
         exit(not POSEntryOutputLog.IsEmpty());
     end;
 
+    // This function is used to determine whether to show barcode as QR code on receipt
+    procedure ShowBarcodeAsQRCode(POSUnitNo: Code[10]): Boolean
+    var
+        POSUnit: Record "NPR POS Unit";
+        POSReceiptProfile: Record "NPR POS Receipt Profile";
+    begin
+        POSUnit.SetLoadFields("POS Receipt Profile");
+        if not POSUnit.Get(POSUnitNo) then
+            exit(false);
+
+        POSReceiptProfile.SetLoadFields("Show Barcode as QR Code");
+        if not POSReceiptProfile.Get(POSUnit."POS Receipt Profile") then
+            exit(false);
+        exit(POSReceiptProfile."Show Barcode as QR Code");
+    end;
+
 }

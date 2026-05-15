@@ -883,6 +883,7 @@ codeunit 6150961 "NPR Digital Order Notif. Mgt."
         TempHeaderBuffer."Document Type" := TempHeaderBuffer."Document Type"::"Ecom Sales Document";
         TempHeaderBuffer."Recipient E-mail" := EcomSalesHeader."Sell-to Email";
         TempHeaderBuffer."Recipient Name" := CopyStr(EcomSalesHeader."Sell-to Name", 1, MaxStrLen(TempHeaderBuffer."Recipient Name"));
+        TempHeaderBuffer."Language Code" := EcomSalesHeader."Language Code";
         TempHeaderBuffer."Document Date" := EcomSalesHeader."Received Date";
         TempHeaderBuffer."Currency Code" := CurrencyCode;
         TempHeaderBuffer."Source Document Id" := EcomSalesHeader.SystemId;

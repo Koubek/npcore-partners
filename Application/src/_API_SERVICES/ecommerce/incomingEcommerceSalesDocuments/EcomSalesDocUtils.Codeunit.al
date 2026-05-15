@@ -667,6 +667,7 @@ codeunit 6248601 "NPR Ecom Sales Doc Utils"
         EcomSalesHeader.TestField("External No.");
         if EcomSalesHeader."Ticket Reservation Token" <> '' then
             EcomCreateTicketImpl.ValidateTicketRequest(EcomSalesHeader);
+        ValidateLanguage(EcomSalesHeader);
     end;
 
     local procedure ValidateImportedLines(EcomSalesHeader: Record "NPR Ecom Sales Header")
@@ -881,6 +882,15 @@ codeunit 6248601 "NPR Ecom Sales Doc Utils"
             until EcomSalesLine.Next() = 0;
     end;
 
+    local procedure ValidateLanguage(EcomSalesHeader: Record "NPR Ecom Sales Header")
+    begin
+        if (EcomSalesHeader."Language Tag" = '') then
+            exit;
+        ValidateLanguageTag(EcomSalesHeader."Language Tag");
+        if (EcomSalesHeader."Language Code" <> '') then
+            EcomSalesHeader.Validate("Language Code");
+    end;
+
     local procedure CheckBundleComponentLinesForCircularReferences(ParentEcomSalesLine: Record "NPR Ecom Sales Line"; var BundleLineIds: List of [Text[100]])
     var
         BundleComponentLine: Record "NPR Ecom Sales Line";
@@ -1001,6 +1011,49 @@ codeunit 6248601 "NPR Ecom Sales Doc Utils"
 
                 EnsureNoUnsupportedAssetsInWalletComponentLines(BundleComponentLine);
             until BundleComponentLine.Next() = 0;
+    end;
+
+    internal procedure ValidateLanguageTag(LanguageTag: Text[80])
+    var
+        WindowsLanguage: Record "Windows Language";
+        UnsupportedCultureCodeErr: Label 'Only IETF language tag (RFC 5646) are supported. Please provide a valid Language Tag.';
+    begin
+        if LanguageTag = '' then
+            exit;
+        if not TryGetWindowsLanguageFromLanguageTag(LanguageTag, WindowsLanguage) then
+            Error(UnsupportedCultureCodeErr);
+    end;
+
+    internal procedure LanguageTagToLanguageCode(LanguageTag: Text[80]) LanguageCode: Code[10]
+    var
+        WindowsLanguage: Record "Windows Language";
+        Language: Codeunit Language;
+    begin
+        if not TryGetWindowsLanguageFromLanguageTag(LanguageTag, WindowsLanguage) then
+            exit('');
+
+        LanguageCode := Language.GetLanguageCode(WindowsLanguage."Language ID");
+        // Fallback to Windows abbreviated name if no BC language code is defined.
+        // This allows the document to be imported and gives the user enough information
+        // to configure the missing language later, without deleting and reimporting the document.
+        if LanguageCode = '' then
+            LanguageCode := Windowslanguage."Abbreviated Name";
+        exit(LanguageCode);
+    end;
+
+    local procedure TryGetWindowsLanguageFromLanguageTag(LanguageTag: Text[80]; var WindowsLanguage: Record "Windows Language"): Boolean
+    var
+        Language: Codeunit Language;
+        LanguageId: Integer;
+    begin
+        if LanguageTag = '' then
+            exit(false);
+
+        LanguageId := Language.GetLanguageIdFromCultureName(LanguageTag);
+        if LanguageId = 0 then
+            exit(false);
+
+        exit(WindowsLanguage.Get(LanguageId));
     end;
 
     var
