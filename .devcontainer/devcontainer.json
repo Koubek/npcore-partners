@@ -23,8 +23,7 @@
         "ms-dynamics-smb.al",
         "davidfeldhoff.al-codeactions",
         "andrzejzwierzchowski.al-code-outline",
-        "waldo.crs-al-language-extension",
-        "anthropic.claude-code"
+        "waldo.crs-al-language-extension"
       ],
       "settings": {
         "editor.formatOnSave": true,
