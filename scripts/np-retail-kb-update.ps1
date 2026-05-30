@@ -76,7 +76,7 @@ function Read-LastCommit {
     param([string]$changeFile)
     if (-not (Test-Path $changeFile)) { return $null }
     $content = Get-Content $changeFile -Raw -Encoding UTF8
-    if ($content -match 'Last Processed Commit:\s*(.+)') {
+    if ($content -match 'Last Processed Commit:\s*\**\s*(.+)') {
         $commit = $matches[1]
         if ($commit -eq '(none — initial scaffold)' -or $commit -eq '(initial build — set on first update)') { return $null }
         return $commit
@@ -820,7 +820,7 @@ function Update-ChangeTracking {
         return
     }
     $content = Get-Content $filePath -Raw -Encoding UTF8
-    $content = $content -replace '(?<=Last Processed Commit:).*', " $newCommit"
+    $content = $content -replace '(?<=Last Processed Commit:)(\**\s*)\S.*', "`$1$newCommit"
     $content = $content -replace '(?<=Last Processed Date:).*', " $today"
     $content = $content -replace '(?<=Modules with pending updates:).*', " (none)"
     $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
