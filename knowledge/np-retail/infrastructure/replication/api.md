@@ -1,66 +1,108 @@
 ---
 type: reference
-tags: [np-retail, infrastructure, replication, api]
-relates: [np-retail/infrastructure/replication/overview.md]
-updated: 2026-05-09
+tags: [infrastructure, replication, np-retail, tables, codeunits, pages, enums, interfaces, reports, xmlports]
+relates:
+  - infrastructure/replication/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/Replication/ExportReplicationSetup.XmlPort.al
+  - Application/src/Replication/ImportReplicationSetup.XmlPort.al
+  - Application/src/Replication/RepCheckMissingFields.Report.al
+  - Application/src/Replication/Import/RepGetBCGenericData.Codeunit.al
+  - Application/src/Replication/Import/RepGetDefDimSubs.Codeunit.al
+  - Application/src/Replication/Import/RepGetItemVarSubs.Codeunit.al
+  - Application/src/Replication/_public/ReplicationAPI.Codeunit.al
+  - Application/src/Replication/_public/ReplicationCounterMgmt.Codeunit.al
+  - Application/src/Replication/_public/ReplicationEndpoint.Page.al
+  - Application/src/Replication/_public/ReplicationEndpoint.Table.al
+  - Application/src/Replication/_public/ReplicationEndPointMeth.Enum.al
+  - Application/src/Replication/_public/ReplicationEndpoints.Page.al
+  - Application/src/Replication/Error Logging/ReplicationErrorLog.Page.al
+  - Application/src/Replication/Error Logging/ReplicationErrorLog.Table.al
+  - Application/src/Replication/_public/ReplicationIEndpointMeth.Interface.al
+  - Application/src/Replication/ReplicationImportEntry.Codeunit.al
+  - Application/src/Replication/_public/ReplicationRegister.Codeunit.al
+  - Application/src/Replication/_public/ReplicationServiceSetup.Table.al
+  - Application/src/Replication/_public/ReplicationSetupCard.Page.al
+  - Application/src/Replication/_public/ReplicationSetupList.Page.al
+  - Application/src/Replication/ReplicationSetupSource.Page.al
+  - Application/src/Replication/ReplicationSetupSource.Table.al
+  - Application/src/Replication/_public/RepSpecFieldMappings.Page.al
+  - Application/src/Replication/_public/RepSpecialFieldMapping.Table.al
+  - Application/src/Replication/_public/RepWSFunctions.Codeunit.al
+  - Application/src/Replication/RepWSFunctionsClient.Codeunit.al
+  - Application/src/Replication/_public/RepWSIFunctions.Interface.al
 ---
 
-# Replication Module — API Reference
+# Replication — API Reference
 
-## Tables (Public)
+## Tables
 
-| ID | Name | Caption | Key Fields | Extensible | Description |
-|----|------|---------|------------|------------|-------------|
-| 6014589 | "NPR Replication Endpoint" | Replication Endpoint | Service Code, EndPoint ID (clustered); Service Code, Enabled, Sequence Order | ✓ | Endpoint definition: path, method (enum), table ID, pagination, replication counter (BigInteger), fixed filter, run-on-insert/modify flags, skip-import-on-no-data |
-| — | "NPR Replication Service Setup" | Replication Service Setup | API Version (Code[20]) | — | Service configuration: base URL, enabled flag, authentication, company ID, job queue schedule, error notification email |
-| — | "NPR Rep. Special Field Mapping" | Special Field Mapping | Service Code, EndPoint ID, Table ID | — | Field-level overrides for generic table imports |
-| — | "NPR Replication Error Log" | Replication Error Log | — | — | Log of all failed replication requests with request/response details |
-| — | "NPR Replication Setup Source" | Replication Setup Source | — | — | Source company configuration for replication setup |
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6014589 | "NPR Replication Endpoint" | Replication Endpoint | "Service Code", "EndPoint ID" | — |
+| 6014584 | "NPR Replication Error Log" | Replication Error Log | "Entry No." | — |
+| 6014588 | "NPR Replication Service Setup" | Replication API Setup | "API Version" | — |
+| 6014634 | "NPR Replication Setup (Source)" | Replication Setup (Source Company) | "Primary Key" | — |
+| 6014602 | "NPR Rep. Special Field Mapping" | Replication Special Field Mapping | "Service Code", "EndPoint ID", "Table ID", "Field ID", Priority | — |
+
 
 ## Codeunits
 
-| ID | Name | Access | Description |
-|----|------|--------|-------------|
-| 6014589 | "NPR Replication API" | Public | implements `NPR Nc Import List IUpdate`. Central API: Update, SendWebRequests, CreateImportEntries, SendWebRequest, RegisterNcImportType, ScheduleJobQueueEntry, DeleteNcImportType, VerifyServiceURL, UpdateReplicationCounter, CreateURI, GetBCAPIResponse, SelectJsonToken helper, IsSuccessfulRequest, FoundErrorInResponse, RunSpecificEndpointImportManually, CheckFieldValue |
-| 6059774 | "NPR Rep. WS Functions" | Public | Exposed as SOAP web service `ReplicationFunctions`. Key: `GetLastReplicationCounter(tableId) → BigInteger` — finds highest counter value for a given table |
-| — | "NPR Replication Counter Mgmt." | Public | Counter evaluation and update logic |
-| — | "NPR Rep. WS Functions Client" | — | Client-side helper for calling the replication functions web service |
-| — | "NPR Replication Register" | — | Registration logic for service setups and endpoints |
-| — | "NPR Replication Import Entry" | — | Import entry processing for replication data |
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6014605 | "NPR Rep. Get BC Generic Data" |  | SendRequest, GetBCData, ProcessImportedContent, HandleArrayElementEntity, InitializeRecRef | OnAfterRecordIsModified |
+| 6014672 | "NPR Rep. Get Def. Dim. Subs." |  | UpdateReferenceIDFields | — |
+| 6014592 | "NPR Rep. Get Item Var. Subs." |  | SkipBarcodeGeneration | — |
+| 6014589 | "NPR Replication API" |  | Update, Update, ShowSetup, ShowErrorLog, ShowErrorLogEntries | — |
+| 6014626 | "NPR Replication Counter Mgmt." |  | UpdateReplicationCounter, CheckReplicationCounterUpdateIsEnabled, UpdateReplicationCounterOnBeforeInsertVarietyGroup, UpdateReplicationCounterOnBeforeModifyVarietyGroup, UpdateReplicationCounterOnBeforeRenameVarietyGroup | — |
+| 6014622 | "NPR Replication Import Entry" |  | RunProcessImportEntry, ProcessImportEntry, GetServiceEndpoint, SendProcessErrorEmailNotification | — |
+| 6014608 | "NPR Replication Register" |  | OnRegisterService, RegisterServiceWithEndPoints, OnAfterRegisterServices, RegisterItemServiceEndPoints, RegisterItemCatSpecialFieldMappings | — |
+| 6059774 | "NPR Rep. WS Functions" |  | GetLastReplicationCounter, GetReplicationCounterKeyIndex, InitRepWSFunctions | — |
+| 6014692 | "NPR Rep. WS Functions Client" |  | GetLastReplicationCounter, BuildODataV4URI | — |
 
-## Pages (Public)
 
-| ID | Name | PageType | SourceTable | Description |
-|----|------|----------|-------------|-------------|
-| — | "NPR Replication Setup Card" | Card | Replication Service Setup | Service configuration page |
-| — | "NPR Replication Setup List" | List | Replication Service Setup | List all replication services |
-| — | "NPR Replication Endpoint" | Card | Replication Endpoint | Endpoint detail/edit page with actions: Open Special Field Mappings, Update Last Replication Counter |
-| — | "NPR Replication Endpoints" | List | Replication Endpoint | List all endpoints for a service |
-| — | "NPR Replication Setup Source" | Card | Replication Setup Source | Source company configuration |
-| — | "NPR Rep. Spec. Field Mappings" | List | Special Field Mapping | Field mapping configuration page |
+## Pages
+
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6014504 | "NPR Replication Endpoint" | Replication Endpoint | "NPR Replication Endpoint" | — |
+| 6014500 | "NPR Replication Endpoints" | Replication Service Endpoints | "NPR Replication Endpoint" | — |
+| 6014487 | "NPR Replication Error Log" | Replication Error Log | "NPR Replication Error Log" | — |
+| 6014495 | "NPR Replication Setup Card" | Replication API Setup Card | "NPR Replication Service Setup" | — |
+| 6014499 | "NPR Replication Setup List" | Replication API Setup List | "NPR Replication Service Setup" | — |
+| 6059849 | "NPR Replication Setup (Source)" | Replication Setup (Source Company) | "NPR Replication Setup (Source)" | — |
+| 6014672 | "NPR Rep. Spec. Field Mappings" | Replication Special Field Mappings | "NPR Rep. Special Field Mapping" | — |
+
 
 ## Enums
 
-| ID | Name | Values | Description |
-|----|------|--------|-------------|
-| — | "NPR Replication EndPoint Meth" | Get BC Generic Data, Get BC API, ... | Pluggable endpoint method enum — each value implements `NPR Replication IEndpoint Meth` |
+| ID | Name | Caption | Values |
+| --- | --- | --- | --- |
+| 6014474 | "NPR Replication EndPoint Meth" | Get BC Generic Data | Get BC Generic Data |
+
 
 ## Interfaces
 
-| Name | Methods | Description |
-|------|---------|-------------|
-| "NPR Replication IEndpoint Meth" | SendRequest, GetDefaultFileName, CheckResponseContainsData, ProcessImportedContent, GetLastReplicationCounter | Contract for pluggable endpoint method implementations |
-| "NPR Rep. WS IFunctions" | GetLastReplicationCounter | Web service contract for replication counter queries |
+| Name | Procedures |
+| --- | --- |
+| "NPR Replication IEndpoint Meth" | SendRequest, GetDefaultFileName, ProcessImportedContent, CheckResponseContainsData |
+| "NPR Rep. WS IFunctions" | GetLastReplicationCounter |
 
-## XMLports
-
-| Name | Description |
-|------|-------------|
-| "NPR Export Replication Setup" | Export replication configuration to XML |
-| "NPR Import Replication Setup" | Import replication configuration from XML |
 
 ## Reports
 
-| Name | Description |
-|------|-------------|
-| "NPR Rep. Check Missing Fields" | Report + RDL to validate field mappings |
+| ID | Name | Caption | Description |
+| --- | --- | --- | --- |
+| 6014415 | "NPR Rep. Check Missing Fields" | Check Missing Fields | — |
+
+
+## XmlPorts
+
+| ID | Name | Caption | Description |
+| --- | --- | --- | --- |
+| 6014400 | "NPR Export Replication Setup" | Export Replication Setup | — |
+| 6014402 | "NPR Import Replication Setup" | Import Replication Setup | — |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: ExportReplicationSetup.XmlPort.al, ImportReplicationSetup.XmlPort.al, RepCheckMissingFields.Report.al, RepGetBCGenericData.Codeunit.al, RepGetDefDimSubs.Codeunit.al, RepGetItemVarSubs.Codeunit.al, ReplicationAPI.Codeunit.al, ReplicationCounterMgmt.Codeunit.al, ReplicationEndpoint.Page.al, ReplicationEndpoint.Table.al, ReplicationEndPointMeth.Enum.al, ReplicationEndpoints.Page.al, ReplicationErrorLog.Page.al, ReplicationErrorLog.Table.al, ReplicationIEndpointMeth.Interface.al, ReplicationImportEntry.Codeunit.al, ReplicationRegister.Codeunit.al, ReplicationServiceSetup.Table.al, ReplicationSetupCard.Page.al, ReplicationSetupList.Page.al, ReplicationSetupSource.Page.al, ReplicationSetupSource.Table.al, RepSpecFieldMappings.Page.al, RepSpecialFieldMapping.Table.al, RepWSFunctions.Codeunit.al, RepWSFunctionsClient.Codeunit.al, RepWSIFunctions.Interface.al

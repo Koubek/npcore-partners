@@ -1,55 +1,56 @@
 ---
 type: reference
-tags: [np-retail, pos, pos-item-availability, tables, codeunits, pages, queries]
+tags: [pos, pos-item-availability, np-retail, tables, codeunits, pages, queries]
 relates:
-  - np-retail/pos/pos-item-availability/overview.md
-updated: 2026-05-09
+  - pos/pos-item-availability/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/POS Item Availability/POSActionCheckAvail.Codeunit.al
+  - Application/src/POS Item Availability/POSActionCheckAvailB.Codeunit.al
+  - Application/src/POS Item Availability/_public/POSInventoryProfile.Codeunit.al
+  - Application/src/POS Item Availability/POSInventoryProfile.Table.al
+  - Application/src/POS Item Availability/POSInventoryProfiles.Page.al
+  - Application/src/POS Item Availability/_public/POSItemAvailability.Table.al
+  - Application/src/POS Item Availability/POSItemAvailCheck.Page.al
+  - Application/src/POS Item Availability/POSItemAvailCheckDet.Page.al
+  - Application/src/POS Item Availability/POSItemCheckAvail.Codeunit.al
+  - Application/src/POS Item Availability/UnpostedPOSItemEntries.Query.al
 ---
 
-# POS Item Availability API Reference
+# POS Item Availability — API Reference
 
 ## Tables
 
-| Table # | Name | Key Fields | Description |
-|---------|------|-----------|-------------|
-| 6014637 | NPR POS Inventory Profile | Code, Description, Stockout Warning | Defines inventory checking behavior per POS unit. `Stockout Warning` flag gates whether availability UI is shown. |
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6014637 | "NPR POS Inventory Profile" | POS Inventory Profile | "Code" | — |
+| 6014636 | "NPR POS Item Availability" | POS Item Availability | "Item No.", "Variant Code", "Location Code" | — |
+
 
 ## Codeunits
 
-| Codeunit # | Name | Key Methods | Description |
-|------------|------|------------|-------------|
-| 6059785 | NPR POS Action: Check Avail. | Register(), RunWorkflow() | POS action workflow implementation. Registers with `NPR POS Workflow Config`, executes check via B-variant. |
-| 6059783 | NPR POS Item-Check Avail. | DefineScopeAndCheckAvailability(), CheckAvailability_PosSale(), CheckAvailability_PosSaleLine(), CalcAvailableInventory(), SetxDataset() | Core availability engine. Computes inventory per item/variant/location. Fires `OnItemNotAvailable` integration event. |
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6059785 | "NPR POS Action: Check Avail." |  | Register, RunWorkflow, GetActionScript | — |
+| 6059959 | "NPR POS Action: Check Avail. B" |  | CheckAvail | — |
+| 6059917 | "NPR POS Inventory Profile" |  | ProfileExist, IsStockWarningEnabeld, SetxDataset, SetxDataset, IsStockWarningEnabeldIfProfileExist | — |
+| 6059783 | "NPR POS Item-Check Avail." |  | DefineScopeAndCheckAvailability, DefineScopeAndCheckAvailability, CheckAvailability_PosSale, CheckAvailability_PosSale, CheckAvailability_PosSaleLine | — |
 
-### NPR POS Item-Check Avail. Methods
-
-| Method | Params | Returns | Description |
-|--------|--------|---------|-------------|
-| DefineScopeAndCheckAvailability | POSSession, AskConfirmation | Boolean | Entry point from session context. Gets current sale and delegates. |
-| CheckAvailability_PosSale | SalePOS, AskConfirmation | Boolean | Checks all item lines in a sale. Uses profile from POS unit. |
-| CheckAvailability_PosSaleLine | SaleLinePOS, xSaleLinePOS, AskConfirmation | Boolean | Checks a single line for availability. |
-| CalcAvailableInventory | SaleLinePOS, AllOtherLocations | Decimal | Computes: `Inventory - Qty. on Sales Orders - Unposted POS Qty` |
-| CalcGrossRequirement | SaleLinePOS | Decimal | Sums quantities across sale lines matching item/variant/location. |
-| SetxDataset | POSSession / SalePOS / SaleLinePOS | — | Creates a snapshot of sale line quantities for change detection in scope-based checking. |
-| SetIgnoreProfile | Set | — | If true, bypasses profile `Stockout Warning` setting. |
-| GetAvailabilityIssuesFound | — | Boolean | Returns whether availability issues were found in last check. |
-
-### Integration Events
-
-`OnItemNotAvailable(PosItemAvailability, Scope, PosInventoryProfile, AskConfirmation, var Handled, var Confirmed)`
-
-Allows subscribers to override the availability failure handling.
 
 ## Pages
 
-| Page # | Name | Usage |
-|--------|------|-------|
-| 6014636 | NPR POS Inventory Profiles | List page for inventory profile configuration |
-| 6014640 | NPR POS Item Avail. Check | Dialog showing availability details per item |
-| 6014641 | NPR POS Item Avail. Check Det. | Detail lines for the availability check dialog |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6059850 | "NPR POS Inventory Profiles" | POS Inventory Profiles | "NPR POS Inventory Profile" | — |
+| 6059851 | "NPR POS Item Avail. Check" | Availability Check | "NPR POS Sale" | — |
+| 6059852 | "NPR POS Item Avail. Check Det." | Availability Check Details | "NPR POS Item Availability" | — |
+
 
 ## Queries
 
-| Query | Purpose |
-|-------|---------|
-| NPR Unposted POS Item Entries | Reads sum of base quantities from unposted POS item entries per item/variant/location |
+| ID | Name | Caption | Description |
+| --- | --- | --- | --- |
+| 6014407 | "NPR Unposted POS Item Entries" |  | — |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: POSActionCheckAvail.Codeunit.al, POSActionCheckAvailB.Codeunit.al, POSInventoryProfile.Codeunit.al, POSInventoryProfile.Table.al, POSInventoryProfiles.Page.al, POSItemAvailability.Table.al, POSItemAvailCheck.Page.al, POSItemAvailCheckDet.Page.al, POSItemCheckAvail.Codeunit.al, UnpostedPOSItemEntries.Query.al

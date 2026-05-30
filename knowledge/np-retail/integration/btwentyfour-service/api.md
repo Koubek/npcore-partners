@@ -1,60 +1,96 @@
 ---
 type: reference
-tags: [np-retail, integration, btwentyfour, tables, codeunits, pages, enums, interfaces]
-relates: [integration/btwentyfour-service/overview.md]
-updated: 2026-05-09
+tags: [integration, btwentyfour, np-retail, tables, codeunits, pages, enums, interfaces]
+relates:
+  - integration/btwentyfour-service/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/BTwentyFour Service/_public/BTFContentType.Enum.al
+  - Application/src/BTwentyFour Service/BTFEndPointErrorLog.Table.al
+  - Application/src/BTwentyFour Service/_public/BTFEndPointMethod.Enum.al
+  - Application/src/BTwentyFour Service/BTFEndPointsErrorLog.Page.al
+  - Application/src/BTwentyFour Service/BTFEnvironment.Enum.al
+  - Application/src/BTwentyFour Service/Messages/BTFGetInvoices.Codeunit.al
+  - Application/src/BTwentyFour Service/Messages/BTFGetOrderResp.Codeunit.al
+  - Application/src/BTwentyFour Service/Messages/BTFGetOrders.Codeunit.al
+  - Application/src/BTwentyFour Service/Messages/BTFGetPriCat.Codeunit.al
+  - Application/src/BTwentyFour Service/Authorization/BTFGetToken.Codeunit.al
+  - Application/src/BTwentyFour Service/_public/BTFIEndPoint.Interface.al
+  - Application/src/BTwentyFour Service/_public/BTFIFormatResponse.Interface.al
+  - Application/src/BTwentyFour Service/_public/BTFJSONResponse.Codeunit.al
+  - Application/src/BTwentyFour Service/Messages/BTFMessagesClass.Enum.al
+  - Application/src/BTwentyFour Service/_public/BTFMessagesStatus.Enum.al
+  - Application/src/BTwentyFour Service/BTFNcImportEntry.Codeunit.al
+  - Application/src/BTwentyFour Service/Messages/BTFProcessMessage.Codeunit.al
+  - Application/src/BTwentyFour Service/BTFRegisterService.Codeunit.al
+  - Application/src/BTwentyFour Service/_public/BTFServiceAPI.Codeunit.al
+  - Application/src/BTwentyFour Service/_public/BTFServiceEndpoint.Page.al
+  - Application/src/BTwentyFour Service/_public/BTFServiceEndPoint.Table.al
+  - Application/src/BTwentyFour Service/_public/BTFServiceEndPoints.Page.al
+  - Application/src/BTwentyFour Service/_public/BTFServiceMethod.Enum.al
+  - Application/src/BTwentyFour Service/_public/BTFServiceSetup.Page.al
+  - Application/src/BTwentyFour Service/_public/BTFServiceSetup.Table.al
+  - Application/src/BTwentyFour Service/_public/BTFServiceSetupCard.Page.al
+  - Application/src/BTwentyFour Service/_public/BTFXMLResponse.Codeunit.al
 ---
 
 # BTwentyFour Service — API Reference
 
 ## Tables
 
-| Table | Purpose |
-|-------|---------|
-| `BTFServiceSetup` | Global config (base URL, default auth profile, retry policy) |
-| `BTFServiceEndPoint` | Per-endpoint config (relative URL, HTTP method, content type, headers, format handler) |
-| `BTFEndPointErrorLog` | Error log (endpoint, timestamp, HTTP status, error message, stack trace) |
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6014524 | "NPR BTF EndPoint Error Log" | BTwentyFour Error Log | "Entry No." | — |
+| 6014523 | "NPR BTF Service EndPoint" | BTwentyFour Service EndPoint | "Service Code", "EndPoint ID" | — |
+| 6014522 | "NPR BTF Service Setup" | BTwentyFour Service Setup | Code | — |
+
 
 ## Codeunits
 
-| Codeunit | Purpose |
-|----------|---------|
-| `BTFServiceAPI` | Core runtime — resolves endpoint config, executes HTTP request, routes to format handler, returns parsed response |
-| `BTFRegisterService` | Service registration (endpoint discovery and validation) |
-| `BTFNcImportEntry` | Import entry processing (feeds external data into NP import framework) |
-| `BTFGetToken` | OAuth/token-based auth — sends auth request, stores and refreshes tokens |
-| `BTFProcessMessage` | Message queue processor — dequeues pending messages, executes via `BTFServiceAPI`, updates status |
-| `BTFGetOrders` | Builds order retrieval request, processes response into BC-compatible format |
-| `BTFGetOrderResp` | Parses order response data |
-| `BTFGetInvoices` | Builds invoice retrieval request, processes response |
-| `BTFGetPriCat` | Retrieves price catalog data from external system |
-| `BTFJSONResponse` | Implements `BTFIFormatResponse` — parses JSON response payloads |
-| `BTFXMLResponse` | Implements `BTFIFormatResponse` — parses XML response payloads |
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6014645 | "NPR BTF GetInvoices" |  | Update, Update, ShowSetup, ShowErrorLog, SendRequest | — |
+| 6014650 | "NPR BTF GetOrderResp" |  | Update, Update, ShowSetup, ShowErrorLog, SendRequest | — |
+| 6014644 | "NPR BTF GetOrders" |  | Update, Update, ShowSetup, ShowErrorLog, SendRequest | — |
+| 6014652 | "NPR BTF GetPriCat" |  | Update, Update, ShowSetup, ShowErrorLog, SendRequest | — |
+| 6014643 | "NPR BTF GetToken" |  | SendRequest, GetDefaultFileName, GetToken, CheckServiceSetup, CheckServiceEndPoint | — |
+| 6014647 | "NPR BTF JSON Response" |  | FormatInternalError, FoundErrorInResponse, GetErrorDescription, GetToken, FoundToken | — |
+| 6014649 | "NPR BTF Nc Import Entry" |  | RunProcessImportEntry, ProcessImportEntry, PreProcessingCheck | — |
+| 6014651 | "NPR BTF ProcessMessage" |  | SendRequest, ProcessMessage, CheckServiceSetup, CheckServiceEndPoint, GetDefaultFileName | — |
+| 6014640 | "NPR BTF Register Service" |  | OnRegisterService, RegisterServiceWithEndPoints, GetServiceCode, OnAfterRegisterService, OnRegisterServiceEndPoint | — |
+| 6014641 | "NPR BTF Service API" |  | VerifyServiceURL, RemoveLastSlashFromPath, ImportContentOnline, ProcessContent, ProcessContentOffline | — |
+| 6014646 | "NPR BTF XML Response" |  | FormatInternalError, FoundErrorInResponse, GetErrorDescription, GetToken, FoundToken | — |
+
 
 ## Pages
 
-| Page | Source Table | Purpose |
-|------|-------------|---------|
-| `BTFServiceSetup` | BTFServiceSetup | Service setup card |
-| `BTFServiceSetupCard` | BTFServiceSetup | Service setup detail card |
-| `BTFServiceEndPoints` | BTFServiceEndPoint | Endpoint list |
-| `BTFServiceEndpoint` | BTFServiceEndPoint | Endpoint detail card |
-| `BTFEndPointsErrorLog` | BTFEndPointErrorLog | Endpoint error log |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6059923 | "NPR BTF EndPoints Error Log" | BTwentyFour EndPoints Error Log | "NPR BTF EndPoint Error Log" | — |
+| 6059924 | "NPR BTF Service Endpoint" | BTwentyFour Service EndPoint | "NPR BTF Service EndPoint" | — |
+| 6059921 | "NPR BTF Service EndPoints" | BTwentyFour Service EndPoints | "NPR BTF Service EndPoint" | — |
+| 6059920 | "NPR BTF Service Setup" | BTwentyFour Service Setup | "NPR BTF Service Setup" | — |
+| 6059922 | "NPR BTF Service Setup Card" | Service Setup Card | "NPR BTF Service Setup" | — |
+
 
 ## Enums
 
-| Enum | Purpose |
-|------|---------|
-| `BTFEnvironment` | Environment selection (Test/Production) |
-| `BTFContentType` | HTTP content type (JSON/XML/Form-URLEncoded) |
-| `BTFEndPointMethod` | HTTP method (GET/POST/PUT/DELETE) |
-| `BTFServiceMethod` | Service method classification |
-| `BTFMessagesStatus` | Message status (Pending/Processing/Completed/Failed) |
-| `BTFMessagesClass` | Message class (Order/Invoice/PriceCatalog) |
+| ID | Name | Caption | Values |
+| --- | --- | --- | --- |
+| 6014409 | "NPR BTF Content Type" | application/json | application/json, application/xml |
+| 6014407 | "NPR BTF EndPoint Method" | Get Token | Get Token, Get Orders, Get Invoices, Process Message, Get Order Response, Get Price Catalogue |
+| 6014416 | "NPR BTF Environment" | sandbox | sandbox, production |
+| 6014413 | "NPR BTF Messages Class" | Price Catalog | pricat, order, orderresponse, despatchadvice, invoice, salesreport, inventoryreport, orderchange |
+| 6014650 | "NPR BTF Messages Status" | Awaiting delivery | Awaiting delivery, Delivering, Delivered |
+| 6014408 | "NPR BTF Service Method" | GET | GET, POST, PUT, PATCH, DELETE |
+
 
 ## Interfaces
 
-| Interface | Methods | Purpose |
-|-----------|---------|---------|
-| `BTFIEndPoint` | `Execute(RequestMsg, var ResponseMsg): Boolean` | Endpoint execution contract |
-| `BTFIFormatResponse` | `Format(ResponsePayload: Text, var ParsedData: Record): Boolean` | Response format parsing contract |
+| Name | Procedures |
+| --- | --- |
+| "NPR BTF IEndPoint" | SendRequest, GetDefaultFileName, ProcessImportedContent, ProcessImportedContentOffline, GetImportListUpdateHandler |
+| "NPR BTF IFormatResponse" | FormatInternalError, FoundErrorInResponse, GetErrorDescription, GetToken, FoundToken |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: BTFContentType.Enum.al, BTFEndPointErrorLog.Table.al, BTFEndPointMethod.Enum.al, BTFEndPointsErrorLog.Page.al, BTFEnvironment.Enum.al, BTFGetInvoices.Codeunit.al, BTFGetOrderResp.Codeunit.al, BTFGetOrders.Codeunit.al, BTFGetPriCat.Codeunit.al, BTFGetToken.Codeunit.al, BTFIEndPoint.Interface.al, BTFIFormatResponse.Interface.al, BTFJSONResponse.Codeunit.al, BTFMessagesClass.Enum.al, BTFMessagesStatus.Enum.al, BTFNcImportEntry.Codeunit.al, BTFProcessMessage.Codeunit.al, BTFRegisterService.Codeunit.al, BTFServiceAPI.Codeunit.al, BTFServiceEndpoint.Page.al, BTFServiceEndPoint.Table.al, BTFServiceEndPoints.Page.al, BTFServiceMethod.Enum.al, BTFServiceSetup.Page.al, BTFServiceSetup.Table.al, BTFServiceSetupCard.Page.al, BTFXMLResponse.Codeunit.al

@@ -1,50 +1,76 @@
 ---
 type: reference
-tags: [np-retail, infrastructure, cloudflare-media]
-relates: [np-retail/infrastructure/cloudflare-media/overview.md]
-updated: 2026-05-09
+tags: [infrastructure, cloudflare-media, np-retail, tables, codeunits, pages, enums, interfaces]
+relates:
+  - infrastructure/cloudflare-media/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/CloudflareMedia/CloudflareImageFactBox.Page.al
+  - Application/src/CloudflareMedia/_public/CloudflareMediaFacade.Codeunit.al
+  - Application/src/CloudflareMedia/CloudflareMediaImpl.Codeunit.al
+  - Application/src/CloudflareMedia/CloudflareMediaLicense.Page.al
+  - Application/src/CloudflareMedia/CloudflareMediaLink.Table.al
+  - Application/src/CloudflareMedia/CloudflareMediaLinkCard.Page.al
+  - Application/src/CloudflareMedia/CloudflareMediaLinkList.Page.al
+  - Application/src/CloudflareMedia/_public/CloudflareMediaSelector.Enum.al
+  - Application/src/CloudflareMedia/CloudflareMediaSetupCard.Page.al
+  - Application/src/CloudflareMedia/CloudflareMediaSvgHelper.Codeunit.al
+  - Application/src/CloudflareMedia/_public/CloudflareMediaVariants.Enum.al
+  - Application/src/CloudflareMedia/_public/CloudflareMigrationInterface.Interface.al
+  - Application/src/CloudflareMedia/CloudflareMigrationJob.Page.al
+  - Application/src/CloudflareMedia/CloudflareMigrationJob.Table.al
+  - Application/src/CloudflareMedia/CloudflareMigrationJobCard.Page.al
+  - Application/src/CloudflareMedia/CloudflareMigrationJobLine.Page.al
+  - Application/src/CloudflareMedia/CloudflareMigrationJobLine.Table.al
 ---
 
 # Cloudflare Media — API Reference
 
-## Enums
-
-| ID | Name | Caption | Values | Implements | Description |
-|----|------|---------|--------|------------|-------------|
-| 6059922 | "NPR CloudflareMediaVariants" | NPR CloudflareMediaVariants | ORIGINAL (0), SMALL (1), MEDIUM (2), LARGE (3), THUMBNAIL (4), PREVIEW (5) | — | Image size/resolution variants for Cloudflare media delivery |
-| 6059923 | "NPR CloudflareMediaSelector" | NPR CloudflareMediaSelector | NOOP (0), MEMBER_PHOTO (100), RESTAURANT_LOGO (200, BC23+), MENU_ITEM_PICTURE (201, BC23+), RESTAURANT_BACKGROUND (202, BC23+) | "NPR CloudflareMigrationInterface" | Categorizes media type for routing to appropriate implementation handler. Extensible. Each value maps to a MigrationInterface implementation |
-
-## Interfaces
-
-| Name | Description |
-|------|-------------|
-| "NPR CloudflareMigrationInterface" | Single-method interface: `PublicIdLookup(PublicId: Text[100]; var TableNumber: Integer; var SystemId: Guid): Boolean`. Implemented by each MediaSelector value to resolve public IDs to BC table records |
-
 ## Tables
 
 | ID | Name | Caption | Key Fields | Description |
-|----|------|---------|------------|-------------|
-| 6151234 | "NPR CloudflareMediaLink" | NPR Cloudflare Media Link | Key1: TableNumber, RecordId, MediaSelector (clustered); Key2: MediaKey; Key3: PublicId | Maps (TableNumber, RecordId, MediaSelector, MediaKey, PublicId) — links BC records to Cloudflare media keys |
-| — | "NPR CloudflareMigrationJob" | NPR Cloudflare Migration Job | JobId (Guid) | Tracks migration jobs: MediaSelector, BatchId, rate limit, enqueued/success/failed/total counts, cursor-based pagination state (NextCursorAfterTs, NextCursorAfterRowId) |
-| — | "NPR CloudflareMigrationJobLine" | NPR Cloudflare Migration Job Line | — | Individual migration item: PublicId, ImageUrl, Status (Pending/Queued/Success/Failed/Finalized), MediaKey, Reason, FileSize, ContentType |
+| --- | --- | --- | --- | --- |
+| 6151234 | "NPR CloudflareMediaLink" | NPR Cloudflare Media Link | TableNumber, RecordId, MediaSelector | — |
+| 6151245 | "NPR CloudflareMigrationJob" | NPR Cloudflare Migration Job | JobId | — |
+| 6151252 | "NPR CloudflareMigrationJobLine" | NPR Cloudflare Migration Job Line | JobId, PublicId | — |
+
 
 ## Codeunits
 
-| ID | Name | Caption | Access | Key Procedures | Description |
-|----|------|---------|--------|---------------|-------------|
-| 6248556 | "NPR CloudflareMediaFacade" | NPR CloudflareMediaFacade | **Public** | AddLicense, RemoveLicense, GetLicenseInfo, Upload, StoreMediaKey (2 overloads), GetMediaKey, GetMediaUrl, GetMediaB64, Delete, DeleteMediaKey, CreateMigrationJobFromJsonFileArray, CreateMigrationJobFromJsonArray (2 overloads), StartMigrationJob, FinalizeMigrationJob, GetMigrationJobStatus, GetMigrationJobResults, CancelMigrationJob | Public facade providing the complete API surface for Cloudflare Media operations |
-| 6248557 | "NPR CloudflareMediaImpl" | NPR CloudflareMediaImpl | Internal | Upload, StoreMediaLink, GetMediaUrl, GetMediaB64, Delete, PublicIdLookup, AddLicense, RemoveLicense, GetLicenseInfo, GetApiKey, GetSecret, LoadJobLineArray, CreateJobForLineArray, StartMigration, FinalizeMigration, GetJobStatus, GetJobResults, CancelMigration | Internal implementation. Implements `NPR CloudflareMigrationInterface` (NOOP handler). Contains all worker HTTP calls, license validation, self-signing logic, migration management |
-| — | "NPR CloudflareMediaSvgHelper" | NPR CloudflareMediaSvgHelper | Internal | — | SVG-specific helper functions |
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6248556 | "NPR CloudflareMediaFacade" |  | AddLicense, RemoveLicense, GetLicenseInfo, Upload, StoreMediaKey | — |
+| 6248557 | "NPR CloudflareMediaImpl" |  | PublicIdLookup, Upload, StoreMediaLink, GetMediaUrl, GetMediaB64 | — |
+| 6151097 | "NPR CloudflareMediaSvgHelper" |  | NoPictureAvailableImage, SpinnerSvg, ToDataUrl | — |
+
 
 ## Pages
 
-| ID | Name | Caption | Type | Description |
-|----|------|---------|------|-------------|
-| — | "NPR Cloudflare Image FactBox" | — | FactBox | Image display factbox |
-| — | "NPR Cloudflare Media License" | — | Card | License management page |
-| — | "NPR Cloudflare Media Link Card" | — | Card | Individual media link card |
-| — | "NPR Cloudflare Media Link List" | — | List | Media links list |
-| — | "NPR Cloudflare Media Setup Card" | — | Card | Module setup page |
-| — | "NPR Cloudflare Migration Job" | — | Card | Migration job card |
-| — | "NPR Cloudflare Migration Job Card" | — | Card | Alternative card view |
-| — | "NPR Cloudflare Migration Job Line" | — | List | Migration job lines |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6185105 | "NPR CloudflareImageFactBox" | Cloudflare Image Link | "NPR CloudflareMediaLink" | — |
+| 6185128 | "NPR CloudflareMediaLicense" | Cloudflare Media License | — | — |
+| 6185104 | "NPR CloudflareMediaLinkCard" | Cloudflare Media Link | "NPR CloudflareMediaLink" | — |
+| 6185103 | "NPR CloudflareMediaLinkList" | Cloudflare Media Links | "NPR CloudflareMediaLink" | — |
+| 6185123 | "NPR CloudflareMediaSetupCard" | Cloudflare Media Setup Card | — | — |
+| 6185124 | "NPR CloudflareMigrationJob" | Cloudflare Media Migration Jobs | "NPR CloudflareMigrationJob" | — |
+| 6185125 | "NPR CloudflareMigrationJobCard" | Cloudflare Media Migration Job Card | "NPR CloudflareMigrationJob" | — |
+| 6185126 | "NPR CloudflareMigrationJobLine" | NPR Cloudflare Migration Job Line | "NPR CloudflareMigrationJobLine" | — |
+
+
+## Enums
+
+| ID | Name | Caption | Values |
+| --- | --- | --- | --- |
+| 6059923 | "NPR CloudflareMediaSelector" |  | NOOP, MEMBER_PHOTO, RESTAURANT_LOGO, MENU_ITEM_PICTURE, RESTAURANT_BACKGROUND |
+| 6059922 | "NPR CloudflareMediaVariants" | Original | ORIGINAL, SMALL, MEDIUM, LARGE, THUMBNAIL, PREVIEW |
+
+
+## Interfaces
+
+| Name | Procedures |
+| --- | --- |
+| "NPR CloudflareMigrationInterface" | PublicIdLookup |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: CloudflareImageFactBox.Page.al, CloudflareMediaFacade.Codeunit.al, CloudflareMediaImpl.Codeunit.al, CloudflareMediaLicense.Page.al, CloudflareMediaLink.Table.al, CloudflareMediaLinkCard.Page.al, CloudflareMediaLinkList.Page.al, CloudflareMediaSelector.Enum.al, CloudflareMediaSetupCard.Page.al, CloudflareMediaSvgHelper.Codeunit.al, CloudflareMediaVariants.Enum.al, CloudflareMigrationInterface.Interface.al, CloudflareMigrationJob.Page.al, CloudflareMigrationJob.Table.al, CloudflareMigrationJobCard.Page.al, CloudflareMigrationJobLine.Page.al, CloudflareMigrationJobLine.Table.al

@@ -1,187 +1,96 @@
 ---
 type: reference
-tags: [np-retail, inventory, item-addon, tables, codeunits, pages, events, queries]
-relates: [inventory/item-addon/overview.md]
-updated: 2026-05-09
+tags: [inventory, item-addon, np-retail, tables, codeunits, pages, queries]
+relates:
+  - inventory/item-addon/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/Item AddOn/ItemAddonTranslation.Page.al
+  - Application/src/Item AddOn/ItemAddonTranslation.Table.al
+  - Application/src/Item AddOn/NpIaAddOnCatTrans.Page.al
+  - Application/src/Item AddOn/NpIaBeforeInsFunc.Codeunit.al
+  - Application/src/Item AddOn/_public/NpIaItemAddOn.Codeunit.al
+  - Application/src/Item AddOn/_public/NpIaItemAddOn.Table.al
+  - Application/src/Item AddOn/_public/NpIaItemAddOnCard.Page.al
+  - Application/src/Item AddOn/NpIaItemAddOnCategories.Page.al
+  - Application/src/Item AddOn/NpIaItemAddOnCategory.Table.al
+  - Application/src/Item AddOn/NpIaItemAddOnCatTrans.Table.al
+  - Application/src/Item AddOn/_public/NpIaItemAddOnLine.Table.al
+  - Application/src/Item AddOn/_public/NpIaItemAddOnLineOpt.Page.al
+  - Application/src/Item AddOn/NpIaItemAddOnLineOpt.Table.al
+  - Application/src/Item AddOn/NpIaItemAddOnLineSetup.Codeunit.al
+  - Application/src/Item AddOn/_public/NpIaItemAddOnLineSetup.Page.al
+  - Application/src/Item AddOn/NpIaItemAddOnLineSetup.Table.al
+  - Application/src/Item AddOn/_public/NPIaItemAddOnLotNos.Page.al
+  - Application/src/Item AddOn/NpIaItemAddOnMgt.Codeunit.al
+  - Application/src/Item AddOn/_public/NpIaItemAddOns.Page.al
+  - Application/src/Item AddOn/_public/NpIaItemAddOnSelVars.Page.al
+  - Application/src/Item AddOn/_public/NPIaItemAddOnSerialNos.Page.al
+  - Application/src/Item AddOn/_public/NpIaItemAddOnSubform.Page.al
+  - Application/src/Item AddOn/NpIaPOSEntryLineBndlAsset.Table.al
+  - Application/src/Item AddOn/NpIaPOSEntryLineBundle.Page.al
+  - Application/src/Item AddOn/NpIaPOSEntryLineBundleCrd.Page.al
+  - Application/src/Item AddOn/NpIaPOSEntryLineBundleId.Table.al
+  - Application/src/Item AddOn/NpIaPOSEntryLineBundlePrt.Page.al
+  - Application/src/Item AddOn/_public/NpIaPOSEntrySaleLineAddOn.Query.al
+  - Application/src/Item AddOn/NpIaPOSEntrySaleLineAddOn.Table.al
+  - Application/src/Item AddOn/_public/NpIaSaleLinePOSAddOn.Table.al
 ---
 
-# Item AddOn — API Reference
+# Item Add On — API Reference
 
 ## Tables
 
-### Table 6151125 "NPR NpIa Item AddOn"
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6059912 | "NPR Item Addon Translation" | Item Addon Translation | "External Table SystemId", "Language Code" | — |
+| 6151125 | "NPR NpIa Item AddOn" | Item AddOn | "No." | — |
+| 6151267 | "NPR NpIa Item AddOn Category" | Item AddOn Category | "Code" | — |
+| 6151268 | "NPR NpIa ItemAddOn Cat. Trans." | Item AddOn Category Translation | "Category Code", "Language Code" | — |
+| 6151126 | "NPR NpIa Item AddOn Line" | Item AddOn Line | "AddOn No.", "Line No." | — |
+| 6151128 | "NPR NpIa ItemAddOn Line Opt." | Item AddOn Line Option | "AddOn No.", "AddOn Line No.", "Line No." | — |
+| 6151129 | "NPR NpIa ItemAddOn Line Setup" | Item AddOn Line Option | "AddOn No.", "AddOn Line No." | — |
+| 6151143 | "NPR NpIa POSEntryLineBndlAsset" | POS Entry Sale Line No. | POSEntrySaleLineId, Bundle, AssetTableId, AssetSystemId | — |
+| 6151142 | "NPR NpIa POSEntryLineBundleId" | Item AddOn POS Entry Sale Line Bundle Id | POSEntrySaleLineId, Bundle | — |
+| 6151141 | "NPR NpIa POSEntrySaleLineAddOn" | Item AddOn POS Entry Sale Line AddOn | POSEntrySaleLineId | — |
+| 6151127 | "NPR NpIa SaleLinePOS AddOn" | Sale Line POS AddOn | "Register No.", "Sales Ticket No.", "Sale Type", "Sale Date", "Sale Line No.", "Line No." | — |
 
-Add-on master. Fields: `No.`, `Description`, `Enabled`, `Comment POS Info Code`, `WalletTemplate`, `Simplified Descriptions on POS`, `NPDesignerTemplateId`, `NPDesignerTemplateLabel`.
-
-Triggers:
-- **OnInsert**: Auto-assigns sequential `No.` (000001+)
-- **OnDelete**: Cascades delete to lines and line options
-
-### Table 6151126 "NPR NpIa Item AddOn Line"
-
-Add-on line definition. Key fields:
-
-| Field | Type | Purpose |
-|-------|------|---------|
-| `AddOn No.` | Code[20] | FK to Item AddOn |
-| `Line No.` | Integer | Line identifier |
-| `Category Code` | Code[20] | FK to Category |
-| `Sort Key` | Integer | Ordering |
-| `Type` | Option | `Quantity` or `Select` |
-| `Item No.` | Code[20] | Base item (for Quantity type) |
-| `Variant Code` | Code[10] | Variant |
-| `Description`, `Description 2` | Text | Display text |
-| `Unit Price` | Decimal | Override price |
-| `Use Unit Price` | Option | `Non-Zero` / `Always` |
-| `Discount %` | Decimal | Line discount |
-| `DiscountAmount` | Decimal | Flat discount |
-| `Comment Enabled` | Boolean | Allow free-text comment |
-| `Quantity` | Decimal | Default/requested qty |
-| `Fixed Quantity` | Boolean | Non-editable qty (switch UI) |
-| `Per Unit` | Boolean | Multiply qty by master line qty |
-| `Mandatory` | Boolean | Cannot be removed |
-| `IncludeFromDate` / `IncludeUntilDate` | Date | Availability window |
-| `AddToWallet` | Boolean | Wallet integration flag |
-| `Before Insert Codeunit ID` | Integer | Plugin for custom pricing logic |
-| `Before Insert Function` | Text[250] | Function name in plugin codeunit |
-| `Copy Serial No.` | Boolean | Copy serial from master line |
-| `Serial No.` / `Lot No.` | Code | Pre-assigned tracking |
-
-**Triggers:**
-- OnValidate(`Type`): Clears Item No. when switching to Select
-- OnValidate(`Item No.`): Sets Unit Price and Description from Item; forces `Type=Quantity`
-- OnDelete: Cascades to translations and line options
-- OnInsert/Modify: Ensures `Item No.` is set for Quantity type
-
-### Table 6151128 "NPR NpIa ItemAddOn Line Opt."
-
-Select-type line options. Key fields: `AddOn No.`, `AddOn Line No.`, `Line No.`, `Item No.`, `Variant Code`, `Description`, `Description 2`, `Quantity`, `Fixed Quantity`, `Use Unit Price`, `Unit Price`, `Discount %`, `Per Unit`.
-
-OnValidate(`Item No.`): Fills Unit Price, Description from Item. OnDelete: Cleans up translations.
-
-### Table 6151129 "NPR NpIa ItemAddOn Line Setup"
-
-Per-line setup data. Fields: `AddOn No.`, `AddOn Line No.`, `Unit Price % from Master` (Decimal, 0-5 decimal places).
-
-### Table 6151127 "NPR NpIa SaleLinePOS AddOn"
-
-Links active POS sale lines to addon definitions. Fields: `Register No.`, `Sales Ticket No.`, `Sale Type`, `Sale Date`, `Sale Line No.`, `Line No.`, `Applies-to Line No.`, `AddOn No.`, `AddOn Line No.`, `Fixed Quantity`, `Per Unit`, `DiscountPercent`, `DiscountAmount`, `Mandatory`, `Copy Serial No.`, `AddToWallet`, `AddOnItemNo`.
-
-### Table 6151141 "NPR NpIa POSEntrySaleLineAddOn"
-
-Posted entry linking. Fields: `POSEntrySaleLineId` (Guid), `PosEntrySaleLineNo`, `AppliesToSaleLineId`, `AppliesToSaleLineNo`, `AddOnNo`, `AddOnLineNo`, `AddToWallet`, `AddOnItemNo`.
-
-### Table 6151142 "NPR NpIa POSEntryLineBundleId"
-
-Posted bundle reference. Fields: `POSEntrySaleLineId`, `Bundle` (Integer), `ReferenceNumber` (Text[50]).
-
-### Table 6151143 "NPR NpIa POSEntryLineBndlAsset"
-
-Posted bundle assets. Fields: `POSEntrySaleLineId`, `Bundle`, `AssetTableId`, `AssetSystemId`, `AppliesToSaleLineId`.
-
-### Table 6151267 "NPR NpIa Item AddOn Category"
-
-Add-on categorization. Fields: `Code`, `Sort Key`. OnInsert: auto-assigns Sort Key (+10000). OnDelete: cascades to translations.
-
-### Table 6151268 "NPR NpIa ItemAddOn Cat. Trans."
-
-Category translation. Fields: `Category Code`, `Language Code`, `Title`, `Description`.
-
-### Table 6059912 "NPR Item Addon Translation"
-
-Generic translation table. Fields: `External Table SystemId` (Guid), `Language Code`, `Description`.
 
 ## Codeunits
 
-### Codeunit 6059900 "NPR NpIa Item AddOn" (Public Facade)
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6151129 | "NPR NpIa Before Ins. Func." |  | UnitPriceFromMaster, UnitPriceFromMasterHasSetup, UnitPriceFromMasterRunSetup, OnBeforeDeleteAddOnLine, CurrCodeunitId | — |
+| 6059900 | "NPR NpIa Item AddOn" |  | InsertPOSAddOnLines, InsertMandatoryPOSAddOnLinesSilent, GetUnitPricePctFromMaster, UnitPriceFromMasterRunSetup, DeleteSetup | — |
+| 6059923 | "NPR NpIa Item AddOn Line Setup" |  | GetUnitPricePctFromMaster, UnitPriceFromMasterRunSetup, DeleteSetup | — |
+| 6151125 | "NPR NpIa Item AddOn Mgt." |  | OnBeforeDeletePOSSaleLine, OnBeforeManualDeletePOSSaleLine, OnAfterDeletePOSSaleLine, DataSourceExtensionName, OnDiscover | — |
 
-Entry point for POS integration. Provides:
-- `InsertPOSAddOnLines(ItemAddOn, SelectedAddOnLines, POSSession, AppliesToLineNo, CompulsoryAddOn): Boolean`
-- `InsertMandatoryPOSAddOnLinesSilent(...): Boolean`
-- `GetUnitPricePctFromMaster(AddOnNo, AddOnLineNo): Decimal`
-- `UnitPriceFromMasterRunSetup(AddOnNo, AddOnLineNo)`
-- `BeforeInsertPOSAddOnLine(SalePOS, AppliesToLineNo, var NpIaItemAddOnLine)` — fires integration event
-- `FilterItemAddOnLine`, `FilterAttachedItemAddonLines`, `FilterSaleLinePOS2ItemAddOnPOSLine`, `CopyItemAddOnLinesToTempBeforeInsert`
-
-**Integration Events (all with `false, false`):**
-| Event | Purpose |
-|-------|---------|
-| `OnBeforeInsertPOSAddOnLine` | Custom pricing/modification before line insert |
-| `OnCheckIfHasSetupBeforeInsertSetup` | Query if line has setup data |
-| `OnRunBeforeInsertSetup` | Open setup dialog for line |
-| `OnFilterAttachedItemAddonLines` | Custom filtering of attached addon lines |
-| `OnFilterSaleLinePOS2ItemAddOnPOSLine` | Custom filtering of addon→sale line link |
-| `OnFilterItemAddOnLine` | Custom filtering of available addon lines |
-| `OnCopyItemAddOnLinesToTempBeforeInsert` | Custom copy logic |
-
-### Codeunit 6151125 "NPR NpIa Item AddOn Mgt." (Internal)
-
-Core implementation. Key procedures:
-- `GenerateItemAddOnConfigJson(...): JsonObject` — builds UI config JSON for POS frontend
-- `InsertPOSAddOnLines(...): Boolean` — parses user selections, inserts addon lines
-- `InsertMandatoryPOSAddOnLines(...): Boolean` — auto-inserts mandatory lines
-- `InsertPOSAddOnLine(...): Boolean` — single line insert with discount, serial, lot no.
-- `FindItemAddOn(var SaleLinePOS, var ItemAddOn): Boolean` — resolves addon from sale line
-- `UserInterfaceIsRequired(...): Boolean` — determines if POS should show selection UI
-- `CopyItemAddOnLinesToTemp`, `FilterAttachedItemAddonLines`, `FilterSaleLinePOS2ItemAddOnPOSLine`
-
-**Events subscribed (10+):**
-| Event | Purpose |
-|-------|---------|
-| `Table NPR POS Sale Line - OnBeforeDeleteEvent` | Prevent delete of mandatory addon lines |
-| `Codeunit NPR POSAction: Delete POS Line - OnBeforeDeleteSaleLinePOS` | Confirm delete with dependent lines |
-| `Table NPR POS Sale Line - OnAfterDeleteEvent` | Cascade delete to addon link records and dependent sale lines |
-| `Codeunit NPR POS Data Management - OnDiscoverDataSourceExtensions` | Register `ItemAddOn` data source extension |
-| `Codeunit NPR POS Data Management - OnGetDataSourceExtension` | Define column schema |
-| `Codeunit NPR POS Data Management - OnDataSourceExtensionReadData` | Read addon boolean for sale lines |
-| `Codeunit NPR POS Create Entry - OnBeforeInsertPOSSalesLine` | Propagate serial numbers |
-| `Codeunit NPR POS Sale Line - OnBeforeSetQuantity` | Block quantity changes on fixed/mandatory lines |
-| `Codeunit NPR POS Sale Line - OnAfterSetQuantity` | Recalculate dependent line qty (per-unit lines) |
-| `Codeunit NPR POS Ext.: Line Format. - OnGetLineStyle` | Set italic style for dependent lines |
-| `Codeunit NPR POS Ext.: Line Format. - OnGetLineFormat` | Set indentation (obsolete) |
-
-### Codeunit 6151129 "NPR NpIa Before Ins. Func."
-
-Implements `UnitPriceFromMaster` — calculates addon price as a percentage of the master line's unit price. Subscribes to:
-- `OnBeforeInsertPOSAddOnLine`
-- `OnCheckIfHasSetupBeforeInsertSetup`
-- `OnRunBeforeInsertSetup`
-- `Table NPR NpIa Item AddOn Line - OnBeforeDeleteEvent`
-
-### Codeunit 6059923 "NPR NpIa Item AddOn Line Setup"
-
-Helper for `UnitPrice % from Master` field. Provides Get/Delete/Setup run.
 
 ## Pages
 
-| Page | ID | Type | Source Table |
-|------|----|------|-------------|
-| NPR NpIa Item AddOns | (in _public) | List | NPR NpIa Item AddOn |
-| NPR NpIa Item AddOnCard | (in _public) | Card | NPR NpIa Item AddOn |
-| NPR NpIa Item AddOnSubform | (in _public) | ListPart | NPR NpIa Item AddOn Line |
-| NPR NpIa Item AddOnSelVars | (in _public) | - | - |
-| NPR NpIa ItemAddOn LineOpt | (in _public) | List | NPR NpIa ItemAddOn Line Opt. |
-| NPR NpIa ItemAddOn LineSetup | (in _public) | Card | NPR NpIa ItemAddOn Line Setup |
-| NPR Item Addon Translation | 6150931 | List | NPR Item Addon Translation |
-| NPR NpIa Item AddOn Categories | 6248192 | List | NPR NpIa Item AddOn Category |
-| NPR NpIa AddOn Cat. Trans. | 6248193 | List | NPR NpIa ItemAddOn Cat. Trans. |
-| NPR NpIa POSEntryLineBundle | 6185036 | List | NPR NpIa POSEntryLineBundleId |
-| NPR NpIa POSEntryLineBundleCrd | 6185037 | Card | NPR NpIa POSEntryLineBundleId |
-| NPR NpIa POSEntryLineBundlePrt | 6185038 | ListPart | NPR NpIa POSEntryLineBndlAsset |
-| NPIaItemAddOnSerialNos | (in _public) | - | - |
-| NPIaItemAddOnLotNos | (in _public) | - | - |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6150931 | "NPR Item Addon Translation" | Item Addon Translation | "NPR Item Addon Translation" | — |
+| 6248193 | "NPR NpIa AddOn Cat. Trans." | Item AddOn Category Translations | "NPR NpIa ItemAddOn Cat. Trans." | — |
+| 6151126 | "NPR NpIa Item AddOn Card" | Item AddOn Card | "NPR NpIa Item AddOn" | — |
+| 6248192 | "NPR NpIa Item AddOn Categories" | Item AddOn Categories | "NPR NpIa Item AddOn Category" | — |
+| 6151128 | "NPR NpIa ItemAddOn Line Opt." | Item AddOn Line Options | "NPR NpIa ItemAddOn Line Opt." | — |
+| 6151129 | "NPR NpIa ItemAddOn Line Setup" | Item AddOn Line Setup | "NPR NpIa ItemAddOn Line Setup" | — |
+| 6151475 | "NPR NpIa ItemAddOn Lot Nos." | Insert Lot No. | "NPR NpIa Item AddOn Line" | — |
+| 6151125 | "NPR NpIa Item AddOns" | Item AddOns | "NPR NpIa Item AddOn" | — |
+| 6151119 | "NPR NpIa ItemAddOn Sel. Vars." | Select Variants | "NPR NpIa Item AddOn Line" | — |
+| 6150613 | "NPR NpIa ItemAddOn Serial Nos." | Select Serial No. | "NPR NpIa Item AddOn Line" | — |
+| 6151127 | "NPR NpIa Item AddOn Subform" | Lines | "NPR NpIa Item AddOn Line" | — |
+| 6185036 | "NPR NpIa POSEntryLineBundle" | Item AddOn POS Entry Sale Line Bundles | "NPR NpIa POSEntryLineBundleId" | — |
+| 6185037 | "NPR NpIa POSEntryLineBundleCrd" | Item AddOn POS Entry Sale Line Bundle | "NPR NpIa POSEntryLineBundleId" | — |
+| 6185038 | "NPR NpIa POSEntryLineBundlePrt" | Item AddOn POS Entry Sale Line Bundle Assets | "NPR NpIa POSEntryLineBndlAsset" | — |
+
 
 ## Queries
 
-| Query | Source | Purpose |
-|-------|--------|---------|
-| NPR NpIaPOSEntrySaleLineAddOn | NPR NpIa POSEntrySaleLineAddOn | Posted addon line linkage |
+| ID | Name | Caption | Description |
+| --- | --- | --- | --- |
+| 6014497 | "NPR NpIa POSEntrySaleLineAddOn" |  | — |
 
-## POS Integration Flow
-
-1. **Item scanned** → POS checks `Item."NPR Item AddOn No."` → resolves `ItemAddOn` record
-2. **UI config** → `GenerateItemAddOnConfigJson()` builds JSON with lines, options, quantities for frontend
-3. **User selection** → POS returns JSON token with chosen values
-4. **Line insertion** → `InsertPOSAddOnLines()` parses selection, calls `BeforeInsertPOSAddOnLine` (integration event), inserts sale lines + link records
-5. **Posting** → `OnBeforeInsertPOSSalesLine` propagates serial numbers; bundle info written to bundle/asset tables
-6. **Deletion** → Cascade rules prevent deletion of mandatory lines; confirmation for manual delete
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: ItemAddonTranslation.Page.al, ItemAddonTranslation.Table.al, NpIaAddOnCatTrans.Page.al, NpIaBeforeInsFunc.Codeunit.al, NpIaItemAddOn.Codeunit.al, NpIaItemAddOn.Table.al, NpIaItemAddOnCard.Page.al, NpIaItemAddOnCategories.Page.al, NpIaItemAddOnCategory.Table.al, NpIaItemAddOnCatTrans.Table.al, NpIaItemAddOnLine.Table.al, NpIaItemAddOnLineOpt.Page.al, NpIaItemAddOnLineOpt.Table.al, NpIaItemAddOnLineSetup.Codeunit.al, NpIaItemAddOnLineSetup.Page.al, NpIaItemAddOnLineSetup.Table.al, NPIaItemAddOnLotNos.Page.al, NpIaItemAddOnMgt.Codeunit.al, NpIaItemAddOns.Page.al, NpIaItemAddOnSelVars.Page.al, NPIaItemAddOnSerialNos.Page.al, NpIaItemAddOnSubform.Page.al, NpIaPOSEntryLineBndlAsset.Table.al, NpIaPOSEntryLineBundle.Page.al, NpIaPOSEntryLineBundleCrd.Page.al, NpIaPOSEntryLineBundleId.Table.al, NpIaPOSEntryLineBundlePrt.Page.al, NpIaPOSEntrySaleLineAddOn.Query.al, NpIaPOSEntrySaleLineAddOn.Table.al, NpIaSaleLinePOSAddOn.Table.al

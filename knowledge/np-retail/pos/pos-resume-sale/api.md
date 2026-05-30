@@ -1,58 +1,62 @@
 ---
 type: reference
-tags: [np-retail, pos, pos-resume-sale, tables, codeunits, pages]
+tags: [pos, pos-resume-sale, np-retail, tables, codeunits, pages]
 relates:
-  - np-retail/pos/pos-resume-sale/overview.md
-updated: 2026-05-09
+  - pos/pos-resume-sale/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/POS Resume Sale/ArchiveNpDcSLPOSCoupon.Table.al
+  - Application/src/POS Resume Sale/ArchiveNpRvSLPOSVouch.Table.al
+  - Application/src/POS Resume Sale/ArchivePOSInfoTrx.Table.al
+  - Application/src/POS Resume Sale/ArchivePOSSale.Page.al
+  - Application/src/POS Resume Sale/_public/ArchiveSaleLinePOS.Table.al
+  - Application/src/POS Resume Sale/ArchiveSalePOS.Table.al
+  - Application/src/POS Resume Sale/ArchNpDcSLPOSNewCoupon.Table.al
+  - Application/src/POS Resume Sale/ArchNpIaSLPOSAddOn.Table.al
+  - Application/src/POS Resume Sale/ArchNpRvSLPOSRef.Table.al
+  - Application/src/POS Resume Sale/ArchPOSSLinesSubpage.Page.al
+  - Application/src/POS Resume Sale/ArchRetailCrossRef.Table.al
+  - Application/src/POS Resume Sale/POSResumeSaleMgt.Codeunit.al
+  - Application/src/POS Resume Sale/POSTryResumeCancelSale.Codeunit.al
+  - Application/src/POS Resume Sale/_public/ResumeSaleMgtEvents.Codeunit.al
+  - Application/src/POS Resume Sale/UnfinishedPOSSale.Page.al
+  - Application/src/POS Resume Sale/UnfinishedPOSSaleTrx.Page.al
 ---
 
-# POS Resume Sale API Reference
+# POS Resume Sale — API Reference
 
 ## Tables
 
-| Table # | Name | Key Fields | Description |
-|---------|------|-----------|-------------|
-| 6014418 | NPR Archive Sale POS | Register No., Sales Ticket No., POS Store Code, Date, Amount, Amount Including VAT, User ID | Archive table for old unfinished sales. Contains all sale header fields matching active sale structure. |
-| — | NPR Archive Sale Line POS | Register No., Sales Ticket No., Line No. | Archived sale line items. |
-| — | ArchivePOSInfoTrx | Register No., Sales Ticket No. | Archived info transactions (comments, additional data). |
-| — | ArchRetailCrossRef | — | Archived cross-references. |
-| — | ArchNpDcSLPOSNewCoupon | — | Archived discount coupon data. |
-| — | ArchNpIaSLPOSAddOn | — | Archived item add-ons. |
-| — | ArchNpRvSLPOSRef | — | Archived retail voucher references. |
-| — | ArchiveNpDcSLPOSCoupon | — | Archived discount coupons. |
-| — | ArchiveNpRvSLPOSVouch | — | Archived retail vouchers. |
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6014496 | "NPR Archive NpDc SL POS Coupon" | Sale Line POS Coupon | "Register No.", "Sales Ticket No.", "Sale Type", "Sale Date", "Sale Line No.", "Line No." | — |
+| 6014492 | "NPR Archive NpRv SL POS Vouch." | Sale Line POS Retail Voucher | ContBusinessRelation.SetRange("Link to Table", ContBusinessRelation."Link to Table"::Customer | — |
+| 6014491 | "NPR Archive POS Info Trx" | POS Info Transaction | "POS Info Code", "Register No.", "Sales Ticket No.", "Sales Line No.", "Entry No." | — |
+| 6014419 | "NPR Archive Sale Line POS" | Archive Sale Line POS | "Register No.", "Sales Ticket No.", Date, "Sale Type", "Line No." | — |
+| 6014418 | "NPR Archive Sale POS" | Sale | "Register No.", "Sales Ticket No." | — |
+| 6014497 | "NPR Arch.NpDc SL POS NewCoupon" | NpDc Sale Line POS New Coupon | "Register No.", "Sales Ticket No.", "Sale Type", "Sale Date", "Sale Line No.", "Line No." | — |
+| 6014494 | "NPR Arch. NpIa SL POS AddOn" | Sale Line POS AddOn | "Register No.", "Sales Ticket No.", "Sale Type", "Sale Date", "Sale Line No.", "Line No." | — |
+| 6014493 | "NPR Arch. NpRv SL POS Ref." | Sale Line POS Retail Voucher Reference | "Register No.", "Sales Ticket No.", "Sale Type", "Sale Date", "Sale Line No.", "Voucher Line No.", "Line No." | — |
+| 6014495 | "NPR Arch. Retail Cross Ref." | Retail Cross Reference | "Retail ID" | — |
+
 
 ## Codeunits
 
-| Codeunit # | Name | Key Methods | Description |
-|------------|------|------------|-------------|
-| 6150739 | NPR POS Resume Sale Mgt. | SelectUnfinishedSaleToResume(), DoSaveAsPOSQuote(), LoadFromPOSQuote(), DoCancelSale(), LogSaleResume() | Core resume management: detect, prompt, cancel, park, resume. |
-| 6150743 | NPR POS Try Resume&CancelSale | Run(SalePOS) | Attempts to cancel a sale. Returns success/failure. |
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6150739 | "NPR POS Resume Sale Mgt." |  | SelectUnfinishedSaleToResume, SaleToResumeIsSelected, DoSaveAsPOSQuote, LoadFromPOSQuote, DoLoadFromPOSQuote | — |
+| 6150738 | "NPR POS Try Resume&CancelSale" |  | Initialize, CheckInitialized, ResumeAndCancelSale, SetAlternativeDescription | — |
+| 6248270 | "NPR Resume Sale Mgt Events" |  | OnBeforePromptResumeSale | OnBeforePromptResumeSale |
 
-### NPR POS Resume Sale Mgt. Methods
-
-| Method | Description |
-|--------|-------------|
-| SelectUnfinishedSaleToResume(var SalePOS, POSSession, var POSQuoteEntryNo) | Main entry point. Finds unfinished sales for current user/unit. Returns selected sale and whether to resume. |
-| DoSaveAsPOSQuote(POSSession, SalePOS, SkipDialog) | Saves sale as parked quote. Returns quote entry number. |
-| LoadFromPOSQuote(var SalePOS, POSQuoteEntryNo) | Loads a saved quote back into active sale. Creates new ticket if cross-unit/cross-day. |
-| DoCancelSale(SalePOS, POSSession) | Forces cancel; errors if fails. |
-| LogSaleResume(SalePOS, FromTicketNo) | Creates audit entry for sale resume via `POSCreateEntry.InsertResumeSaleEntry`. |
-| SetAlternativeCancelDescription(Text) | Sets alternative description for cancel operation. |
-
-### Event: OnBeforePromptResumeSale
-
-`OnBeforePromptResumeSale(SalePOS, POSSession, var SkipDialog, var ActionOption, var ActionOnCancelError, var Handled)`
-
-Subscribers can override the entire resume dialog. Parameters:
-- `SkipDialog` — Set true to suppress UI
-- `ActionOption` — " ", Resume, CancelAndNew, SaveAsQuote, SkipAndNew
-- `ActionOnCancelError` — " ", Resume, SaveAsQuote, ShowError
 
 ## Pages
 
-| Page # | Name | Usage |
-|--------|------|-------|
-| — | NPR Unfinished POS Sale | Dialog page showing unfinished sale with Resume/Cancel/New options |
-| — | NPR Unfinished POS Sale Trx | Transaction details for unfinished sale |
-| — | NPR Archive POS Sale | List page for archived sales |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6150744 | "NPR Archive POS Sale" | Archive POS Sale | "NPR Archive Sale POS" | — |
+| 6150745 | "NPR Arch. POS S. Lines Subpage" | Archive POS Sale Lines | "NPR Archive Sale Line POS" | — |
+| 6150746 | "NPR Unfinished POS Sale" | Unfinished POS Sale | "NPR POS Sale" | — |
+| 6150747 | "NPR Unfinished POS Sale Trx" | Unfinished POS Sale Transactions | "NPR POS Sale" | — |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: ArchiveNpDcSLPOSCoupon.Table.al, ArchiveNpRvSLPOSVouch.Table.al, ArchivePOSInfoTrx.Table.al, ArchivePOSSale.Page.al, ArchiveSaleLinePOS.Table.al, ArchiveSalePOS.Table.al, ArchNpDcSLPOSNewCoupon.Table.al, ArchNpIaSLPOSAddOn.Table.al, ArchNpRvSLPOSRef.Table.al, ArchPOSSLinesSubpage.Page.al, ArchRetailCrossRef.Table.al, POSResumeSaleMgt.Codeunit.al, POSTryResumeCancelSale.Codeunit.al, ResumeSaleMgtEvents.Codeunit.al, UnfinishedPOSSale.Page.al, UnfinishedPOSSaleTrx.Page.al

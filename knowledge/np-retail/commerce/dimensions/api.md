@@ -1,72 +1,72 @@
 ---
 type: reference
-tags: [np-retail, commerce, dimensions, tables, codeunits, pages, enums]
-relates: [commerce/dimensions/overview.md]
-updated: 2026-05-09
+tags: [commerce, dimensions, np-retail, tables, codeunits, pages, enums]
+relates:
+  - commerce/dimensions/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/Dimensions/_public/Dimension.Codeunit.al
+  - Application/src/Dimensions/_public/DimensionMgt.Codeunit.al
+  - Application/src/Dimensions/DimensionValueList.Page.al
+  - Application/src/Dimensions/DimPopupFilterType.Enum.al
+  - Application/src/Dimensions/DimSelectMulwFilter.Page.al
+  - Application/src/Dimensions/LineDimension.Table.al
+  - Application/src/Dimensions/LineDimensions.Page.al
+  - Application/src/Dimensions/PopupDimFilter.Page.al
+  - Application/src/Dimensions/PopupDimFilter.Table.al
+  - Application/src/Dimensions/PopUpDimPOSUnitFilter.Page.al
+  - Application/src/Dimensions/PopUpDimPOSUnitFilter.Table.al
+  - Application/src/Dimensions/POSEndSaleDimSaleStat.Codeunit.al
+  - Application/src/Dimensions/POSPaymViewEventMgt.Codeunit.al
+  - Application/src/Dimensions/POSPaymViewEventSetup.Page.al
+  - Application/src/Dimensions/POSPaymViewEventSetup.Table.al
+  - Application/src/Dimensions/POSPaymViewLogEntries.Page.al
+  - Application/src/Dimensions/POSPaymViewLogEntry.Table.al
+  - Application/src/Dimensions/_public/SalesDimensionEvents.Codeunit.al
 ---
 
-# Dimensions (Commerce) — API Reference
+# Dimensions — API Reference
 
 ## Tables
 
-### Table 6014430 "NPR Line Dimension"
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6014430 | "NPR Line Dimension" | NPR Line Dimension | "Table ID", "Register No.", "Sales Ticket No.", Date, "Sale Type", "Line No.", "No.", "Dimension Code" | — |
+| 6014527 | "NPR Popup Dim. Filter" | Popup Dimension Filter | Type, "No." | — |
+| 6150694 | "NPR Pop Up Dim POS Unit Filter" | Pop Up Dim POS Unit Filter | "POS Unit" | — |
+| 6151054 | "NPR POS Paym. View Event Setup" | POS Payment View Event Setup | "Primary Key" | — |
+| 6151053 | "NPR POS Paym. View Log Entry" | POS Payment View Log Entry | "Entry No." | — |
 
-Fields:
-
-| Field | Type | Purpose |
-|-------|------|---------|
-| `Table ID` | Integer | Source table (NPR POS Sale or NPR POS Sale Line) |
-| `Register No.` | Code[10] | POS Unit No. |
-| `Sales Ticket No.` | Code[20] | Sale identifier |
-| `Sale Type` | Option | Sale, Payment, Debit Sale, etc. |
-| `Line No.` | Integer | Sale line number |
-| `Date` | Date | Transaction date |
-| `No.` | Code[20] | Item or entity number |
-| `Dimension Code` | Code[20] | FK to Dimension |
-| `Dimension Value Code` | Code[20] | FK to Dimension Value |
-
-**Triggers:**
-- `OnInsert/OnModify/OnDelete`: Updates `UpdateLineDim` (cascades to sale lines) and `UpdateGlobalDimCode` (syncs Shortcut Dimension 1/2 Code on sale records)
-- `OnRename`: Prevented (error)
-
-**Key procedures:**
-- `GetDimensions(TableNo, Kassenr, Bonnr, EkspArt, Dato2, LinjeNr, Nr, var TempNPRLineDim)` — reads dimensions into temp buffer
-- `UpdateAllLineDim(TableNo, Kassenr, Bonnr, EkspArt, Dato2, var OldNPRLineDimHeader)` — syncs line dimensions when header dimensions change
-
-### Supporting Tables
-
-| Table | Purpose |
-|-------|---------|
-| `PopupDimFilter` | Dimension filter criteria buffer |
-| `PopUpDimPOSUnitFilter` | POS-unit-scoped dimension filter |
-| `POSPaymViewEventSetup` | Payment view event configuration (enabled events, triggers) |
-| `POSPaymViewLogEntry` | Logged payment view events with timestamp and user |
 
 ## Codeunits
 
-### "POSEndSaleDimSaleStat"
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6059845 | "NPR Dimension" |  | CreateSeatingDimForPOSEntry | — |
+| 6014401 | "NPR Dimension Mgt." |  | GetGLSetup, UpdateNPRDefaultDim, GetDefaultDim, TypeToTableNPR, LineTypeToTableNPR | — |
+| 6014598 | "NPR POS End Sale: Dim.SaleStat" |  | CU_CodeunitPOSFrontEndManagement_OnBeforeChangeToPaymentView, ToInteger, ToDecimal, ToBoolean, ToOption | — |
+| 6151053 | "NPR POS Paym. View Event Mgt." |  | DimensionIsRequired, SkipPopup, SkipOnItemFilter, ValidTime, HasDimValue | — |
+| 6150671 | "NPR Sales Dimension Events" |  | OnBeforeRunDimensionValueListModal | OnBeforeRunDimensionValueListModal |
 
-Processes dimension updates at end-of-sale, ensures dimension values are finalized on posting.
-
-### "POSPaymViewEventMgt"
-
-Manages payment view dimension events — logs dimension changes during payment view operations for audit trail.
-
-## Enums
-
-### "DimPopupFilterType"
-
-Options for dimension popup filter behavior.
 
 ## Pages
 
-| Page | Source Table | Purpose |
-|------|-------------|---------|
-| `DimensionValueList` | Dimension Value | Dimension value selection |
-| `LineDimensions` | NPR Line Dimension | Line dimension editor |
-| `PopupDimFilter` | PopupDimFilter | Filter criteria dialog |
-| `PopUpDimPOSUnitFilter` | PopUpDimPOSUnitFilter | POS-unit filter |
-| `DimSelectMulwFilter` | PopupDimFilter | Multi-value dimension filter |
-| `DimensionValueList` | Dimension | Dimension value list |
-| `POSPaymViewEventSetup` | POSPaymViewEventSetup | Event configuration |
-| `POSPaymViewLogEntries` | POSPaymViewLogEntry | Audit log view |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6150845 | "NPR Dimension Value List" | Dimension Value List | "Dimension Value" | — |
+| 6014546 | "NPR Dim. Select.Mul.w.Filter" | Dimension Selection | "Dimension Selection Buffer" | — |
+| 6014494 | "NPR Line Dimensions" | NPR Line Dimensions | "NPR Line Dimension" | — |
+| 6014556 | "NPR Popup Dim. Filter" | Popup Dimension Filter | "NPR Popup Dim. Filter" | — |
+| 6151299 | "NPR Pop Up Dim POS Unit Filter" | Pop Up Dim POS Unit Filter | "NPR Pop Up Dim POS Unit Filter" | — |
+| 6151054 | "NPR POS Paym. View Event Setup" | POS Payment View Event Setup | "NPR POS Paym. View Event Setup" | — |
+| 6151043 | "NPR POS Paym. View Log Entries" | POS Payment View Log Entries | "NPR POS Paym. View Log Entry" | — |
+
+
+## Enums
+
+| ID | Name | Caption | Values |
+| --- | --- | --- | --- |
+| 6014459 | "NPR Dim. Popup Filter Type" | Item | Item, Item Category |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: Dimension.Codeunit.al, DimensionMgt.Codeunit.al, DimensionValueList.Page.al, DimPopupFilterType.Enum.al, DimSelectMulwFilter.Page.al, LineDimension.Table.al, LineDimensions.Page.al, PopupDimFilter.Page.al, PopupDimFilter.Table.al, PopUpDimPOSUnitFilter.Page.al, PopUpDimPOSUnitFilter.Table.al, POSEndSaleDimSaleStat.Codeunit.al, POSPaymViewEventMgt.Codeunit.al, POSPaymViewEventSetup.Page.al, POSPaymViewEventSetup.Table.al, POSPaymViewLogEntries.Page.al, POSPaymViewLogEntry.Table.al, SalesDimensionEvents.Codeunit.al

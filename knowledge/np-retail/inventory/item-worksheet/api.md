@@ -1,146 +1,150 @@
 ---
 type: reference
-tags: [np-retail, inventory, item-worksheet, tables, codeunits, pages, events, xmlports]
-relates: [inventory/item-worksheet/overview.md]
-updated: 2026-05-09
+tags: [inventory, item-worksheet, np-retail, tables, codeunits, pages, enums, xmlports]
+relates:
+  - inventory/item-worksheet/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/Item Worksheet/ItemWkshtDocExch.Codeunit.al
+  - Application/src/Item Worksheet/ItemWkshtPriceHandling.Enum.al
+  - Application/src/Item Worksheet/ItemWkshtTaskQueueMgt.Codeunit.al
+  - Application/src/Item Worksheet/ItemWkshtValidation.Codeunit.al
+  - Application/src/Item Worksheet/_public/ItemWkshtWebService.Codeunit.al
+  - Application/src/Item Worksheet/ItemWkshtWebServiceMgr.Codeunit.al
+  - Application/src/Item Worksheet/ItemWkshtWfEvents.Codeunit.al
+  - Application/src/Item Worksheet/ItemWkshtWfResponses.Codeunit.al
+  - Application/src/Item Worksheet/ItemWorksExcelColumn.Page.al
+  - Application/src/Item Worksheet/ItemWorkshAttrFactBox.Page.al
+  - Application/src/Item Worksheet/_public/ItemWorksheet.Codeunit.al
+  - Application/src/Item Worksheet/_public/ItemWorksheet.Table.al
+  - Application/src/Item Worksheet/_public/ItemWorksheetFactBox.Page.al
+  - Application/src/Item Worksheet/ItemWorksheetItemMgt.Codeunit.al
+  - Application/src/Item Worksheet/_public/ItemWorksheetLine.Table.al
+  - Application/src/Item Worksheet/_public/ItemWorksheetMgt.Codeunit.al
+  - Application/src/Item Worksheet/_public/ItemWorksheetPage.Page.al
+  - Application/src/Item Worksheet/_public/ItemWorksheets.Page.al
+  - Application/src/Item Worksheet/ItemWorksheetTemplates.Page.al
+  - Application/src/Item Worksheet/_public/ItemWorkshExcelColumn.Table.al
+  - Application/src/Item Worksheet/ItemWorkshFieldChange.Table.al
+  - Application/src/Item Worksheet/ItemWorkshFieldChanges.Page.al
+  - Application/src/Item Worksheet/ItemWorkshFieldMapping.Page.al
+  - Application/src/Item Worksheet/ItemWorkshFieldMapping.Table.al
+  - Application/src/Item Worksheet/ItemWorkshFieldSetup.Page.al
+  - Application/src/Item Worksheet/ItemWorkshFieldSetup.Table.al
+  - Application/src/Item Worksheet/ItemWorkshImportExport.XmlPort.al
+  - Application/src/Item Worksheet/ItemWorkshLineWebImp.XmlPort.al
+  - Application/src/Item Worksheet/ItemWorkshMissingSetup.Page.al
+  - Application/src/Item Worksheet/ItemWorkshSetupSubpage.Page.al
+  - Application/src/Item Worksheet/ItemWorkshTemplate.Page.al
+  - Application/src/Item Worksheet/_public/ItemWorkshTemplate.Table.al
+  - Application/src/Item Worksheet/_public/ItemWorkshVariantLine.Table.al
+  - Application/src/Item Worksheet/ItemWorkshVarietyValue.Table.al
+  - Application/src/Item Worksheet/ItemWorkshVrtyMapping.Page.al
+  - Application/src/Item Worksheet/ItemWorkshVrtyMapping.Table.al
+  - Application/src/Item Worksheet/ItemWorkshVrtySubpage.Page.al
+  - Application/src/Item Worksheet/ItemWorkshVrtyValues.Page.al
+  - Application/src/Item Worksheet/ItemWorksPurchIntegr.Codeunit.al
+  - Application/src/Item Worksheet/_public/ItemWrkshCombineLine.Codeunit.al
+  - Application/src/Item Worksheet/ItemWshtCheckLine.Codeunit.al
+  - Application/src/Item Worksheet/ItemWshtImpExp.Codeunit.al
+  - Application/src/Item Worksheet/_public/ItemWshtRegistBatch.Codeunit.al
+  - Application/src/Item Worksheet/ItemWshtRegisterLine.Codeunit.al
+  - Application/src/Item Worksheet/_public/ItemWshtRegistYesNo.Codeunit.al
+  - Application/src/Item Worksheet/MissingSetupRecord.Table.al
+  - Application/src/Item Worksheet/MissingSetupTable.Table.al
+  - Application/src/Item Worksheet/RegisteredItemWorks.Table.al
+  - Application/src/Item Worksheet/RegisteredItemWorksh.Page.al
+  - Application/src/Item Worksheet/_public/RegistItemWorkshLine.Table.al
+  - Application/src/Item Worksheet/RegistItemWorkshPage.Page.al
+  - Application/src/Item Worksheet/RegItemWshtVarLine.Table.al
+  - Application/src/Item Worksheet/RegItemWshtVarSubpage.Page.al
+  - Application/src/Item Worksheet/RegItemWshtVarValue.Table.al
 ---
 
 # Item Worksheet — API Reference
 
 ## Tables
 
-### Table 6060052 "NPR Item Worksh. Field Setup"
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6060041 | "NPR Item Worksheet" | Item Worksheet Batch | "Item Template Name", Name | — |
+| 6060042 | "NPR Item Worksheet Line" | Item Worksheet Line | "Worksheet Template Name", "Worksheet Name", "Line No." | — |
+| 6060051 | "NPR Item Worksh. Excel Column" | Item Worksheet Excel Column | "Worksheet Template Name", "Worksheet Name", "Excel Column No." | — |
+| 6060053 | "NPR Item Worksh. Field Change" | Item Worksheet Field Change | "Worksheet Template Name", "Worksheet Name", "Worksheet Line No.", "Worksheet Variant Line No.", "Table No.", "Field Number" | — |
+| 6060055 | "NPR Item Worksh. Field Mapping" | Item Worksheet Field Mapping | "Worksheet Template Name", "Worksheet Name", "Table No.", "Field Number", "Source Value" | — |
+| 6060052 | "NPR Item Worksh. Field Setup" | Item Worksheet Field Setup | "Worksheet Template Name", "Worksheet Name", "Table No.", "Field Number" | — |
+| 6060040 | "NPR Item Worksh. Template" | Item Worksheet Template | Name | — |
+| 6060043 | "NPR Item Worksh. Variant Line" | Item Worksheet Variant Line | ItemWorksheetVariantLine2.SetRange("Variety 1 Value", xRec."Variety 1 Value" | — |
+| 6060044 | "NPR Item Worksh. Variety Value" | Item Worksheet Variety Value | "Worksheet Template Name", "Worksheet Name", "Worksheet Line No.", Type, "Table", Value | — |
+| 6060057 | "NPR Item Worksh. Vrty Mapping" | Item Worksheet Variety Mapping | "Worksheet Template Name", "Worksheet Name", "Vendor No.", Variety, "Variety Table", "Vendor Variety Value", "Item Wksh. Maping Field", "Item Wksh. Maping Field Value" | — |
+| 6060050 | "NPR Missing Setup Record" | Missing Setup Record | "Table ID", "Field No.", Value | — |
+| 6060049 | "NPR Missing Setup Table" | Missing Setup Table | "Table ID", "Field No." | — |
+| 6060045 | "NPR Registered Item Works." | Item Worksheet Batch | "No." | — |
+| 6060046 | "NPR Regist. Item Worksh Line" | Registered Item Worksheet Line | "Registered Worksheet No.", "Line No." | — |
+| 6060047 | "NPR Reg. Item Wsht Var. Line" | Reg. Item Wsht Variant Line | "Registered Worksheet No.", "Registered Worksheet Line No.", "Line No." | — |
+| 6060048 | "NPR Reg. Item Wsht Var. Value" | Reg. Item Wsht Variety Value | "Registered Worksheet No.", "Registered Worksheet Line No.", Type, "Table", Value | — |
 
-Maps worksheet source fields to target creation and update fields.
-
-| Field | Type | Purpose |
-|-------|------|---------|
-| `Worksheet Template Name` | Code[10] | FK to template |
-| `Worksheet Name` | Code[10] | FK to worksheet |
-| `Table No.` | Integer | Source table ID |
-| `Field Number` | Integer | Source field |
-| `Table Name/Caption` | Text | Display |
-| `Field Name/Caption` | Text | Display |
-| `Target Table No. Create` | Integer | Table to write on create action |
-| `Target Field Number/Name/Caption Create` | - | Target field for create |
-| `Target Table No. Update` | Integer | Table to write on update action |
-| `Target Field Number/Name/Caption Update` | - | Target field for update |
-| `Process Create` | Option | Ignore/Process/Use Default on Blank/Always use Default |
-| `Process Update` | Option | Ignore/Warn and Ignore/Warn and Process/Process |
-| `Default Value for Create` | Text[50] | Default when blank |
-| `Mapped Values` | Integer (FlowField) | Count of field mappings |
-
-### Table 6060053 "NPR Item Worksh. Field Change"
-
-Records field-level changes during validation and registration.
-
-| Field | Type | Purpose |
-|-------|------|---------|
-| `Worksheet Template Name` | Code[10] | FK |
-| `Worksheet Name` | Code[10] | FK |
-| `Worksheet Line No.` | Integer | FK to line |
-| `Worksheet Variant Line No.` | Integer | FK to variant line |
-| `Table No.` / `Field Number` | Integer | Source field |
-| `Target Table No. Update` / `Target Field Number Update` | Integer | Target field |
-| `Process` / `Warning` | Boolean | Flags |
-| `Current Value` / `New Value` | Text[250] | Before/after values |
-
-### Table 6060055 "NPR Item Worksh. Field Mapping"
-
-Value-level field mapping with matching strategies.
-
-| Field | Type | Purpose |
-|-------|------|---------|
-| `Worksheet Template Name` | Code[10] | FK |
-| `Worksheet Name` | Code[10] | FK |
-| `Table No.` / `Field Number` | Integer | Source field |
-| `Source Value` | Text[250] | Incoming value to match |
-| `Target Value` | Text[250] | Outgoing replacement value |
-| `Matching` | Option | Exact/Starts With/Ends With/Contains |
-| `Case Sensitive` | Boolean | Toggle |
-
-### Table 6060057 "NPR Item Worksh. Vrty Mapping"
-
-Maps vendor-specific variety values to internal NP Retail variety values.
-
-| Field | Type | Purpose |
-|-------|------|---------|
-| `Worksheet Template Name` | Code[10] | FK |
-| `Worksheet Name` | Code[10] | FK |
-| `Vendor No.` | Code[20] | Vendor context |
-| `Variety` | Code[10] | Variety dimension |
-| `Variety Table` | Code[40] | Variety source table |
-| `Vendor Variety Value` | Text[50] | Value as sent by vendor |
-| `Variety Value` | Code[50] | Internal mapped value |
-| `Item Wksh. Maping Field/Value` | - | Additional mapping target |
 
 ## Codeunits
 
-### Codeunit 6060045 "NPR Item Wsht.-Check Line"
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6060056 | "NPR Item Wksht. Doc. Exch." |  | InsertItemWorksheetLine, ItemWorksheetExists, OnCheckIncomingDocCreateDocRestrictionsCheckReopen, OnAfterInsertItemWorksheetLine | OnAfterInsertItemWorksheetLine |
+| 6060058 | "NPR Item Wksht. TaskQueue Mgt." |  | ParamTemplateName, ParamBatchName, ParamRegisterItemWksht, RegisterItemWkshtBatch | — |
+| 6060052 | "NPR Item Wksht. Validation" |  | ValidateItemWorksheetLineProcessing | — |
+| 6060048 | "NPR Item Wksht. WebService" |  | CreateItemWorksheetLine, InsertImportEntry, GetDocumentSequence, TicketIntegrationSetup, CreateImportType | — |
+| 6060049 | "NPR Item Wksht. WebService Mgr" |  | RunProcessImportEntry, Initialize, CreateItemWorksheetLine, CreateItemWorksheetLines, FindWorksheetLine | — |
+| 6060053 | "NPR Item Wksht. Wf Events" |  | ItemStatusChanged, NewItemWorksheetLineInserted, AddItemWorksheetEventsToLibrary, RunWorkflowOnAfterInsertWorksheeLine, RunWorkflowOnAfterModifyItemStatus | — |
+| 6060054 | "NPR Item Wksht. Wf Responses" |  | SetItemField, SetItemFieldCode, SetItemStatus, SetItemStatusCode, AddResponseCombinations | — |
+| 6014440 | "NPR Item Worksheet" |  | OnBeforeExportWorksheetLine, OnBeforeExportWorksheetVariantLine, OnAfterImportWorksheetLine, OnAfterImportWorksheetVariantLine, OnAfterRegisterLine | OnBeforeExportWorksheetLine, OnBeforeExportWorksheetVariantLine, OnAfterImportWorksheetLine |
+| 6060041 | "NPR Item Worksheet Item Mgt." |  | MatchItemNo, GetVariantCode, UpdateItemNo, FindItemNo, CheckDuplicateLine | — |
+| 6060040 | "NPR Item Worksheet Mgt." |  | TemplateSelection, TemplateSelectionFromBatch, OpenJnl, OpenJnlBatch, CheckTemplateName | — |
+| 6060057 | "NPR Item Works. Purch. Integr." |  | CreateItemFromWorksheet, SelectItemtoCreate, CreateItem, SelectItemWorksheet, MatchToItemWorksheetLine | — |
+| 6059791 | "NPR Item Wrksh. Combine Line" |  | CombineLine, CanCreateTask | — |
+| 6060045 | "NPR Item Wsht.-Check Line" |  | RunCheck, CheckItemWorksheetVariantLine, CheckItemWorksheetVarietyLine, CheckWorkSheetLinePrices, CheckWorkSheetLineDirectUnitCost | — |
+| 6060047 | "NPR Item Wsht. Imp. Exp." |  | Export, Import, ExportToExcel, ImportFromExcel, SelectExcelToMap | — |
+| 6060044 | "NPR Item Wsht.-Regist. Batch" |  | CreateWindow, CreateRegisteredWorksheet, CheckLines, RegisterLines, DeleteWorksheetLine | — |
+| 6060046 | "NPR Item Wsht.Register Line" |  | RunWithCheck, CreateItem, UpdateItem, UpdateAndCopyVarieties, FindNewVarietyNames | — |
+| 6060043 | "NPR Item Wsht.-Regist.(Yes/No)" |  | — | — |
 
-Validates a worksheet line before processing. Public procedure:
-- `RunCheck(ItemWkshtLine, StopOnError, CalledFromRegister)` — validates action, item existence, variety completeness, prices, duplicate barcodes
-
-Validation rules per action type:
-- **CreateNew**: Requires Item Category, No. Series (manual or default), Description, valid prices; checks item doesn't already exist
-- **UpdateOnly/UpdateAndCreateVariants**: Requires Existing Item No., matching variety definitions, Description; validates variety/copy constraints
-
-### Codeunit 6060049 "NPR Item Wksht. WebService Mgr"
-
-Implements `NPR Nc Import List IProcess` for XML-based item worksheet import.
-
-Public procedure:
-- `RunProcessImportEntry(ImportEntry)` — loads XML doc, dispatches to `CreateItemWorksheetLines` by function name
-
-Key internal procedures:
-- `ReadItemWorksheetLine(Element, var ItemWorksheetLine)` — parses 80+ XML fields (ItemNo, Description, VendorNo, prices, dimensions, variety values, tracking codes, barcodes, Magento fields, customs data, etc.)
-- `FindWorksheetLine(VendorNo, VATRegNo, var Template, var Worksheet, var LineNo)` — auto-creates template/worksheet if needed
-- `ReadWkshLineAttributes(ItemWorksheetLine, Element)` — parses attribute XML nodes
-
-**Imported XML fields include**: ItemNo, VendorNo, VendorItemNo, Description, Description2, DirectUnitCost, UnitPrice, ItemCategory, ProductGroup, Variety1-4, Barcodes (Internal/Vendors), GTIN, ItemTrackingCode, Blocked, PriceIncludesVAT, ReorderPoint, MaximumInventory, SafetyStock, Manufacturing/Replenishment policies, Magento fields (Name, Status, Brand, SeoLink, Meta fields), Customs (TariffNo, CountryRegion), and 30+ more.
-
-### Codeunit 6151052 — referenced from Replenishment module
 
 ## Pages
 
-| Page | Type | Purpose |
-|------|------|---------|
-| NPR Item Worksheet Templates | List | Manage templates |
-| NPR Item Wksh. Template | Card | Template details |
-| RegistItemWorkshPage | - | Registration worksheet UI |
-| RegisteredItemWorksh | List | View registered worksheets |
-| RegItemWshtVarSubpage | Subpage | Registered variant lines |
-| ItemWorkshAttrFactBox | FactBox | Attribute display |
-| ItemWorkshFieldSetup | Card | Field setup configuration |
-| ItemWorkshFieldChanges | List | Field change log |
-| ItemWorkshFieldMapping | List | Value mapping configuration |
-| ItemWorkshVrtyMapping | List | Variety mapping per vendor |
-| ItemWorkshMissingSetup | List | Missing setup record display |
-| ItemWorkshSetupSubpage | Subpage | Setup subpage |
-| ItemWorkshVrtySubpage | Subpage | Variety values per line |
-| ItemWorkshVrtyValues | List | Variety value browser |
-| ItemWorksExcelColumn | - | Excel column mapping |
-| ItemWorkshTemplate | Card | Template card UI |
-| ItemWorkshTemplateCard | Card | Alternative template card |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6060053 | "NPR Item Works. Excel Column" | Item Worksheet Excel Column | "NPR Item Worksh. Excel Column" | — |
+| 6060052 | "NPR Item Worksh. Attr. FactBox" | NP Attributes FactBox | "NPR Item Worksheet Line" | — |
+| 6060051 | "NPR Item Worksheet FactBox" | Item Worksheet FactBox | "NPR Item Worksheet Line" | — |
+| 6060042 | "NPR Item Worksheet Page" | Item Worksheet Page | "NPR Item Worksheet Line" | — |
+| 6060041 | "NPR Item Worksheets" | Item Worksheets | "NPR Item Worksheet" | — |
+| 6060040 | "NPR Item Worksheet Templates" | Item Worksheet Templates | "NPR Item Worksh. Template" | — |
+| 6060055 | "NPR Item Worksh. Field Changes" | Item Worksheet Field Changes | "NPR Item Worksh. Field Change" | — |
+| 6060057 | "NPR Item Worksh. Field Mapping" | Item Worksheet Field Mapping | "NPR Item Worksh. Field Mapping" | — |
+| 6060054 | "NPR Item Worksh. Field Setup" | Item Worksheet Field Setup | "NPR Item Worksh. Field Setup" | — |
+| 6060049 | "NPR Item Worksh. Missing Setup" | Item Worksheet Missing Setup | "NPR Missing Setup Table" | — |
+| 6060050 | "NPR Item Worksh. Setup Subpage" | Item Worksheet Setup Subpage | "NPR Missing Setup Record" | — |
+| 6060058 | "NPR Item Worksh. Template" | Item Worksheet Template | "NPR Item Worksh. Template" | — |
+| 6060060 | "NPR Item Worksh. Vrty. Mapping" | Item Worksheet Variety Mapping | "NPR Item Worksh. Vrty Mapping" | — |
+| 6060043 | "NPR Item Worksh. Vrty. Subpage" | Item Worksheet Variety Subpage | "NPR Item Worksh. Variant Line" | — |
+| 6060044 | "NPR Item Worksh.Vrty. Values" | Item Worksheet Variety Values | "NPR Item Worksh. Variety Value" | — |
+| 6060046 | "NPR Registered Item Worksh." | Registered Item Worksheets | "NPR Registered Item Works." | — |
+| 6060047 | "NPR Regist. Item Worksh. Page" | Registered Item Worksheet Page | "NPR Regist. Item Worksh Line" | — |
+| 6060048 | "NPR Reg. ItemWsht Var.Subpage" | Reg. Item Wsht Variety Subpage | "NPR Reg. Item Wsht Var. Line" | — |
+
+
+## Enums
+
+| ID | Name | Caption | Values |
+| --- | --- | --- | --- |
+| 6014564 | "NPR Item Wksht. Price Handling" | Item | Item, PriceList |
+
 
 ## XmlPorts
 
-| XmlPort | Purpose |
-|---------|---------|
-| NPR Item Worksh. Import Export | Standard worksheet import/export |
-| NPR Item Wsht. Line Web Imp. | Web-based line import (35KB schema) |
+| ID | Name | Caption | Description |
+| --- | --- | --- | --- |
+| 6060040 | "NPR Item Worksh. Import/Export" | Item Worksheet Import/Export | — |
+| 6060041 | "NPR Item Worksh. Line Web Imp." | Item Worksheet Line Web Import | — |
 
-## Events
-
-| Event | Source | Purpose |
-|-------|--------|---------|
-| `OnAfterImportWorksheetLine` | Codeunit NPR Item Worksheet | Hook after web service line import |
-| `OnAfterImportWorksheetVariantLine` | Codeunit NPR Item Worksheet | Hook after web service variant line import |
-
-## Registration Flow
-
-1. **Import** → XML web service populates worksheet lines (or manual entry)
-2. **Check** → `RunCheck()` validates each line (field setup, prices, varieties, duplicates)
-3. **Validation** → Optional `NPR Item Wksht. Validation` codeunit run per template setting
-4. **Register** → `NPR Item Wsht.Register Line` processes lines: creates/updates items, variants, price lists; tracks changes in Field Change table
-5. **Archive** → Registered data moved to `Registered Item Worksh.` / `Reg Item Wsht Var Line`
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: ItemWkshtDocExch.Codeunit.al, ItemWkshtPriceHandling.Enum.al, ItemWkshtTaskQueueMgt.Codeunit.al, ItemWkshtValidation.Codeunit.al, ItemWkshtWebService.Codeunit.al, ItemWkshtWebServiceMgr.Codeunit.al, ItemWkshtWfEvents.Codeunit.al, ItemWkshtWfResponses.Codeunit.al, ItemWorksExcelColumn.Page.al, ItemWorkshAttrFactBox.Page.al, ItemWorksheet.Codeunit.al, ItemWorksheet.Table.al, ItemWorksheetFactBox.Page.al, ItemWorksheetItemMgt.Codeunit.al, ItemWorksheetLine.Table.al, ItemWorksheetMgt.Codeunit.al, ItemWorksheetPage.Page.al, ItemWorksheets.Page.al, ItemWorksheetTemplates.Page.al, ItemWorkshExcelColumn.Table.al, ItemWorkshFieldChange.Table.al, ItemWorkshFieldChanges.Page.al, ItemWorkshFieldMapping.Page.al, ItemWorkshFieldMapping.Table.al, ItemWorkshFieldSetup.Page.al, ItemWorkshFieldSetup.Table.al, ItemWorkshImportExport.XmlPort.al, ItemWorkshLineWebImp.XmlPort.al, ItemWorkshMissingSetup.Page.al, ItemWorkshSetupSubpage.Page.al, ItemWorkshTemplate.Page.al, ItemWorkshTemplate.Table.al, ItemWorkshVariantLine.Table.al, ItemWorkshVarietyValue.Table.al, ItemWorkshVrtyMapping.Page.al, ItemWorkshVrtyMapping.Table.al, ItemWorkshVrtySubpage.Page.al, ItemWorkshVrtyValues.Page.al, ItemWorksPurchIntegr.Codeunit.al, ItemWrkshCombineLine.Codeunit.al, ItemWshtCheckLine.Codeunit.al, ItemWshtImpExp.Codeunit.al, ItemWshtRegistBatch.Codeunit.al, ItemWshtRegisterLine.Codeunit.al, ItemWshtRegistYesNo.Codeunit.al, MissingSetupRecord.Table.al, MissingSetupTable.Table.al, RegisteredItemWorks.Table.al, RegisteredItemWorksh.Page.al, RegistItemWorkshLine.Table.al, RegistItemWorkshPage.Page.al, RegItemWshtVarLine.Table.al, RegItemWshtVarSubpage.Page.al, RegItemWshtVarValue.Table.al
