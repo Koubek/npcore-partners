@@ -1,71 +1,72 @@
 ---
 type: reference
-tags: [np-retail, pos, pos-statistics, tables, codeunits, pages, queries]
+tags: [pos, pos-statistics, np-retail, tables, codeunits, pages, queries]
 relates:
-  - np-retail/pos/pos-statistics/overview.md
-updated: 2026-05-09
+  - pos/pos-statistics/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/POS Statistics/CashSummary.Page.al
+  - Application/src/POS Statistics/CashSummary.Query.al
+  - Application/src/POS Statistics/CashSummaryBuffer.Table.al
+  - Application/src/POS Statistics/ItemSalesPostings.Query.al
+  - Application/src/POS Statistics/POSCurrentSaleStats.Page.al
+  - Application/src/POS Statistics/POSEntryStatistics.Page.al
+  - Application/src/POS Statistics/POSEntryStatistics.Table.al
+  - Application/src/POS Statistics/POSEntryStatisticsMgt.Codeunit.al
+  - Application/src/POS Statistics/POSEntryStats.Query.al
+  - Application/src/POS Statistics/POSSalespersonStats.Query.al
+  - Application/src/POS Statistics/POSSalespersonStBuffer.Table.al
+  - Application/src/POS Statistics/POSSalespersonTop20.Page.al
+  - Application/src/POS Statistics/POSSingleSaleStatistics.Page.al
+  - Application/src/POS Statistics/POSSingleStatistics.Query.al
+  - Application/src/POS Statistics/POSSingleStatsBuffer.Table.al
+  - Application/src/POS Statistics/POSSLDiscAmtType.Query.al
+  - Application/src/POS Statistics/POSStatisticsMgt.Codeunit.al
+  - Application/src/POS Statistics/RetailHeadlineSales.Query.al
 ---
 
-# POS Statistics API Reference
+# POS Statistics — API Reference
 
 ## Tables
 
-| Table # | Name | Type | Key Fields | Description |
-|---------|------|------|-----------|-------------|
-| 6014620 | NPR POS Entry Statistics | Temporary | Source System Id, Source Table Id | Aggregation of POS entries with flowfield-based calculations: payment amounts, direct/credit/debit/balancing sale amounts (excl. and incl. tax). Flow filters: POS Unit, Document, Date, Global Dimension 1/2, Payment Method, Salesperson, POS Store, Customer. |
-| — | NPR Cash Summary Buffer | Temporary | Entry No., POS Unit No., Payment Bin No., Payment Method Code | Cash summary aggregation per unit/bin/method. |
-| — | NPR POS Single Stats Buffer | Temporary | Entry No., Document No., POS Unit No. | Per-entry statistics: sales amount, cost, profit %, discount, tax, quantity. |
-| — | NPR POS Turnover Calc. Buffer | Temporary | Entry No., IsHeader, Description, This Year, Last Year | Turnover comparison rows with formatted text values. |
-| — | NPR POS Salesperson St Buffer | Temporary | Entry No., Name, Sales (LCY), Discount Amount, Profit (LCY) | Salesperson ranking data. |
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6059847 | "NPR Cash Summary Buffer" | Cash Summary Buffer | "Entry No." | — |
+| 6014620 | "NPR POS Entry Statistics" | POS Entry Statistics | "Source System Id" | — |
+| 6014671 | "NPR POS Salesperson St Buffer" | POS Salesperson Stats Buffer | "Entry No." | — |
+| 6014663 | "NPR POS Single Stats Buffer" | POS Single Stats Buffer | "Entry No." | — |
+
 
 ## Codeunits
 
-| Codeunit # | Name | Key Methods | Description |
-|------------|------|------------|-------------|
-| 6059818 | NPR POS Statistics Mgt. | FillSingleStatsBuffer(), FillCurrentStatsBuffer(), FillTurnoverData(), FillSalePersonTop20(), FillCashSummary(), TryGetPOSEntry() | Core statistics engine for turnover, salesperson, and cash summary reporting. |
-| — | NPR POS Entry Statistics Mgt. | Calculate(), InsertRecord() | Entry-level statistics calculation with filter propagation from source records. |
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6184978 | "NPR POS Entry Statistics Mgt" |  | OnRequestPOSData, GetPOSEntries, ApplyPOSEntryFilters, CreateJsonObjectPOSEntry, PosStats_GetAvailableFields | — |
+| 6059818 | "NPR POS Statistics Mgt." |  | FillSingleStatsBuffer, FillCurrentStatsBuffer, TryGetPOSEntry, GetAmountData, FillTurnoverData | — |
 
-### NPR POS Statistics Mgt. Methods
-
-| Method | Description |
-|--------|-------------|
-| FillSingleStatsBuffer(var POSSingleStatsBuffer, var POSEntry) | Computes per-entry stats: cost from either posted actuals (query) or unit cost, profit %, sales amount. |
-| FillCurrentStatsBuffer(var POSCurrentStatsBuffer, var POSSale, AlwaysUseUnitCost) | Computes real-time stats from active sale lines. Gets cost from item card (Last Direct Cost or Unit Cost). |
-| FillTurnoverData(var POSTurnoverCalcBuffer, BaseDate, POSStoreCode, POSUnitNo) | Fills 8 time-range blocks (day, week, last week, month, last month, year, last year) with net/cost/profit/% data. |
-| FillSalePersonTop20(var SalespersonStatsBuffer, FromDate, ToDate) | Queries and ranks top 20 salespeople. Computes discount %, profit %. |
-| FillCashSummary(var CashSummaryBuffer temporary) | Aggregates cash amounts per POS unit/bin from last FLOAT entry point. |
-| CalculateTransactionAmount() | Returns total cash transaction amount from last FLOAT. |
-
-### NPR POS Entry Statistics Methods
-
-| Method | Description |
-|--------|-------------|
-| Calculate(Source: Variant) | Main entry point. Extracts filters from source record, propagates to flowfields, fires OnBeforeCalcFields, calculates flowfields. |
-| InsertRecord(Source: Variant) | Inserts a new entry statistics record with Source SystemId and Source Table ID. |
-| GetPageId() | Returns the statistics page ID. |
 
 ## Pages
 
-| Page # | Name | Usage |
-|--------|------|-------|
-| — | NPR POS Entry Statistics | Entry-level statistics page with filterable aggregation |
-| — | NPR POS Current Sale Stats | Real-time statistics for the active sale |
-| — | NPR POS Single Sale Statistics | Statistics for a single posted entry |
-| — | NPR POS Salesperson Top 20 | Salesperson ranking page |
-| — | NPR Cash Summary | Cash transaction summary per POS unit |
-| — | NPR POS Cash Summary Buffer | Cash summary buffer view |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6150781 | "NPR Cash Summary" | Cash Summary | "NPR Cash Summary Buffer" | — |
+| 6059892 | "NPR POS Current Sale Stats" | Current Sale Statistics | "NPR POS Single Stats Buffer" | — |
+| 6014669 | "NPR POS Entry Statistics" | POS Entry Statistics | "NPR POS Entry Statistics" | — |
+| 6059869 | "NPR POS Salesperson Top 20" | Salesperson Top 20 | "NPR POS Salesperson St Buffer" | — |
+| 6059861 | "NPR POS Single Sale Statistics" | Single Sale Statistics | "NPR POS Single Stats Buffer" | — |
+
 
 ## Queries
 
-| Query | Description |
-|-------|-------------|
-| NPR POS Turnover | Aggregates direct sale amounts and costs by posting date |
-| NPR POS Credit Sales Invoice | Credit sale invoice amounts and costs |
-| NPR POS Credit Sales Cr. Memo | Credit sale credit memo amounts and costs |
-| NPR POS Single Statistics | Per-entry actual cost and sales amounts |
-| NPR POS Salesperson Stats | Salesperson-level aggregation: sales, discount, cost |
-| NPR Cash Summary | Cash transaction amounts per unit/bin/method |
-| NPR POS Entry Stats | Entry-level statistics aggregation |
-| NPR POS SL Disc Amt. Type | Sales line discount amounts by discount type |
-| NPR Item Sales Postings | Item sales posting data |
-| NPR Retail Headline Sales | Headline sales figures |
+| ID | Name | Caption | Description |
+| --- | --- | --- | --- |
+| 6014410 | "NPR Cash Summary" | Cash Summary | — |
+| 6014430 | "NPR Item Sales Postings" | Item Sales Postings | — |
+| 6014479 | "NPR POS Entry Stats" | POS Entry Stats | — |
+| 6014415 | "NPR POS Salesperson Stats" | POS Salesperson Stats | — |
+| 6014414 | "NPR POS Single Statistics" | POS Single Statistics | — |
+| 6014402 | "NPR POS SL Disc. Amt. Type" | POS Entry Sales Line Discount Amount Type | — |
+| 6014429 | "NPR Retail Headline Sales" | Retail Headline Sales | — |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: CashSummary.Page.al, CashSummary.Query.al, CashSummaryBuffer.Table.al, ItemSalesPostings.Query.al, POSCurrentSaleStats.Page.al, POSEntryStatistics.Page.al, POSEntryStatistics.Table.al, POSEntryStatisticsMgt.Codeunit.al, POSEntryStats.Query.al, POSSalespersonStats.Query.al, POSSalespersonStBuffer.Table.al, POSSalespersonTop20.Page.al, POSSingleSaleStatistics.Page.al, POSSingleStatistics.Query.al, POSSingleStatsBuffer.Table.al, POSSLDiscAmtType.Query.al, POSStatisticsMgt.Codeunit.al, RetailHeadlineSales.Query.al

@@ -1,52 +1,68 @@
 ---
 type: reference
-tags: [np-retail, commerce, distribution, tables, codeunits, pages]
-relates: [commerce/distribution/overview.md]
-updated: 2026-05-09
+tags: [commerce, distribution, np-retail, tables, codeunits, pages]
+relates:
+  - commerce/distribution/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/Distribution/DistribGroup.Page.al
+  - Application/src/Distribution/DistribGroup.Table.al
+  - Application/src/Distribution/DistribGroupList.Page.al
+  - Application/src/Distribution/DistribGroupMemberCard.Page.al
+  - Application/src/Distribution/DistribGroupMemberList.Page.al
+  - Application/src/Distribution/DistribGroupMembers.Table.al
+  - Application/src/Distribution/DistribGrpMembListpart.Page.al
+  - Application/src/Distribution/DistribMatrix.Page.al
+  - Application/src/Distribution/DistributionHeader.Page.al
+  - Application/src/Distribution/DistributionHeaders.Table.al
+  - Application/src/Distribution/DistributionLines.Page.al
+  - Application/src/Distribution/DistributionLines.Table.al
+  - Application/src/Distribution/DistributionMap.Table.al
+  - Application/src/Distribution/DistributionMgmt.Codeunit.al
+  - Application/src/Distribution/DistributionOrders.Page.al
+  - Application/src/Distribution/DistributionPlan.Page.al
+  - Application/src/Distribution/DistributionPlans.Page.al
+  - Application/src/Distribution/_public/DistributionSetup.Page.al
+  - Application/src/Distribution/_public/DistributionSetup.Table.al
 ---
 
 # Distribution — API Reference
 
 ## Tables
 
-| Table | Purpose |
-|-------|---------|
-| `NPR Distrib. Group` | Group header - `Code`, `Description`, `Warehouse Location` |
-| `NPR Distrib. Group Members` | Members - `Distribution Group`, `Distribution Member Id`, `Location`, `Distribution Share Pct.` |
-| `NPR Distribution Headers` | Plan - `Distribution Id`, `Distribution Group`, `Distribution Type` (Blocked/Manual/Automatic), `Required Date`, `Status` |
-| `NPR Distribution Lines` | Lines - `Distribution Id`, `Distribution Line`, `Distribution Group Member`, `Distribution Item`, `Item Hiearachy`, `Item Hiearachy Level`, `Location`, `Date Required`, `Description`, `Avaliable Quantity`, `Demanded Quantity`, `Distribution Quantity`, `Org. Distribution Quantity`, `Item Variant` |
-| `NPR Distribution Map` | Document linkage - `Distribution Id`, `Table ID`, `System ID` (links to Purchase Line or Transfer Line) |
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6151055 | "NPR Distrib. Group" | Distribution Group | "Code" | — |
+| 6151056 | "NPR Distrib. Group Members" | Distribution Group Members | "Distribution Member Id" | — |
+| 6151057 | "NPR Distribution Headers" | Distribution Group Setup | "Distribution Id" | — |
+| 6151058 | "NPR Distribution Lines" | Distribution Lines | "Distribution Id", "Distribution Line" | — |
+| 6014526 | "NPR Distribution Map" | Distribution Map | "Table Id", "Table Record Id" | — |
+| 6151059 | "NPR Distribution Setup" | Distribution Setup | "Distribution Group", "Item Hiearachy" | — |
+
 
 ## Codeunits
 
-### Codeunit 6151051 "NPR Distribution Mgmt" (Internal)
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6151051 | "NPR Distribution Mgmt" |  | CreateDistributionItem, CreateDistributionDocuments, CreateTransfOrders | — |
 
-Key procedures:
-
-- `CreateDistributionItem(DistributionId, ItemHierarchy, DistributionGroups)` — creates distribution lines from item hierarchy members:
-  - **Blocked type**: Error
-  - **Manual type**: Clears existing lines, iterates group members and hierarchy lines, calculates available quantity (inventory + purchase orders) vs. demanded quantity (from replenishment demand), applies distribution share percentage
-  - **Automatic type**: Not yet implemented
-- `CreateDistributionDocuments(var DistributionHeaders)` — generates purchase orders and transfer orders from approved distribution lines:
-  - Matches distribution lines to open purchase orders by item+location
-  - Creates transfer orders for remaining demand using warehouse stock
-  - Links resulting documents via `DistribTableMap`
-- `CreateTransfOrders(var DistributionLines, TransferQuantity)` — creates transfer header+line from DistributionLines:
-  - Uses `NPR Retail Replenishment Setup` for default transit location
-  - Creates DistributionMap entries for transfer tracking
 
 ## Pages
 
-| Page | Source Table | Purpose |
-|------|-------------|---------|
-| `DistribGroupList` | NPR Distrib. Group | Group list |
-| `DistribGroup` | NPR Distrib. Group | Group card |
-| `DistribGroupMemberList` | NPR Distrib. Group Members | Member list |
-| `DistribGroupMemberCard` | NPR Distrib. Group Members | Member card |
-| `DistribGrpMembListpart` | NPR Distrib. Group Members | Member list part |
-| `DistribMatrix` | — | Distribution planning matrix |
-| `DistributionPlans` | NPR Distribution Headers | Plan list |
-| `DistributionPlan` | NPR Distribution Headers | Plan card |
-| `DistributionHeaders` | NPR Distribution Headers | Header view |
-| `DistributionOrders` | — | Generated document list |
-| `DistributionLines` | NPR Distribution Lines | Line detail view |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6151056 | "NPR Distrib. Group" | Distribution Group | "NPR Distrib. Group" | — |
+| 6151055 | "NPR Distrib. Group List" | Distribution Groups | "NPR Distrib. Group" | — |
+| 6151068 | "NPR Distrib. Group Member Card" | Distribution Group Member | "NPR Distrib. Group Members" | — |
+| 6151069 | "NPR Distrib. Group Member List" | Distribution Group Member List | "NPR Distrib. Group Members" | — |
+| 6151058 | "NPR Distrib. Grp Memb Listpart" | Distribution Group Members | "NPR Distrib. Group Members" | — |
+| 6151061 | "NPR Distrib. Matrix" | Distribution Matrix | "NPR Item Hierarchy Line" | — |
+| 6151057 | "NPR Distribution Header" | Distribution Group Setup | "NPR Distribution Headers" | — |
+| 6151059 | "NPR Distribution Lines" | Distribution Lines | "NPR Distribution Lines" | — |
+| 6151067 | "NPR Distribution Orders" | Distribution Orders | "NPR Distribution Lines" | — |
+| 6151060 | "NPR Distribution Plan" | Distribution Plan | "NPR Distribution Headers" | — |
+| 6151063 | "NPR Distribution Plans" | Distribution Plans | "NPR Distribution Headers" | — |
+| 6151062 | "NPR Distribution Setup" | Distribution Setup | "NPR Distribution Setup" | — |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: DistribGroup.Page.al, DistribGroup.Table.al, DistribGroupList.Page.al, DistribGroupMemberCard.Page.al, DistribGroupMemberList.Page.al, DistribGroupMembers.Table.al, DistribGrpMembListpart.Page.al, DistribMatrix.Page.al, DistributionHeader.Page.al, DistributionHeaders.Table.al, DistributionLines.Page.al, DistributionLines.Table.al, DistributionMap.Table.al, DistributionMgmt.Codeunit.al, DistributionOrders.Page.al, DistributionPlan.Page.al, DistributionPlans.Page.al, DistributionSetup.Page.al, DistributionSetup.Table.al

@@ -1,55 +1,60 @@
 ---
 type: reference
-tags: [np-retail, commerce, digital-notification, tables, codeunits, pages, enums]
-relates: [commerce/digital-notification/overview.md]
-updated: 2026-05-09
+tags: [commerce, digital-notification, np-retail, tables, codeunits, pages, enums]
+relates:
+  - commerce/digital-notification/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/Digital Notification/CreateEcomOCNotif.Codeunit.al
+  - Application/src/Digital Notification/DigitalDocHeaderBuffer.Table.al
+  - Application/src/Digital Notification/DigitalDocLineBuffer.Table.al
+  - Application/src/Digital Notification/DigitalDocumentType.Enum.al
+  - Application/src/Digital Notification/DigitalNotifEntries.Page.al
+  - Application/src/Digital Notification/_public/DigitalNotifEvents.Codeunit.al
+  - Application/src/Digital Notification/DigitalNotificationEntry.Table.al
+  - Application/src/Digital Notification/DigitalNotificationSend.Codeunit.al
+  - Application/src/Digital Notification/DigitalNotificationSetup.Page.al
+  - Application/src/Digital Notification/DigitalNotificationSetup.Table.al
+  - Application/src/Digital Notification/_public/DigitalNotifType.Enum.al
+  - Application/src/Digital Notification/DigitalOrderNotifMgt.Codeunit.al
 ---
 
 # Digital Notification — API Reference
 
 ## Tables
 
-### "NPR Digital Notification Setup"
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6248184 | "NPR Digital Doc. Header Buffer" | Digital Document Header Buffer | "External Order No." | — |
+| 6248185 | "NPR Digital Doc. Line Buffer" | Digital Document Line Buffer | "External Order No.", "Line No." | — |
+| 6248181 | "NPR Digital Notification Entry" | Digital Notification Entry | "Entry No." | — |
+| 6248183 | "NPR Digital Notification Setup" | Digital Notification Setup | "Primary Key" | — |
 
-Fields: `Enabled`, `Max Attempts` (0=unlimited).
-
-### "NPR Digital Notification Entry"
-
-Fields: `Entry No.`, `Sent` (Boolean), `Attempt Count`, `Sent Date-Time`, `Email Template Id`, `Recipient E-mail`, `Language Code`, `Document Type`, `Error Message`.
-
-## Enums
-
-### "NPR Digital Document Type"
-
-Values: `Ecom Sales Document`, (additional retail document types).
 
 ## Codeunits
 
-### Codeunit 6150963 "NPR Digital Notification Send" (Internal, BC22+)
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6150946 | "NPR Create Ecom OC Notif" |  | — | — |
+| 6151156 | "NPR Dig. Notif. Events" |  | OnAfterGenerateContentExample, OnAfterAddExampleHeaderFieldsToJson, OnAfterAddExampleLineJson, OnAfterGetEcomSalesDocContent, OnAfterAddEcomSalesDocHeaderFieldsToJson | OnAfterGenerateContentExample, OnAfterAddExampleHeaderFieldsToJson, OnAfterAddExampleLineJson |
+| 6150963 | "NPR Digital Notification Send" |  | SendNotifications, SendNotification, SendNotification, SetJobQueueEntry, ResetAttemptCount | — |
+| 6150961 | "NPR Digital Order Notif. Mgt." |  | OnAfterPostSalesDocSendDigitalOrderConfirmation, SyncBucketIdToNotifEntry, TryCreateEcomDigitalNotification, TryCreateEcomOrderConfirmationNotification, SendDigitalOrderNotificationManual | — |
 
-Key procedures:
-
-- `SendNotifications()` — filters pending entries and sends each via `NPR NP Email`
-- `SendNotification(var NotifEntry): Boolean` — send single notification
-- `SendNotification(var NotifEntry, var AlreadySent): Boolean` — send with duplicate detection using UPDLOCK isolation
-- `SetJobQueueEntry(Create)` — create or cancel recurring job queue entry (1-min interval)
-- `ResetAttemptCount(var NotifEntry)` — reset sent status, attempt count, and error message
-- `FilterNotificationsToSend(var NotifEntry)` — filter unsent, non-Ecom entries with max attempts
-
-**Event Subscriber:**
-- `Codeunit NPR Job Queue Management - OnRefreshNPRJobQueueList` — auto-refreshes job queue when setup is enabled
-
-### Codeunit "DigitalOrderNotifMgt"
-
-Manages order notification lifecycle (creation of notification entries from document events).
 
 ## Pages
 
-| Page | Source Table | Purpose |
-|------|-------------|---------|
-| `DigitalNotificationSetup` | NPR Digital Notification Setup | Enable/disable, max attempts configuration |
-| `DigitalNotifEntries` | NPR Digital Notification Entry | Notification queue list with status |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6150918 | "NPR Digital Notif. Entries" | Digital Notification Entries | "NPR Digital Notification Entry" | — |
+| 6150919 | "NPR Digital Notification Setup" | Digital Notification Setup | "NPR Digital Notification Setup" | — |
 
-## Job Queue
 
-Recurring job entry: Object Type=Codeunit, Object ID=6150963, interval=1 minute. Description: "Digital Order Notifications Processor".
+## Enums
+
+| ID | Name | Caption | Values |
+| --- | --- | --- | --- |
+| 6151015 | "NPR Digital Document Type" | Invoice | Invoice, Credit Memo, Ecom Sales Document |
+| 6014634 | "NPR Dig. Notif. Type" | Digital Assets | Digital Assets, Order Confirmation |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: CreateEcomOCNotif.Codeunit.al, DigitalDocHeaderBuffer.Table.al, DigitalDocLineBuffer.Table.al, DigitalDocumentType.Enum.al, DigitalNotifEntries.Page.al, DigitalNotifEvents.Codeunit.al, DigitalNotificationEntry.Table.al, DigitalNotificationSend.Codeunit.al, DigitalNotificationSetup.Page.al, DigitalNotificationSetup.Table.al, DigitalNotifType.Enum.al, DigitalOrderNotifMgt.Codeunit.al

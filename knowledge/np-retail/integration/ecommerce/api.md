@@ -1,63 +1,70 @@
 ---
 type: reference
-tags: [np-retail, integration, ecommerce, tables, codeunits, pages, xmlports]
-relates: [integration/ecommerce/overview.md]
-updated: 2026-05-09
+tags: [integration, ecommerce, np-retail, tables, codeunits, pages, xmlports]
+relates:
+  - integration/ecommerce/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/Ecommerce/_public/NpEcCustomerMapping.Page.al
+  - Application/src/Ecommerce/_public/NpEcCustomerMapping.Table.al
+  - Application/src/Ecommerce/_public/NpEcDocument.Table.al
+  - Application/src/Ecommerce/NpEcPInvoiceImpCreate.Codeunit.al
+  - Application/src/Ecommerce/NpEcPInvoiceLook.Codeunit.al
+  - Application/src/Ecommerce/NpEcPurchDocImportMgt.Codeunit.al
+  - Application/src/Ecommerce/NpEcPurchInvoiceImport.XmlPort.al
+  - Application/src/Ecommerce/NpEcSalesDocImpMgt.Codeunit.al
+  - Application/src/Ecommerce/NpEcSalesOrderImport.XmlPort.al
+  - Application/src/Ecommerce/NpEcSOrderImpDelete.Codeunit.al
+  - Application/src/Ecommerce/NpEcSOrderImportCreate.Codeunit.al
+  - Application/src/Ecommerce/NpEcSOrderImportPost.Codeunit.al
+  - Application/src/Ecommerce/NpEcSOrderLookup.Codeunit.al
+  - Application/src/Ecommerce/_public/NpEcStore.Table.al
+  - Application/src/Ecommerce/_public/NpEcStoreCard.Page.al
+  - Application/src/Ecommerce/NpEcStores.Page.al
+  - Application/src/Ecommerce/_public/NpEcWebservice.Codeunit.al
 ---
 
 # Ecommerce — API Reference
 
 ## Tables
 
-### "NpEcStore"
-Store configuration master. Fields include endpoint URLs, authentication credentials, default mappings, and status flags for each configured ecommerce store.
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6151305 | "NPR NpEc Customer Mapping" | Customer Mapping | "Store Code", "Country/Region Code", "Post Code" | — |
+| 6151310 | "NPR NpEc Document" | E-Commerce Document | "Entry No." | — |
+| 6151300 | "NPR NpEc Store" | E-commerce Store | "Code" | — |
 
-### "NpEcDocument"
-Tracks imported documents (sales orders, purchase invoices). Links external ecommerce documents to their BC counterparts. Fields include `External Document No.`, `BC Document No.`, `Document Type`, `Status`, `Import Date/Time`.
-
-### "NpEcCustomerMapping"
-Maps ecommerce customer identifiers to BC Customer No. Fields: `Ecommerce Customer ID`, `BC Customer No.`, `Store Code`, `Last Sync Date`.
 
 ## Codeunits
 
-### "NpEcWebservice" (Public)
-Entry point for external web service calls from ecommerce platforms. Handles authentication, request routing, and response formatting.
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6151327 | "NPR NpEc P.Invoice Imp. Create" |  | RunProcessImportEntry, ImportPurchInvoices, ImportPurchInvoice, Load | — |
+| 6151326 | "NPR NpEc P.Invoice Look." |  | RunLookupImportEntry, GetInvoiceDocuments, RunPagePurchInvoice, RunPagePostedPurchInvoice, Load | — |
+| 6151321 | "NPR NpEc Purch.Doc.Import Mgt." |  | DeletePurchLines, DeleteNotes, InsertNote, InsertInvoiceHeader, InsertInvoiceLines | — |
+| 6151301 | "NPR NpEc Sales Doc. Imp. Mgt." |  | DeleteSalesLines, DeletePaymentLines, DeleteNotes, UpsertCustomer, InsertNote | — |
+| 6151305 | "NPR NpEc S.Order Imp. Delete" |  | RunProcessImportEntry, ImportSalesOrders, ImportSalesOrder, Load | — |
+| 6151303 | "NPR NpEc S.Order Import Create" |  | RunProcessImportEntry, ImportSalesOrders, ImportSalesOrder, Load | — |
+| 6151304 | "NPR NpEc S.Order Import (Post)" |  | RunProcessImportEntry, ImportSalesOrders, ImportSalesOrder, PostSalesOrder, SendSalesInvoice | — |
+| 6151302 | "NPR NpEc S.Order Lookup" |  | RunLookupImportEntry, GetOrderDocuments, RunPageSalesOrder, RunPageSalesInvoice, Load | — |
+| 6151300 | "NPR NpEc Webservice" |  | CreateSalesOrder, ProcessImportEntry, PostSalesOrder, DeleteSalesOrder, CreatePurchaseInvoice | — |
 
-### "NpEcSalesDocImpMgt"
-Manages the import lifecycle of sales documents: fetch from ecommerce system, validate, transform to BC sales orders.
-
-### "NpEcPurchDocImportMgt"
-Manages the import lifecycle of purchase documents: fetch from ecommerce system, validate, transform to BC purchase invoices.
-
-### "NpEcSOrderImportCreate"
-Creates BC sales orders from imported ecommerce sales order data. Handles line-item mapping, pricing, and customer resolution.
-
-### "NpEcSOrderImportPost"
-Posts completed sales orders in BC after successful validation.
-
-### "NpEcSOrderLookup"
-Looks up order status and details in the ecommerce system from within BC.
-
-### "NpEcSOrderImpDelete"
-Cleans up failed or cancelled import records and associated temporary data.
-
-### "NpEcPInvoiceImpCreate"
-Creates BC purchase invoices from imported ecommerce purchase invoice data.
-
-### "NpEcPInvoiceLook"
-Looks up purchase invoice status in the ecommerce system.
 
 ## Pages
 
-| Page | Source Table | Purpose |
-|------|-------------|---------|
-| `NpEcStores` | NpEcStore | List of ecommerce stores |
-| `NpEcStoreCard` | NpEcStore | Store detail card |
-| `NpEcCustomerMapping` | NpEcCustomerMapping | Customer mapping entries |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6151305 | "NPR NpEc Customer Mapping" | Np E-commerce Customer Mapping | "NPR NpEc Customer Mapping" | — |
+| 6151301 | "NPR NpEc Store Card" | E-commerce Store Card | "NPR NpEc Store" | — |
+| 6151300 | "NPR NpEc Stores" | E-commerce Stores | "NPR NpEc Store" | — |
 
-## XMLPorts
 
-| XMLPort | Purpose |
-|---------|---------|
-| `NpEcSalesOrderImport` | Defines XML schema for importing sales orders from ecommerce platforms |
-| `NpEcPurchInvoiceImport` | Defines XML schema for importing purchase invoices from ecommerce platforms |
+## XmlPorts
+
+| ID | Name | Caption | Description |
+| --- | --- | --- | --- |
+| 6151306 | "NPR NpEc Purch. Invoice Import" | Magento Purchase Invoice Import | — |
+| 6151300 | "NPR NpEc Sales Order Import" | Magento Sales Order Import | — |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: NpEcCustomerMapping.Page.al, NpEcCustomerMapping.Table.al, NpEcDocument.Table.al, NpEcPInvoiceImpCreate.Codeunit.al, NpEcPInvoiceLook.Codeunit.al, NpEcPurchDocImportMgt.Codeunit.al, NpEcPurchInvoiceImport.XmlPort.al, NpEcSalesDocImpMgt.Codeunit.al, NpEcSalesOrderImport.XmlPort.al, NpEcSOrderImpDelete.Codeunit.al, NpEcSOrderImportCreate.Codeunit.al, NpEcSOrderImportPost.Codeunit.al, NpEcSOrderLookup.Codeunit.al, NpEcStore.Table.al, NpEcStoreCard.Page.al, NpEcStores.Page.al, NpEcWebservice.Codeunit.al

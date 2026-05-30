@@ -1,9 +1,25 @@
 ---
 type: reference
-tags: [np-retail, pos, pos-data-source, tables, codeunits, pages, events]
+tags: [pos, pos-data-source, np-retail, tables, codeunits, pages]
 relates:
-  - np-retail/pos/pos-data-source/overview.md
-updated: 2026-05-09
+  - pos/pos-data-source/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/POS Data Source/POSDataDriverDim.Codeunit.al
+  - Application/src/POS Data Source/POSDataDriverDiscount.Codeunit.al
+  - Application/src/POS Data Source/POSDataDriverExchRate.Codeunit.al
+  - Application/src/POS Data Source/POSDataDriverPayLine.Codeunit.al
+  - Application/src/POS Data Source/POSDataDriverRegBal.Codeunit.al
+  - Application/src/POS Data Source/POSDataDriverSale.Codeunit.al
+  - Application/src/POS Data Source/POSDataDriverSaleLine.Codeunit.al
+  - Application/src/POS Data Source/_public/POSDataManagement.Codeunit.al
+  - Application/src/POS Data Source/POSDataMgmtInternal.Codeunit.al
+  - Application/src/POS Data Source/POSDataSourceDiscovery.Table.al
+  - Application/src/POS Data Source/POSDataSources.Page.al
+  - Application/src/POS Data Source/POS Data Refresh/POSRefreshData.Codeunit.al
+  - Application/src/POS Data Source/POS Data Refresh/POSRefreshPaymentLine.Codeunit.al
+  - Application/src/POS Data Source/POS Data Refresh/POSRefreshSale.Codeunit.al
+  - Application/src/POS Data Source/POS Data Refresh/POSRefreshSaleLine.Codeunit.al
 ---
 
 # POS Data Source — API Reference
@@ -11,67 +27,34 @@ updated: 2026-05-09
 ## Tables
 
 | ID | Name | Caption | Key Fields | Description |
-|----|------|---------|------------|-------------|
-| 6150708 | NPR POS Data Source Discovery | POS Data Source | Name (Code[50], PK) | Temporary-only table for discovering/registering data sources via business event |
+| --- | --- | --- | --- | --- |
+| 6150708 | "NPR POS Data Source Discovery" | POS Data Source | Name | — |
 
-### NPR POS Data Source Discovery Key Procedures
-
-| Procedure | Description |
-|-----------|-------------|
-| `RegisterDataSource(Name, Description)` | Register a new data source (temporary context only) |
-| `LookupDataSource(var DataSourceName): Boolean` | Opens lookup page for data source selection |
-| `DiscoverDataSources()` | Fires `OnDiscoverDataSource` business event |
 
 ## Codeunits
 
-| ID | Name | Purpose |
-|----|------|---------|
-| 6150790 | NPR POS Data Mgmt. Internal | Internal data source management — resolution, binding, record-to-dataset conversion |
-| — | NPR POS Data Management | Public API for data source extension registration (external module surface) |
-| — | POSDataDriverSale | Built-in Sale data source driver |
-| — | POSDataDriverSaleLine | Built-in Sale Line data source driver |
-| — | POSDataDriverPayLine | Built-in Payment Line data source driver |
-| — | POSDataDriverRegBal | Register Balance data source driver |
-| — | POSDataDriverDiscount | Discount data source driver |
-| — | POSDataDriverDim | Dimension data source driver |
-| — | POSDataDriverExchRate | Exchange Rate data source driver |
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6150732 | "NPR POS Data Driver: Dim." |  | ThisExtension, OnDiscoverDataSourceExtensions, OnGetDataSourceExtension, AddDimensionCode, OnDataSourceExtensionReadData | — |
+| 6014669 | "NPR POS Data Driver: Discount" |  | ThisExtension, OnDiscoverDataSourceExtension, OnGetDataSourceExtension, OnDataSourceExtensionReadData, GetDiscountTypeString | — |
+| 6150715 | "NPR POS Data Driver: ExchRate" |  | ThisExtension, OnDiscoverDataSourceExtensions, OnGetDataSourceExtension, OnDataSourceExtensionReadData | — |
+| 6150713 | "NPR POS Data Driver: Pay. Line" |  | GetDataSource, RefreshDataSet, SetPosition, OnDiscoverDataSource | — |
+| 6150714 | "NPR POS Data Driver: Reg. Bal." |  | — | — |
+| 6150711 | "NPR POS Data Driver - Sale" |  | GetDataSource, RefreshDataSet, SetPosition, ReadDataSourceVariables, POSDataManagementModified | — |
+| 6150712 | "NPR POS Data Driver: Sale Line" |  | GetDataSource, RefreshDataSet, OnAfterReadDataSourceRow, SetPosition, OnDiscoverDataSource | — |
+| 6150710 | "NPR POS Data Management" |  | AddFieldToDataSource, AddFieldToDataSource, OnGetDataSource, OnAfterGetDataSource, OnDiscoverDataSourceExtensions | OnGetDataSource, OnAfterGetDataSource, OnDiscoverDataSourceExtensions |
+| 6150790 | "NPR POS Data Mgmt. Internal" |  | SetupDefaultDataSourcesForView, GetDataSource, RecordToDataSet, NavOneRecordToDataRow, AddFieldToDataSource | — |
+| 6150791 | "NPR POS Refresh Data" |  | StartDataCollection, Refresh, SetFullRefresh | — |
+| 6150784 | "NPR POS Refresh Payment Line" |  | GetDeltaData, GetRows, GetFullDataInCurrentSale, Insert, Delete | — |
+| 6150749 | "NPR POS Refresh Sale" |  | GetDeltaData, GetRows, GetFullDataInCurrentSale, Insert, Delete | — |
+| 6150693 | "NPR POS Refresh Sale Line" |  | GetDeltaData, GetRows, GetFullDataInCurrentSale, Insert, Delete | — |
 
-### NPR POS Data Mgmt. Internal Key Procedures
-
-| Procedure | Description |
-|-----------|-------------|
-| `SetupDefaultDataSourcesForView(View, Setup)` | Registers default data sources (BuiltInSaleLine, BuiltInSale, BuiltInPaymentLine) |
-| `GetDataSource(Name, var DataSource, Setup)` | Resolves data source by name via `OnGetDataSource`, discovers/loads extensions |
-| `RecordToDataSet(Record, var CurrDataSet, DataSource, POSSession, FrontEnd)` | Convert BC records to `NPR Data Set` with typed columns and positions |
-| `NavOneRecordToDataRow(RecRef, DataRow, DataSource, POSSession, FrontEnd)` | Map one BC record to a data row, handling extensions and variables |
-| `AddFieldToDataSource(DataSource, Record, FieldNo, Visible, Editable)` | Add a BC field as a typed data source column with auto-detected type mapping |
-
-### Data Type Mapping (AddFieldToDataSource)
-
-| BC Type | NPR Data Type | Width |
-|---------|---------------|-------|
-| Boolean | Boolean | 2 |
-| Date / DateTime / Time | DateTime | 4 |
-| Decimal | Decimal | 5 |
-| Integer / BigInteger | Integer | 4 |
-| Option / Text / Code | String | 10/13/16/20 (by length) |
 
 ## Pages
 
-| Name | Source Table | Purpose |
-|------|-------------|---------|
-| NPR POS Data Sources | NPR POS Data Source Discovery (temp) | Lookup page for data source selection |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6150708 | "NPR POS Data Sources" | POS Data Sources | "NPR POS Data Source Discovery" | — |
 
-## Events
-
-| Event | Source | Type | Description |
-|-------|--------|------|-------------|
-| OnDiscoverDataSource | NPR POS Data Source Discovery | Business | Register available data sources |
-| OnGetDataSource | NPR POS Data Management | — | Resolve data source name to implementation codeunit |
-| OnDiscoverDataSourceExtensions | NPR POS Data Management | — | Register extensions for a data source |
-| OnGetDataSourceExtension | NPR POS Data Management | — | Resolve extension implementation |
-| OnAfterGetDataSource | NPR POS Data Management | — | Post-resolution customization |
-| OnAfterReadDataSourceRow | NPR POS Data Management | — | Post-row-read transformations |
-| OnReadDataSourceVariables | NPR POS Data Management | — | Populate variable/calculated columns |
-| OnAfterReadDataSourceVariables | NPR POS Data Management | — | Post-variable-read transformations |
-| OnDataSourceExtensionReadData | NPR POS Data Management | — | Populate extension data per row |
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: POSDataDriverDim.Codeunit.al, POSDataDriverDiscount.Codeunit.al, POSDataDriverExchRate.Codeunit.al, POSDataDriverPayLine.Codeunit.al, POSDataDriverRegBal.Codeunit.al, POSDataDriverSale.Codeunit.al, POSDataDriverSaleLine.Codeunit.al, POSDataManagement.Codeunit.al, POSDataMgmtInternal.Codeunit.al, POSDataSourceDiscovery.Table.al, POSDataSources.Page.al, POSRefreshData.Codeunit.al, POSRefreshPaymentLine.Codeunit.al, POSRefreshSale.Codeunit.al, POSRefreshSaleLine.Codeunit.al

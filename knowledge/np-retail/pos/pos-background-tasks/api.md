@@ -1,56 +1,46 @@
 ---
 type: reference
-tags: [np-retail, pos, pos-background-tasks, codeunits, interfaces, enums]
+tags: [pos, pos-background-tasks, np-retail, codeunits, enums, interfaces]
 relates:
-  - np-retail/pos/pos-background-tasks/overview.md
-updated: 2026-05-09
+  - pos/pos-background-tasks/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/POS Background Tasks/Example/POSActionTaskExample.Codeunit.al
+  - Application/src/POS Background Tasks/POSAPIStackCheck.Codeunit.al
+  - Application/src/POS Background Tasks/API/_public/POSBackgroundTask.Enum.al
+  - Application/src/POS Background Tasks/API/_public/POSBackgroundTask.Interface.al
+  - Application/src/POS Background Tasks/API/_public/POSBackgroundTaskAPI.Codeunit.al
+  - Application/src/POS Background Tasks/POSBackgrTaskManager.Codeunit.al
+  - Application/src/POS Background Tasks/POSPageStackCheck.Codeunit.al
+  - Application/src/POS Background Tasks/UnknownPOSBgndTask.Codeunit.al
 ---
 
 # POS Background Tasks — API Reference
 
 ## Codeunits
 
-| ID | Name | SingleInstance | Purpose |
-|----|------|---------------|---------|
-| 6059869 | NPR POS Backgr. Task Manager | Yes | Central task queue manager. Enqueues, dispatches, and handles completion/error/cancellation for background tasks |
-| — | POSAPIStackCheck | No | Verifies AL callstack originated from POS API trigger |
-| — | POSPageStackCheck | No | Verifies AL callstack originated from POS Page trigger |
-| — | UnknownPOSBgndTask | No | Default handler for unregistered task types |
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6059862 | "NPR POSAction - Task Example" |  | Register, RunWorkflow, ExecuteBackgroundTask, BackgroundTaskSuccessContinuation, BackgroundTaskErrorContinuation | — |
+| 6151585 | "NPR POS API Stack Check" |  | CurrentStackWasStartedByPOSAPI, OnCurrentStackWasStartedByPOSAPI, OnCurrentStackWasStartedByPOSAPIPublisher | — |
+| 6059863 | "NPR POS Background Task API" |  | Initialize, EnqueuePOSBackgroundTask, CancelBackgroundTask, ErrorIfNotInitialized | — |
+| 6059869 | "NPR POS Backgr. Task Manager" |  | EnqueuePOSBackgroundTask, CancelPOSBackgroundTask, GetQueue, GetCancellationQueue, TryGetPBTTaskId | — |
+| 6059864 | "NPR POS Page Stack Check" |  | CurrentStackWasStartedByPOSTrigger, OnCurrentStackWasStartedByPOSTrigger, OnCurrentStackWasStartedByPOSTriggerPublisher | — |
+| 6059868 | "NPR Unknown POS Bgnd. Task" |  | ExecuteBackgroundTask, BackgroundTaskSuccessContinuation, BackgroundTaskErrorContinuation, BackgroundTaskCancelled | — |
 
-### Codeunit Details
-
-**NPR POS Backgr. Task Manager** (6059869):
-
-| Procedure | Description |
-|-----------|-------------|
-| `EnqueuePOSBackgroundTask(var WrapperTaskIdOut, TaskImplementation, var Parameters, Timeout)` | Queue a task for execution. Validates stack origin. Generates wrapper task ID |
-| `CancelPOSBackgroundTask(WrapperTaskId)` | Cancel a queued task by wrapper ID |
-| `GetQueue(var QueuedTasksOut)` | Returns list of queued wrapper task IDs |
-| `GetCancellationQueue(var QueuedCancellationsOut)` | Returns list of cancellation requests |
-| `TryGetPBTTaskId(WrapperTaskId, var PBTTaskIdOut): Boolean` | Resolves wrapper ID to platform PB task ID |
-| `GetQueuedTask(WrapperTaskId, var ParametersOut, var TimeoutOut)` | Retrieves task parameters for execution |
-| `AddMappedId(PBTTaskId, WrapperTaskId)` | Registers mapping between platform and wrapper IDs |
-| `ClearQueues()` | Clears all internal queues |
-| `BackgroundTaskCompleted(PBTTaskId, Results)` | Called by POS page on successful completion → calls `BackgroundTaskSuccessContinuation` |
-| `BackgroundTaskError(PBTTaskId, ErrorCode, ErrorText, ErrorCallStack, var IsHandled)` | Called on error → captures Sentry span, calls `BackgroundTaskErrorContinuation` |
-| `BackgroundTaskCancelled(PBTTaskId)` | Called on cancellation → calls `BackgroundTaskCancelled` on implementation |
-| `CleanupTaskStateBeforeContinuation(PBTTaskId)` | Removes all state for a completed/errored/cancelled task |
-
-## Interface
-
-### NPR POS Background Task
-
-Implemented by enum value codeunits. Procedures:
-
-| Procedure | Signature | Context |
-|-----------|-----------|---------|
-| `ExecuteBackgroundTask` | `(TaskId: Integer; Parameters: Dictionary of [Text, Text]; var Results: Dictionary of [Text, Text])` | Background session |
-| `BackgroundTaskSuccessContinuation` | `(TaskId: Integer; Parameters: Dictionary of [Text, Text]; Results: Dictionary of [Text, Text])` | User thread |
-| `BackgroundTaskErrorContinuation` | `(TaskId: Integer; Parameters: Dictionary of [Text, Text]; ErrorCode: Text; ErrorText: Text; ErrorCallStack: Text)` | User thread |
-| `BackgroundTaskCancelled` | `(TaskId: Integer; Parameters: Dictionary of [Text, Text])` | User thread |
 
 ## Enums
 
-| Name | Values | Purpose |
-|------|--------|---------|
-| NPR POS Background Task | (extensible) | Maps enum values to codeunit implementations via interface. Each value implements NPR POS Background Task |
+| ID | Name | Caption | Values |
+| --- | --- | --- | --- |
+| 6014505 | "NPR POS Background Task" | Example | Example, EFT_NETS_CLOUD_TRX, EFT_NETS_CLOUD_LOOKUP, EFT_NETS_CLOUD_ABORT, EFT_ADYEN_CLOUD_ABORT, EFT_ADYEN_CLOUD_TRX, EFT_ADYEN_CLOUD_ACQ_CARD, EFT_ADYEN_CLOUD_ACQ_ABORT |
+
+
+## Interfaces
+
+| Name | Procedures |
+| --- | --- |
+| "NPR POS Background Task" | ExecuteBackgroundTask, BackgroundTaskSuccessContinuation, BackgroundTaskErrorContinuation, BackgroundTaskCancelled |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: POSActionTaskExample.Codeunit.al, POSAPIStackCheck.Codeunit.al, POSBackgroundTask.Enum.al, POSBackgroundTask.Interface.al, POSBackgroundTaskAPI.Codeunit.al, POSBackgrTaskManager.Codeunit.al, POSPageStackCheck.Codeunit.al, UnknownPOSBgndTask.Codeunit.al

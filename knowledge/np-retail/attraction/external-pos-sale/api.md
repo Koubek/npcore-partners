@@ -1,76 +1,66 @@
 ---
 type: reference
-tags: [np-retail, attraction, external-pos-sale, tables, codeunits, pages, events]
-relates: [np-retail/attraction/external-pos-sale/overview.md]
-updated: 2026-05-09
+tags: [attraction, external-pos-sale, np-retail, tables, codeunits, pages]
+relates:
+  - attraction/external-pos-sale/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/External POS Sale/ExternalPOSSale.Table.al
+  - Application/src/External POS Sale/_public/ExternalPOSSaleBuf.Table.al
+  - Application/src/External POS Sale/ExternalPOSSaleCard.Page.al
+  - Application/src/External POS Sale/ExternalPOSSaleEftLine.Table.al
+  - Application/src/External POS Sale/ExternalPOSSaleEvents.Codeunit.al
+  - Application/src/External POS Sale/ExternalPOSSaleLine.Table.al
+  - Application/src/External POS Sale/ExternalPOSSalePaySub.Page.al
+  - Application/src/External POS Sale/_public/ExternalPOSSalePub.Codeunit.al
+  - Application/src/External POS Sale/ExternalPOSSales.Page.al
+  - Application/src/External POS Sale/ExternalPOSSaleSubform.Page.al
+  - Application/src/External POS Sale/ExtPOSSaleConverter.Codeunit.al
+  - Application/src/External POS Sale/ExtPOSSaleLookup.Codeunit.al
+  - Application/src/External POS Sale/ExtPOSSaleProcessing.Codeunit.al
+  - Application/src/External POS Sale/ExtPOSSaleProcessor.Codeunit.al
+  - Application/src/External POS Sale/JobQueues/ExtSaleConvertJQ.Codeunit.al
+  - Application/src/External POS Sale/JobQueues/ExtSaleEmailJQ.Codeunit.al
+  - Application/src/External POS Sale/JobQueues/ExtSaleSMSJQ.Codeunit.al
+  - Application/src/External POS Sale/GetExternalPOSSale.Codeunit.al
 ---
 
 # External POS Sale — API Reference
 
 ## Tables
 
-| ID | Name | Caption | Key Fields | Notes |
-|----|------|---------|------------|-------|
-| 6014606 | NPR External POS Sale | External POS Sale | Entry No. (PK) | Sale header; dimensions, posting setup, receipt delivery, conversion status |
-| 6014605 | NPR External POS Sale Line | External POS Sale Line | External POS Sale Entry No., Line No. | Sale lines with full item tracking, VAT, discount, dimensions |
-| 6150988 | NPR External POS Sale Eft Line | — | External POS Sale Entry No., External Pos SaleLine No | EFT data per payment line; Base64 blob, processing type, NP Pay integration |
-| — | ExternalPOSSaleBuf | — (temporary, _public) | — | Buffer table for public API consumption |
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6014606 | "NPR External POS Sale" | External POS Sale | "Entry No." | — |
+| 6151293 | "NPR External POS Sale Buf" | Entry No. | "Entry No." | — |
+| 6150988 | "NPR External POS Sale Eft Line" | External POS Sale Entry No. | "External POS Sale Entry No.", "External Pos SaleLine No" | — |
+| 6014605 | "NPR External POS Sale Line" | External POS Sale Line | "External POS Sale Entry No.", "Line No." | — |
 
-### NPR External POS Sale (6014606)
-Key fields: Entry No. (Integer, AutoIncrement), Register No. (Code[10]), Sales Ticket No. (Code[20]), POS Store Code, Salesperson Code, Date, Start Time, Location Code, Customer No., Country Code, Gen. Bus. Posting Group, Prices Including VAT, External Document No., Tax Area Code, Tax Liable, VAT Bus. Posting Group, Event No., User ID, External Pos Id, External Pos Sale Id, Send Receipt: Email/SMS, Converted To POS Entry, Has Conversion Error, POS Entry No. Multiple keys for conversion status/receipt delivery queries.
-
-### NPR External POS Sale Line (6014605)
-Key fields: External POS Sale Entry No., Register No., Sales Ticket No., Line No., Line Type (Enum NPR POS Sale Line Type), No., Description, Unit of Measure Code, Quantity, Qty. per Unit of Measure, Unit Price, Price Includes VAT, VAT %, VAT Base Amount, Discount %, Discount Amount, Amount, Amount Including VAT, Currency Code, Variant Code, Serial No., Location Code, Gen. Bus./VAT posting groups, Dimension Set ID, Item Category Code, Return Reason Code, Unit Cost. Full OnValidate dispatch per line type.
-
-### NPR External POS Sale Eft Line (6150988)
-Fields: External POS Sale Entry No., External Pos SaleLine No, Base64Data (Blob), EFT Type (Option: NP Pay), EFT Entry No (→ NPR EFT Transaction Request), Processing Type (Option: PAYMENT/REFUND/OPEN/CLOSE/etc.), EFT Reference (Text[50]).
 
 ## Codeunits
 
-| ID | Name | Purpose |
-|----|------|---------|
-| 6014637 | NPR Ext. POS Sale Converter | Converts external sale to POS Entry; processes EFT data in NpPay/Adyen format |
-| 6014642 | NPR Ext. POS Sale Lookup | Import entry lookup handler; opens ExternalPOS Sale card |
-| 6248233 | NPR Ext. POS Sale Processing | Auto-fill, validation, and balance checking before conversion |
-| 6014625 | NPR Ext. POS Sale Processor | Process handler for import entries; runs converter |
-| 6248188 | NPR External POS Sale Events | Integration events for partner extensibility |
-| 6014648 | NPR Get External POS Sale | Import update handler; polls unconverted sales, creates import entries |
-| — | ExternalPOSSalePub | (_public) Public API codeunit |
-| — | ExtSaleConvertJQ | Job queue: batch conversion worker |
-| — | ExtSaleEmailJQ | Job queue: email receipt delivery |
-| — | ExtSaleSMSJQ | Job queue: SMS receipt delivery |
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6248188 | "NPR External POS Sale Events" |  | OnAfterInsertPaymentLineFromRestApi | OnAfterInsertPaymentLineFromRestApi |
+| 6248222 | "NPR External POS Sale Pub" |  | GetBySystemId, GetByPOSEntrySystemId, FindSetByRegisterNo, FindSetByConvertedToPOSEntry, FindSetByEmailReceiptSent | OnExternalPOSSaleCustomerLookupByPhoneNo |
+| 6014637 | "NPR Ext. POS Sale Converter" |  | CreateEftData, CreateNewEFTTransactionRequest, EFTTransactionRequestPrefill, EFTTransactionRequestIntegrationHandle, NpPayEftIntegrationHandler | — |
+| 6014642 | "NPR Ext. POS Sale Lookup" |  | RunLookupImportEntry, LookupExtPOSSale | — |
+| 6248233 | "NPR Ext. POS Sale Processing" |  | TryAutoFillExternalPOSSale, TryAutoFillExternalPOSSaleLine, ValidateExternalPOSData, ValidateSaleLinesData, ValidateBalance | — |
+| 6014625 | "NPR Ext. POS Sale Processor" |  | RunProcessImportEntry, ProcessImportEntry, GetExternalPOSSale, RegisterNcImportType, DeleteNCImportType | — |
+| 6248236 | "NPR Ext. Sale Convert JQ" |  | RunAddExtPOSSaleConversionJobQueue, AddExtPOSSaleConversionJobQueue, GetExternalSaleCategory | — |
+| 6248239 | "NPR Ext. Sale Email JQ" |  | SendEmailReceipt, RunAddExtPOSSaleSendEmailReceiptJobQueue, AddExtPOSSaleSendEmailReceiptJobQueue | — |
+| 6248238 | "NPR Ext. Sale SMS JQ" |  | ExtPosSaleQueueSMSReceipt, RunAddExtPOSSaleSMSReceiptJobQueue, AddExtPOSSaleSMSReceiptJobQueue | — |
+| 6014648 | "NPR Get External POS Sale" |  | Update, Update, ShowSetup, ShowErrorLog, GetNewEntries | — |
 
-### NPR Ext. POS Sale Converter (6014637)
-Key procedures:
-- OnRun — main entry: validates, assigns receipt no., processes EFT data, calls POSCreateEntry
-- CreateEftData — iterates payment lines, converts NP Pay EFT data to EFTTransactionRequest
-- NpPayEftIntegrationHandler — parses Adyen response, maps payment types
-
-### NPR Ext. POS Sale Processing (6248233)
-Key procedures:
-- TryAutoFillExternalPOSSale — fills defaults from POS unit/store/posting profile
-- TryAutoFillExternalPOSSaleLine — fills VAT, discounts, UoM per line type
-- ValidateExternalPOSData — checks conversion flag, line data, balance (sale amount = paid amount + rounding)
-- AddConversionError — marks sale with error flag and message
-
-### NPR Ext. POS Sale Processor (6014625)
-- ProcessImportEntry — resolves RecordId from import entry, runs converter
-- RegisterNcImportType / DeleteNCImportType — manages import type registration
-
-### NPR External POS Sale Events (6248188)
-- OnAfterInsertPaymentLineFromRestApi — integration event for custom payment processing via REST API
-
-### NPR Get External POS Sale (6014648)
-- Update(JobQueueEntry) — polls External POS Sale for unconverted entries
-- GetNewEntries — iterates sales with Auto Process enabled, creates import entries
-- ShowErrorLog — opens filtered list of failed conversions
-- Shows conversion errors; no custom setup
 
 ## Pages
 
-| Name | Source Table | Notes |
-|------|-------------|-------|
-| NPR External POS Sale Card | NPR External POS Sale | Card page for editing/completing external sales |
-| NPR External POS Sales | NPR External POS Sale | List page for external sales |
-| NPR External POS Sale Subform | NPR External POS Sale Line | Subpage for sale lines |
-| NPR External POS Sale Pay Sub | NPR External POS Sale Line (payments) | Subpage for payment lines |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6059801 | "NPR External POS Sale Card" | External POS Sale | "NPR External POS Sale" | — |
+| 6184902 | "NPR External POS Sale Pay Sub" | External POS Sale Subform | "NPR External POS Sale Line" | — |
+| 6059776 | "NPR External POS Sales" | External POS Sales List | "NPR External POS Sale" | — |
+| 6059774 | "NPR External POS Sale Subform" | External POS Sale Subform | "NPR External POS Sale Line" | — |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: ExternalPOSSale.Table.al, ExternalPOSSaleBuf.Table.al, ExternalPOSSaleCard.Page.al, ExternalPOSSaleEftLine.Table.al, ExternalPOSSaleEvents.Codeunit.al, ExternalPOSSaleLine.Table.al, ExternalPOSSalePaySub.Page.al, ExternalPOSSalePub.Codeunit.al, ExternalPOSSales.Page.al, ExternalPOSSaleSubform.Page.al, ExtPOSSaleConverter.Codeunit.al, ExtPOSSaleLookup.Codeunit.al, ExtPOSSaleProcessing.Codeunit.al, ExtPOSSaleProcessor.Codeunit.al, ExtSaleConvertJQ.Codeunit.al, ExtSaleEmailJQ.Codeunit.al, ExtSaleSMSJQ.Codeunit.al, GetExternalPOSSale.Codeunit.al

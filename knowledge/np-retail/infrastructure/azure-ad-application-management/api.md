@@ -1,8 +1,14 @@
 ---
 type: reference
-tags: [np-retail, infrastructure, azure-ad]
-relates: [np-retail/infrastructure/azure-ad-application-management/overview.md]
-updated: 2026-05-09
+tags: [infrastructure, azure-ad, np-retail, tables, codeunits, pages]
+relates:
+  - infrastructure/azure-ad-application-management/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/Azure AD Application Management/AADApplicationMgt.Codeunit.al
+  - Application/src/Azure AD Application Management/EntraAppPermission.Table.al
+  - Application/src/Azure AD Application Management/EntraAppPermissions.Page.al
+  - Application/src/Azure AD Application Management/EntraAppRegistration.Page.al
 ---
 
 # Azure AD Application Management — API Reference
@@ -10,36 +16,23 @@ updated: 2026-05-09
 ## Tables
 
 | ID | Name | Caption | Key Fields | Description |
-|----|------|---------|------------|-------------|
-| 6150915 | "NPR Entra App Permission" | Entra App Permission | Permission Set ID (Code[20], clustered, Temporary) | Temporary table for permission set picker. FlowField `Permission Set Name` calculated from `Aggregate Permission Set`. Validates that `NPR NP RETAIL` cannot be assigned |
+| --- | --- | --- | --- | --- |
+| 6150915 | "NPR Entra App Permission" | Entra App Permission | "Permission Set ID" | — |
+
 
 ## Codeunits
 
-| ID | Name | Caption | Key Procedures | Description |
-|----|------|---------|---------------|-------------|
-| 6060060 | "NPR AAD Application Mgt." | NPR AAD Application Mgt. | CreateAzureADApplicationAndSecret (4 overloads), CreateAzureADSecret, RegenerateEntraAppSecret, RegisterAzureADApplication, GetApplicationIDAndSecret, SetSilent, TryGrantConsentToApp, SynchronizeEntraAppPermissionSets, GetConsentGranted, GetErrorMessages | Full lifecycle management of Entra ID apps via Graph API. All secret-related procedures are `[NonDebuggable]` |
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6060060 | "NPR AAD Application Mgt." |  | CreateAzureADApplicationAndSecret, CreateAzureADApplicationAndSecret, CreateAzureADSecret, RegenerateEntraAppSecret, DeleteAzureADApplication | — |
+
 
 ## Pages
 
-| ID | Name | Caption | Type | Description |
-|----|------|---------|------|-------------|
-| — | "NPR Entra App Permissions" | Entra App Permissions | — | Page for managing permission sets assigned to an Entra ID application |
-| — | "NPR Entra App Registration" | Entra App Registration | — | Page for registering/creating Entra ID applications |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6184804 | "NPR Entra App Permissions" | Entra App Permissions | "NPR Entra App Permission" | — |
+| 6184803 | "NPR Entra App Registration" | Microsoft Entra Application Registration Wizard | — | — |
 
-## Key Procedures Detail
-
-### NPR AAD Application Mgt. (6060060)
-
-| Category | Procedure | Parameters | Access | Description |
-|----------|-----------|------------|--------|-------------|
-| **Creation** | `CreateAzureADApplicationAndSecret` | AppDisplayName, SecretDisplayName, PermissionSets (List of Code[20]) | Internal | Creates new Entra ID app (or reuses existing), grants admin consent, creates secret, registers in BC, assigns permission sets |
-| **Creation** | `CreateAzureADApplicationAndSecret` | AppDisplayName, SecretDisplayName, PermissionSets, RegenerateSecret (Boolean) | Internal | Overload with regenerate option for reusing existing apps |
-| **Secrets** | `CreateAzureADSecret` | ApplicationId (Guid), DisplayName (Text) | Internal | Creates a new secret for an existing Entra ID app via Graph API `addPassword`. Errors if app not found |
-| **Secrets** | `RegenerateEntraAppSecret` | var EntraApp (Record "AAD Application"), WithConfirmDialog (Boolean) | Internal | Regenerates secret with optional confirmation dialog |
-| **Registration** | `RegisterAzureADApplication` | ClientID (Guid), DisplayName (Text[50]), PermissionSets (List of Code[20]) | Internal | Registers an Entra ID app in Business Central by creating AAD Application record and assigning permission sets |
-| **Query** | `GetApplicationIDAndSecret` | var ClientID (Guid), var ClientSecret (Text) | Internal (NonDebuggable) | Returns the last created application's ID and secret |
-| **Silent** | `SetSilent` | Silent (Boolean) | Internal | Sets silent mode — suppresses all messages and errors (collected via GetErrorMessages instead) |
-| **Consent** | `TryGrantConsentToApp` | ClientId (Guid), TenantId (Text), var PermissionGrantErrorTxt (Text) | Internal | Grants admin consent via OAuth2. Returns success/failure. Retries up to 3 times with 20s delay |
-| **Synchronize** | `SynchronizeEntraAppPermissionSets` | var AADApplication, RemoveAllExistingFirst, PermissionSets | Internal | Syncs permission sets for an app — optionally deletes existing first, then adds all specified sets |
-| **Query** | `GetConsentGranted` | — | Internal | Returns whether admin consent was successfully granted in the last operation |
-| **Query** | `GetErrorMessages` | var ErrorMessages (List of Text) | Internal | Returns collected error messages from silent operations |
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: AADApplicationMgt.Codeunit.al, EntraAppPermission.Table.al, EntraAppPermissions.Page.al, EntraAppRegistration.Page.al

@@ -1,60 +1,100 @@
 ---
 type: reference
-tags: [np-retail, infrastructure, reimbursement]
-relates: [np-retail/infrastructure/reimbursement/overview.md]
-updated: 2026-05-09
+tags: [infrastructure, reimbursement, np-retail, tables, codeunits, pages, enums]
+relates:
+  - infrastructure/reimbursement/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/Reimbursement/NpRiAccountType.Enum.al
+  - Application/src/Reimbursement/NpRiCollectCustLedgers.Codeunit.al
+  - Application/src/Reimbursement/NpRiCollectGLEntries.Codeunit.al
+  - Application/src/Reimbursement/NpRiCollectLoyPoints.Codeunit.al
+  - Application/src/Reimbursement/NpRiCollVendorLedgers.Codeunit.al
+  - Application/src/Reimbursement/_public/NpRiDataCollectionMgt.Codeunit.al
+  - Application/src/Reimbursement/NpRiParties.Page.al
+  - Application/src/Reimbursement/_public/NpRiParty.Table.al
+  - Application/src/Reimbursement/_public/NpRiPartyType.Table.al
+  - Application/src/Reimbursement/NpRiPartyTypes.Page.al
+  - Application/src/Reimbursement/NpRiProvisionSetup.Page.al
+  - Application/src/Reimbursement/NpRiProvisionSetup.Table.al
+  - Application/src/Reimbursement/NpRiPurchDocDiscSetup.Page.al
+  - Application/src/Reimbursement/NpRiPurchDocDiscSetup.Table.al
+  - Application/src/Reimbursement/_public/NpRiReimbursement.Table.al
+  - Application/src/Reimbursement/_public/NpRiReimbursementEntry.Table.al
+  - Application/src/Reimbursement/_public/NpRiReimbursementMgt.Codeunit.al
+  - Application/src/Reimbursement/_public/NpRiReimbursementModule.Table.al
+  - Application/src/Reimbursement/_public/NpRiReimbursements.Page.al
+  - Application/src/Reimbursement/_public/NpRiReimbursementTempl.Page.al
+  - Application/src/Reimbursement/_public/NpRiReimbursementTempl.Table.al
+  - Application/src/Reimbursement/_public/NpRiReimbursEntries.Page.al
+  - Application/src/Reimbursement/NpRiReimburseProvision.Codeunit.al
+  - Application/src/Reimbursement/NpRiReimbursModules.Page.al
+  - Application/src/Reimbursement/NpRiReimPurchDocDisc.Codeunit.al
+  - Application/src/Reimbursement/NpRiReimSalesInv.Codeunit.al
+  - Application/src/Reimbursement/NpRiSalesInvSetup.Page.al
+  - Application/src/Reimbursement/NpRiSalesInvSetup.Table.al
+  - Application/src/Reimbursement/NpRiSalesInvSetupLine.Table.al
+  - Application/src/Reimbursement/_public/NpRiSetupMgt.Codeunit.al
+  - Application/src/Reimbursement/NpRiSInvSetupSubpage.Page.al
+  - Application/src/Reimbursement/NpRiTaskQueueMgt.Codeunit.al
 ---
 
-# Reimbursement Module — API Reference
+# Reimbursement — API Reference
 
-## Tables (Public)
+## Tables
 
 | ID | Name | Caption | Key Fields | Description |
-|----|------|---------|------------|-------------|
-| 6151102 | "NPR NpRi Reimbursement" | Reimbursement | Party Type, Party No., Template Code | Main reimbursement record: tracks collection/reimbursement dates, balance via FlowField, deactivation flag, date range filters |
-| 6151105 | "NPR NpRi Party" | Reimbursement Party | Party Type, No. | Party definition with schedule (Reimburse every, Next Posting Date Calculation), polymorphic lookup via Table No. |
-| — | "NPR NpRi Party Type" | Party Type | Code | Party type definitions with default schedule values and target table mapping |
-| — | "NPR NpRi Reimbursement Template" | Reimbursement Template | Code | Template defining data collection module, reimbursement module, posting description, data collection filters (XML) |
-| — | "NPR NpRi Reimbursement Entry" | Reimbursement Entry | Party Type, Party No., Template Code, Entry Type, Open, Posting Date | Individual entry: Data Collection, Manual Application, or Reimbursement type, with Amount, Remaining Amount, Open/Closed tracking |
-| — | "NPR NpRi Reimbursement Module" | Reimbursement Module | Code | Registered reimbursement module definitions |
-| — | "NPR NpRi Provision Setup" | Provision Setup | — | Configuration for provision-based reimbursement |
-| — | "NPR NpRi Purch. Doc. Disc. Setup" | Purchase Doc Discount Setup | — | Configuration for purchase document discount reimbursement |
-| — | "NPR NpRi Sales Inv. Setup" | Sales Invoice Setup | — | Configuration for sales invoice reimbursement |
-| — | "NPR NpRi Sales Inv. Setup Line" | Sales Invoice Setup Line | — | Line details for sales invoice reimbursement setup |
+| --- | --- | --- | --- | --- |
+| 6151105 | "NPR NpRi Party" | Reimbursement Party | "Party Type", "No." | — |
+| 6151104 | "NPR NpRi Party Type" | Reimbursement Party Type | "Code" | — |
+| 6151106 | "NPR NpRi Provision Setup" | Provision Reimbursement Setup | "Template Code" | — |
+| 6151107 | "NPR NpRi Purch.Doc.Disc. Setup" | Purchase Document Discount Reimbursement Setup | "Template Code" | — |
+| 6151102 | "NPR NpRi Reimbursement" | Reimbursement | "Party Type", "Party No.", "Template Code" | — |
+| 6151103 | "NPR NpRi Reimbursement Entry" | Reimbursement Entry | "Entry No." | — |
+| 6151100 | "NPR NpRi Reimbursement Module" | Reimbursement Module | "Code" | — |
+| 6151101 | "NPR NpRi Reimbursement Templ." | Reimbursement Template | "Code" | — |
+| 6151110 | "NPR NpRi Sales Inv. Setup" | Sales Invoice Reimbursement Setup | "Template Code" | — |
+| 6151111 | "NPR NpRi Sales Inv. Setup Line" | Sales Invoice Reimbursement Setup Line | "Template Code", "Line No." | — |
+
 
 ## Codeunits
 
-| ID | Name | Access | Description |
-|----|------|--------|-------------|
-| 6151101 | "NPR NpRi Data Collection Mgt." | Internal | Data collection engine: RunDataCollections, RunDataCollection, InsertEntry, InitEntry, request page management, filter persistence as XML |
-| 6151102 | "NPR NpRi Reimbursement Mgt." | Internal | Reimbursement engine: RunReimbursements, RunReimbursement, ManualApplyEntries, CancelManualApplication, CalculateApplyEntry |
-| — | "NPR NpRi Collect Cust. Ledgers" | — | Collects outstanding customer ledger entries |
-| — | "NPR NpRi Collect Vendor Ledgers" | — | Collects outstanding vendor ledger entries |
-| — | "NPR NpRi Collect GL Entries" | — | Collects general ledger entries |
-| — | "NPR NpRi Collect Loy. Points" | — | Collects loyalty point balances |
-| — | "NPR NpRi Reimburse Purch. Doc. Disc." | — | Creates reimbursements for purchase document discounts |
-| — | "NPR NpRi Reimburse Sales Inv." | — | Creates reimbursements for sales invoices |
-| — | "NPR NpRi Reimburse Provision" | — | Handles provision-based reimbursement |
-| — | "NPR NpRi Task Queue Mgt." | — | Manages task queue scheduling for reimbursement jobs |
-| — | "NPR NpRi Setup Mgt." | Public | Setup management for the reimbursement module |
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6151104 | "NPR NpRi Collect Cust. Ledgers" |  | DiscoverCustomerLedgers, CustomerLedgerCode, HasTemplateFilters, SetupTemplateFilters, OnSetupPartyTypeTableNoLookup | — |
+| 6151109 | "NPR NpRi Collect G/L Entries" |  | DiscoverGLEntries, ModuleCode, HasTemplateFilters, SetupTemplateFilters, OnSetupPartyTypeTableNoLookup | — |
+| 6151108 | "NPR NpRi Collect Loy. Points" |  | DiscoverMemberLoyaltyPoints, MemberLoyaltyPointsCode, HasTemplateFilters, SetupTemplateFilters, OnSetupPartyTypeTableNoLookup | — |
+| 6151103 | "NPR NpRi Coll. Vendor Ledgers" |  | DiscoverVendorLedgers, VendorLedgerCode, HasTemplateFilters, SetupTemplateFilters, OnSetupPartyTypeTableNoLookup | — |
+| 6151101 | "NPR NpRi Data Collection Mgt." |  | HasTemplateFilters, SetupTemplateFilters, AddRequestField, RunRequestPage, InitRequestPage | HasTemplateFilters, SetupTemplateFilters |
+| 6151102 | "NPR NpRi Reimbursement Mgt." |  | HasTemplateParameters, SetupTemplateParameters, ManualApplyEntries, CreateManualApplicationEntry, UpdateManualApplicationEntry | HasTemplateParameters, SetupTemplateParameters |
+| 6151105 | "NPR NpRi Reimburse Provision" |  | DiscoverProvision, ProvisionCode, OnBeforeDeleteTemplate, HasTemplateParameters, SetupTemplateParameters | — |
+| 6151107 | "NPR NpRi Reim. Purch.Doc.Disc." |  | DiscoverPurchDocDiscCode, PurchDocDiscCode, OnBeforeDeleteTemplate, HasTemplateParameters, SetupTemplateParameters | — |
+| 6151110 | "NPR NpRi Reim. Sales Inv." |  | DiscoverSalesInv, ModuleCode, OnBeforeDeleteTemplate, HasTemplateParameters, SetupTemplateParameters | — |
+| 6151100 | "NPR NpRi Setup Mgt." |  | DiscoverModules, SetupPartyTypeTableNoLookup, ShowEntrySource | DiscoverModules, SetupPartyTypeTableNoLookup |
+| 6151106 | "NPR NpRi Task Queue Mgt." |  | ParamRunDataCollections, ParamRunReimbursements, RunDataCollections, RunReimbursements | — |
 
-## Pages (Public)
 
-| ID | Name | PageType | SourceTable | Description |
-|----|------|----------|-------------|-------------|
-| — | "NPR NpRi Parties" | List | NPR NpRi Party | Party list page |
-| — | "NPR NpRi Party Types" | List | NPR NpRi Party Type | Party type configuration |
-| — | "NPR NpRi Reimbursements" | List | NPR NpRi Reimbursement | Reimbursement list |
-| — | "NPR NpRi Reimbursement Entries" | List | NPR NpRi Reimbursement Entry | Reimbursement entries list |
-| — | "NPR NpRi Reimbursement Templates" | List | NPR NpRi Reimbursement Templ. | Template configuration |
-| — | "NPR NpRi Reimbursement Modules" | List | NPR NpRi Reimbursement Module | Registered module list |
-| — | "NPR NpRi Provision Setup" | Card | NPR NpRi Provision Setup | Provision setup card |
-| — | "NPR NpRi Purch. Doc. Disc. Setup" | Card | NPR NpRi PurchDocDiscSetup | Purchase discount setup |
-| — | "NPR NpRi Sales Inv. Setup" | Card | NPR NpRi SalesInvSetup | Sales invoice setup |
-| — | "NPR NpRi Sales Inv. Setup Subpage" | ListPart | NPR NpRi SalesInvSetupLine | Setup line subpage |
+## Pages
+
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6151105 | "NPR NpRi Parties" | Reimbursement Parties | "NPR NpRi Party" | — |
+| 6151104 | "NPR NpRi Party Types" | Reimbursement Party Types | "NPR NpRi Party Type" | — |
+| 6151106 | "NPR NpRi Provision Setup" | Reimbursement Provision Setup | "NPR NpRi Provision Setup" | — |
+| 6151107 | "NPR NpRi Purch.Doc.Disc. Setup" | Purchase Document Discount Reimbursement Setup | "NPR NpRi Purch.Doc.Disc. Setup" | — |
+| 6151102 | "NPR NpRi Reimbursements" | Reimbursements | "NPR NpRi Reimbursement" | — |
+| 6151101 | "NPR NpRi Reimbursement Templ." | Reimbursement Templates | "NPR NpRi Reimbursement Templ." | — |
+| 6151103 | "NPR NpRi Reimburs. Entries" | Reimbursement Entries | "NPR NpRi Reimbursement Entry" | — |
+| 6151100 | "NPR NpRi Reimburs. Modules" | Reimbursement Modules | "NPR NpRi Reimbursement Module" | — |
+| 6151110 | "NPR NpRi Sales Inv. Setup" | Sales Invoice Reimbursement Setup | "NPR NpRi Sales Inv. Setup" | — |
+| 6151111 | "NPR NpRi S. Inv. SetupSubpage" | Lines | "NPR NpRi Sales Inv. Setup Line" | — |
+
 
 ## Enums
 
-| ID | Name | Caption | Values | Description |
-|----|------|---------|--------|-------------|
-| — | "NPR NpRi Account Type" | Account Type | — | Distinguishes account types for reimbursement entries |
+| ID | Name | Caption | Values |
+| --- | --- | --- | --- |
+| 6151100 | "NPR NpRi Account Type" | G/L Account | G/L Account, Customer, Vendor, Bank Account, Fixed Asset, IC Partner, Membership |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: NpRiAccountType.Enum.al, NpRiCollectCustLedgers.Codeunit.al, NpRiCollectGLEntries.Codeunit.al, NpRiCollectLoyPoints.Codeunit.al, NpRiCollVendorLedgers.Codeunit.al, NpRiDataCollectionMgt.Codeunit.al, NpRiParties.Page.al, NpRiParty.Table.al, NpRiPartyType.Table.al, NpRiPartyTypes.Page.al, NpRiProvisionSetup.Page.al, NpRiProvisionSetup.Table.al, NpRiPurchDocDiscSetup.Page.al, NpRiPurchDocDiscSetup.Table.al, NpRiReimbursement.Table.al, NpRiReimbursementEntry.Table.al, NpRiReimbursementMgt.Codeunit.al, NpRiReimbursementModule.Table.al, NpRiReimbursements.Page.al, NpRiReimbursementTempl.Page.al, NpRiReimbursementTempl.Table.al, NpRiReimbursEntries.Page.al, NpRiReimburseProvision.Codeunit.al, NpRiReimbursModules.Page.al, NpRiReimPurchDocDisc.Codeunit.al, NpRiReimSalesInv.Codeunit.al, NpRiSalesInvSetup.Page.al, NpRiSalesInvSetup.Table.al, NpRiSalesInvSetupLine.Table.al, NpRiSetupMgt.Codeunit.al, NpRiSInvSetupSubpage.Page.al, NpRiTaskQueueMgt.Codeunit.al

@@ -1,45 +1,74 @@
 ---
 type: reference
-tags: [np-retail, commerce, digital-receipt, tables, codeunits, pages, enums]
-relates: [commerce/digital-receipt/overview.md]
-updated: 2026-05-09
+tags: [commerce, digital-receipt, np-retail, tables, codeunits, pages, enums]
+relates:
+  - commerce/digital-receipt/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/Digital Receipt/DigitalRcptSetup.Table.al
+  - Application/src/Digital Receipt/DigitalReceiptSetup.Page.al
+  - Application/src/Digital Receipt/DigitalReceiptSetup.Table.al
+  - Application/src/Digital Receipt/FiskalyAPI.Codeunit.al
+  - Application/src/Digital Receipt/PDFDigitalReceiptViewer.Page.al
+  - Application/src/Digital Receipt/POSReceiptProfile.Page.al
+  - Application/src/Digital Receipt/POSReceiptProfile.Table.al
+  - Application/src/Digital Receipt/POSReceiptProfiles.Page.al
+  - Application/src/Digital Receipt/POSSaleDigitalRcptEntries.Page.al
+  - Application/src/Digital Receipt/POSSaleDigitalReceiptEntry.Table.al
+  - Application/src/Digital Receipt/POSSaleDigReceiptEntry.Table.al
+  - Application/src/Digital Receipt/QRCodeSetup/_public/QRCodeIntegrationType.Enum.al
+  - Application/src/Digital Receipt/QRCodeSetup/QRCodeSetup.Page.al
+  - Application/src/Digital Receipt/QRCodeSetup/QRCodeSetupHeader.Table.al
+  - Application/src/Digital Receipt/QRCodeSetup/QRCodeSetupLine.Page.al
+  - Application/src/Digital Receipt/QRCodeSetup/QRCodeSetupLine.Table.al
+  - Application/src/Digital Receipt/QRCodeSetup/QRCodeSetupLines.Page.al
+  - Application/src/Digital Receipt/QRCodeSetup/QRCodeSetupList.Page.al
+  - Application/src/Digital Receipt/ShowQRCodeOn.Enum.al
 ---
 
 # Digital Receipt — API Reference
 
 ## Tables
 
-| Table | Purpose |
-|-------|---------|
-| `DigitalRcptSetup` | Global setup flags |
-| `DigitalReceiptSetup` | Delivery configuration (email, SMS, QR) |
-| `POSReceiptProfile` | Per-POS-unit receipt profile (method, format, delay) |
-| `POSSaleDigReceiptEntry` | Links POS sale to digital receipt delivery |
-| `POSSaleDigitalReceiptEntry` | Extended receipt entry (delivery status, timestamps) |
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6059859 | "NPR Digital Rcpt. Setup" | Digital Receipt Setup | Code | — |
+| 6059853 | "NPR Digital Receipt Setup" | Digital Receipt Setup | Code | — |
+| 6150742 | "NPR POS Receipt Profile" | POS Receipt Profile | "Code" | — |
+| 6059852 | "NPR POSSaleDigitalReceiptEntry" | POS Sale Digital Receipt Entry | Id, PDFLink | — |
+| 6151216 | "NPR POSSale Dig. Receipt Entry" | POS Sale Digital Receipt Entry | "Entry No." | — |
+| 6059926 | "NPR QR Code Setup Header" | QR Code Setup Header | "Code" | — |
+| 6059927 | "NPR QR Code Setup Line" | QR Code Setup Line | "QR Code Setup Header Code", "POS Unit No." | — |
 
-## Enums
-
-### "ShowQRCodeOn"
-
-Controls when QR code is displayed. Values typical for receipt-on-phone scenarios.
 
 ## Codeunits
 
-### Codeunit "FiskalyAPI"
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6184663 | "NPR Fiskaly API" |  | TryCallApiPost, TryCallAPIPost, TryCallApiAuth, TryCallAPIAuth, ExtractBearerToken | — |
 
-Fiskaly cloud API client for DSFinV-K (German cash register compliance). Required for markets where digital receipts must be archived with fiscal verification.
 
 ## Pages
 
-| Page | Source Table | Purpose |
-|------|-------------|---------|
-| `DigitalReceiptSetup` | DigitalReceiptSetup | Global digital receipt configuration |
-| `POSReceiptProfile` | POSReceiptProfile | Per-unit profile card |
-| `POSReceiptProfiles` | POSReceiptProfile | Profile list |
-| `POSSaleDigReceiptEntry` | POSSaleDigReceiptEntry | Sale-linked receipt entry |
-| `POSSaleDigitalRcptEntries` | POSSaleDigitalReceiptEntry | Digital receipt list |
-| `PDFDigitalReceiptViewer` | — | PDF preview for digital receipts |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6150797 | "NPR Digital Receipt Setup" | Digital Receipt Setup | "NPR Digital Rcpt. Setup" | — |
+| 6151320 | "NPR PDF Digital Receipt Viewer" | PDF Digital Receipt Preview | "NPR POSSale Dig. Receipt Entry" | — |
+| 6150757 | "NPR POS Receipt Profile" | POS Receipt Profile | "NPR POS Receipt Profile" | — |
+| 6151321 | "NPR POS Receipt Profiles" | POS Receipt Profiles | "NPR POS Receipt Profile" | — |
+| 6151322 | "NPR POSSaleDigitalRcptEntries" | POS Sale Digital Receipt Entries | "NPR POSSale Dig. Receipt Entry" | — |
+| 6185080 | "NPR QR Code Setup" | QR Code Setup | "NPR QR Code Setup Header" | — |
+| 6150955 | "NPR QR Code Setup Line" | QR Code Setup Line | "NPR QR Code Setup Line" | — |
+| 6150954 | "NPR QR Code Setup Lines" | QR Code Setup Lines | "NPR QR Code Setup Line" | — |
+| 6150956 | "NPR QR Code Setup List" | QR Code Setup List | "NPR QR Code Setup Header" | — |
 
-## Subdirectory: QRCodeSetup
 
-Contains QR code generation and display configuration files.
+## Enums
+
+| ID | Name | Caption | Values |
+| --- | --- | --- | --- |
+| 6014613 | "NPR QRCode Integration Type" |   |  , Adyen |
+| 6014617 | "NPR Show QR Code On" | On Screen | On Screen, Terminal |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: DigitalRcptSetup.Table.al, DigitalReceiptSetup.Page.al, DigitalReceiptSetup.Table.al, FiskalyAPI.Codeunit.al, PDFDigitalReceiptViewer.Page.al, POSReceiptProfile.Page.al, POSReceiptProfile.Table.al, POSReceiptProfiles.Page.al, POSSaleDigitalRcptEntries.Page.al, POSSaleDigitalReceiptEntry.Table.al, POSSaleDigReceiptEntry.Table.al, QRCodeIntegrationType.Enum.al, QRCodeSetup.Page.al, QRCodeSetupHeader.Table.al, QRCodeSetupLine.Page.al, QRCodeSetupLine.Table.al, QRCodeSetupLines.Page.al, QRCodeSetupList.Page.al, ShowQRCodeOn.Enum.al

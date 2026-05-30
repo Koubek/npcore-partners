@@ -1,72 +1,54 @@
 ---
 type: reference
-tags: [np-retail, pos, pos-billing, tables, codeunits, enums, pages]
+tags: [pos, pos-billing, np-retail, tables, codeunits, pages, enums]
 relates:
-  - np-retail/pos/pos-billing/overview.md
-updated: 2026-05-09
+  - pos/pos-billing/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/POS Billing/UI/POSLicBillAllowances.Page.al
+  - Application/src/POS Billing/Data/POSLicBillingAllowance.Table.al
+  - Application/src/POS Billing/POSLicBillingLicType.Enum.al
+  - Application/src/POS Billing/POSLicBillUserStatus.Enum.al
+  - Application/src/POS Billing/POSLicenseBillingFeat.Codeunit.al
+  - Application/src/POS Billing/POSLicenseBillingMgt.Codeunit.al
+  - Application/src/POS Billing/POSLicenseBillingUpgrd.Codeunit.al
+  - Application/src/POS Billing/Data/POSLicenseBillingUser.Table.al
+  - Application/src/POS Billing/UI/POSLicenseBillingUsers.Page.al
 ---
 
 # POS Billing — API Reference
 
-## Enums
-
-| ID | Name | Values | Extensible |
-|----|------|--------|------------|
-| 6059949 | NPR POS Lic. Billing Lic. Type | _(0), months03(3), months12(12) | false |
-| — | NPR POS Lic. Bill. User Status | Active, SuspendedAutomatically, SuspendedManually | — |
-
 ## Tables
 
-| ID | Name | Key Fields | Description |
-|----|------|------------|-------------|
-| — | NPR POS License Billing User | User Security ID, License Type, Status | Per-user license assignment with status tracking |
-| — | NPR POS Lic. Billing Allowance | Pool Id, License Type | License allowance per pool (synced from billing API). Fields: Name, Total Licenses, Tenant Id, Environment Name, Company Name, Status, Renewal Month/Day, Period Months, Valid Since/Until, Created/Updated At |
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6151278 | "NPR POS Lic. Billing Allowance" | NPR POS License Billing Allowance | "Pool Id", "License Type" | — |
+| 6151229 | "NPR POS License Billing User" | POS License Billing User | "User Security ID" | — |
+
 
 ## Codeunits
 
-| ID | Name | SingleInstance | Purpose |
-|----|------|---------------|---------|
-| 6248524 | NPR POS License Billing Mgt. | Yes | Core license billing logic. Handles API sync, user validation, allowance enforcement |
-| — | NPR POS License Billing Feat. | No | Feature flag for license billing |
-| — | NPR POS License Billing Upgrd. | No | Upgrade codeunit for schema/data migration |
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6248537 | "NPR POS License Billing Feat." |  | AddFeature, IsFeatureEnabled, SetFeatureEnabled | — |
+| 6248524 | "NPR POS License Billing Mgt." |  | GetAllowedLicenses, GetCustomerPortalUrl, ForceSyncCurrentLicenseAllowanceFromApi, OnActivateLicensedUser, GetAllowanceDictionaryPerLicenseType | — |
+| 6248547 | "NPR POS License Billing Upgrd." |  | AddPOSLicenseBillingFeature | — |
 
-### NPR POS License Billing Mgt. Key Procedures
-
-| Procedure | Description |
-|-----------|-------------|
-| `GetAllowedLicenses(): Integer` | *(Obsolete — per-user model)* |
-| `GetCustomerPortalUrl(): Text` | Returns URL for buying more licenses |
-| `ForceSyncCurrentLicenseAllowanceFromApi(): Boolean` | Force re-sync allowances from billing API |
-| `OnActivateLicensedUser(var POSLicBillingUser)` | Validates user activation against allowance limits |
-| `GetAllowanceDictionaryPerLicenseType(var SuccessSynced): Dictionary of [Integer, Integer]` | Returns license type → allowance mapping |
-| `SyncTenantEnvironmentCompany(ShowErrorMessage)` | Syncs tenant → environment → company hierarchy |
-| `ProceedLicenseValidationFromPOS()` | Entry point from POS Session initialization |
-| `TrySyncTenantEnvironmentCompany()` | Try-function for hierarchy sync |
-| `SyncTenant()` | Check/create tenant in billing API |
-| `SyncEnvironment()` | Check/create environment |
-| `SyncCompany()` | Check/create company |
-| `TenantExists(): Boolean` | Checks via GET /tenants/{id} |
-| `CreateTenant()` | POST /tenants with Azure AD domain |
-| `EnvironmentExists(): Boolean` | Checks via GET /tenants/{id}/environments/{name} |
-| `CreateEnvironment()` | POST /tenants/{id}/environments |
-| `CompanyExists(): Boolean` | Checks via GET /tenants/{id}/environments/{env}/companies/{name} |
-| `CreateCompany()` | POST /tenants/{id}/environments/{env}/companies |
-| `SyncCurrentLicenseAllowanceFromApi(): Boolean` | Refresh + persist + invalidate |
-| `PersistLicenseAllowance(var AllowanceTemp)` | Merge API allowances into table |
-| `InvalidateLicensedUsers()` | Mark users exceeding allowance as SuspendedAutomatically |
-| `ParseLicenseAllowanceJsonToTable(var JsonParser, var AllowanceTemp)` | Parse API JSON response |
-| `UpdateLastLogin()` | Update last login timestamp (5-min throttle) |
-
-### Events
-
-| Event | Source | Type | Description |
-|-------|--------|------|-------------|
-| OnPOSSessionInitialize | POS Session, OnInitialize | EventSubscriber | Triggers license validation from POS start |
-| OnAfterValidateStatusEvent | NPR POS License Billing User, AfterValidate Status | EventSubscriber | Validates user activation on status change |
 
 ## Pages
 
-| Name | Source Table | Purpose |
-|------|-------------|---------|
-| — | NPR POS License Billing User (list+card) | User license assignment management |
-| — | NPR POS Lic. Billing Allowance (list) | Allowance overview per pool |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6248205 | "NPR POS Lic. Bill. Allowances" |  | "NPR POS Lic. Billing Allowance" | — |
+| 6185094 | "NPR POS License Billing Users" | NPR Licensed Users | "NPR POS License Billing User" | — |
+
+
+## Enums
+
+| ID | Name | Caption | Values |
+| --- | --- | --- | --- |
+| 6059949 | "NPR POS Lic. Billing Lic. Type" | POS License Billing License Type | _, months03, months12 |
+| 6059948 | "NPR POS Lic. Bill. User Status" | POS License Billing User Status | _, Pending, Active, DisabledManually, SuspendedAutomatically |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: POSLicBillAllowances.Page.al, POSLicBillingAllowance.Table.al, POSLicBillingLicType.Enum.al, POSLicBillUserStatus.Enum.al, POSLicenseBillingFeat.Codeunit.al, POSLicenseBillingMgt.Codeunit.al, POSLicenseBillingUpgrd.Codeunit.al, POSLicenseBillingUser.Table.al, POSLicenseBillingUsers.Page.al
