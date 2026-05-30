@@ -492,7 +492,7 @@ function New-ObjectTable {
     [void]$sb.AppendLine("")
     $headerLine = "| " + ($headers -join " | ") + " |"
     [void]$sb.AppendLine($headerLine)
-    $sepLine = "| " + ($headers | ForEach-Object { "---" } -join " | ") + " |"
+    $sepLine = "| " + (($headers | ForEach-Object { "---" }) -join " | ") + " |"
     [void]$sb.AppendLine($sepLine)
     foreach ($row in $rows) {
         [void]$sb.AppendLine("| $row |")
