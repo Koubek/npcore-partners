@@ -186,9 +186,9 @@ function Get-ALObjects {
         SourceFiles     = [System.Collections.ArrayList]::new()
     }
 
-    if (-not (Test-Path $modulePath)) { return $result }
+    if (-not (Test-Path -LiteralPath $modulePath)) { return $result }
 
-    $alFiles = Get-ChildItem $modulePath -Recurse -Filter "*.al" | Sort-Object Name
+    $alFiles = Get-ChildItem -LiteralPath $modulePath -Recurse -Filter "*.al" | Sort-Object Name
     if (-not $alFiles) { return $result }
 
     foreach ($file in $alFiles) {
