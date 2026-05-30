@@ -59,7 +59,7 @@ if (-not $ConfigPath) {
 
 # ---------- Config loading ----------
 
-$config = Get-Content $ConfigPath -Raw -Encoding UTF8 | ConvertFrom-Json
+$config = Get-Content -LiteralPath $ConfigPath -Raw -Encoding UTF8 | ConvertFrom-Json
 
 $kbRoot = $config.kbRoot
 if (-not [System.IO.Path]::IsPathRooted($kbRoot)) {
@@ -75,7 +75,7 @@ $moduleFilterList = if ($ModuleFilter) { $ModuleFilter -split ',' | ForEach-Obje
 function Read-LastCommit {
     param([string]$changeFile)
     if (-not (Test-Path $changeFile)) { return $null }
-    $content = Get-Content $changeFile -Raw -Encoding UTF8
+    $content = Get-Content -LiteralPath $changeFile -Raw -Encoding UTF8
     if ($content -match 'Last Processed Commit:\s*\**\s*(.+)') {
         $commit = $matches[1]
         if ($commit -eq '(none — initial scaffold)' -or $commit -eq '(initial build — set on first update)') { return $null }
@@ -186,15 +186,14 @@ function Get-ALObjects {
         SourceFiles     = [System.Collections.ArrayList]::new()
     }
 
-    $alFiles = @()
-    if (Test-Path -LiteralPath $modulePath) {
-        $alFiles = [System.IO.Directory]::GetFiles($modulePath, "*.al", [System.IO.SearchOption]::AllDirectories) | ForEach-Object { Get-Item -LiteralPath $_ } | Sort-Object Name
-    }
+    if (-not (Test-Path $modulePath)) { return $result }
+
+    $alFiles = Get-ChildItem -LiteralPath $modulePath -Recurse -Filter "*.al" | Sort-Object Name
     if (-not $alFiles) { return $result }
 
     foreach ($file in $alFiles) {
         [void]$result.SourceFiles.Add($file.FullName)
-        $raw = Get-Content $file.FullName -Raw -Encoding UTF8
+        $raw = Get-Content -LiteralPath $file.FullName -Raw -Encoding UTF8
         if (-not $raw) { continue }
         $cleaned = Strip-ALComments $raw
 
@@ -493,7 +492,7 @@ function New-ObjectTable {
     [void]$sb.AppendLine("")
     $headerLine = "| " + ($headers -join " | ") + " |"
     [void]$sb.AppendLine($headerLine)
-    $sepLine = "| " + (($headers | ForEach-Object { "---" }) -join " | ") + " |"
+    $sepLine = "| " + ($headers | ForEach-Object { "---" } -join " | ") + " |"
     [void]$sb.AppendLine($sepLine)
     foreach ($row in $rows) {
         [void]$sb.AppendLine("| $row |")
@@ -728,7 +727,7 @@ function Update-SubDomainIndexMd {
 
     # Walk all modules in this sub-domain
     $entries = @()
-    $subDirs = Get-ChildItem $subDomainDir -Directory | Sort-Object Name
+    $subDirs = Get-ChildItem -LiteralPath $subDomainDir -Directory | Sort-Object Name
     foreach ($dir in $subDirs) {
         $overviewFile = Join-Path $dir.FullName "overview.md"
         $apiFile = Join-Path $dir.FullName "api.md"
@@ -743,7 +742,7 @@ function Update-SubDomainIndexMd {
         if (Test-Path $apiFile) {
             $apTags = @("np-retail") + $tagCols
             # Read api.md frontmatter for object type tags
-            $apContent = Get-Content $apiFile -Raw -Encoding UTF8
+            $apContent = Get-Content -LiteralPath $apiFile -Raw -Encoding UTF8
             $objTypes = @()
             if ($apContent -match 'tags:\s*\[([^\]]+)\]') {
                 $allTags = $matches[1] -split ',\s*' | ForEach-Object { $_.Trim().Trim('"') }
@@ -820,7 +819,7 @@ function Update-ChangeTracking {
         Write-Warning "change-tracking.md not found at $filePath"
         return
     }
-    $content = Get-Content $filePath -Raw -Encoding UTF8
+    $content = Get-Content -LiteralPath $filePath -Raw -Encoding UTF8
     $content = $content -replace '(?<=Last Processed Commit:)(\**\s*)\S.*', "`$1$newCommit"
     $content = $content -replace '(?<=Last Processed Date:).*', " $today"
     $content = $content -replace '(?<=Modules with pending updates:).*', " (none)"
@@ -838,7 +837,7 @@ function Update-ObjectRegistry {
         Write-Warning "_object-registry.md not found at $filePath"
         return
     }
-    $content = Get-Content $filePath -Raw -Encoding UTF8
+    $content = Get-Content -LiteralPath $filePath -Raw -Encoding UTF8
 
     # Parse existing entries into a lookup: ModuleName → { text, references }
     $existingSections = $content -split "`n(?=## )"
