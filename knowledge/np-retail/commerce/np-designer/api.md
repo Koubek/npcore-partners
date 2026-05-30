@@ -1,61 +1,56 @@
 ---
 type: reference
-tags: [np-retail, commerce, np-designer, tables, codeunits, pages, events]
-relates: [commerce/np-designer/overview.md]
-updated: 2026-05-09
+tags: [commerce, np-designer, np-retail, tables, codeunits, pages]
+relates:
+  - commerce/np-designer/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/NPDesigner/NPDesigner.Codeunit.al
+  - Application/src/NPDesigner/_public/NPDesignerFacade.Codeunit.al
+  - Application/src/NPDesigner/Manifest/NPDesignerManifest.Table.al
+  - Application/src/NPDesigner/Manifest/_public/NPDesignerManifestCard.Page.al
+  - Application/src/NPDesigner/Manifest/_public/NPDesignerManifestFacade.Codeunit.al
+  - Application/src/NPDesigner/Manifest/_public/NPDesignerManifestLine.Page.al
+  - Application/src/NPDesigner/Manifest/NPDesignerManifestLine.Table.al
+  - Application/src/NPDesigner/Manifest/_public/NPDesignerManifestList.Page.al
+  - Application/src/NPDesigner/Manifest/NPDesignerManifestWebHook.Codeunit.al
+  - Application/src/NPDesigner/NPDesignerSetup.Table.al
+  - Application/src/NPDesigner/NPDesignerSetupCard.Page.al
+  - Application/src/NPDesigner/NPDesignerTemplateList.Page.al
+  - Application/src/NPDesigner/_public/NPDesignerTemplates.Table.al
 ---
 
 # NP Designer — API Reference
 
 ## Tables
 
-### Table 6151022 "NPR NPDesignerSetup"
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6151256 | "NPR NPDesignerManifest" | NPDesigner Manifest | EntryNo | — |
+| 6151257 | "NPR NPDesignerManifestLine" | NPDesigner Manifest Line | EntryNo, LineNo | — |
+| 6151022 | "NPR NPDesignerSetup" | NPDesigner Setup | Code | — |
+| 6150990 | "NPR NPDesignerTemplates" | Design Templates | ExternalId | — |
 
-Single-record setup. Fields: `Code`, `DesignerURL`, `ApiAuthorization`, `PublicTicketURL`, `PublicOrderURL`, `EnableManifest`, `AssetsUrl` (default `https://assets.npretail.app/`).
 
 ## Codeunits
 
-### Codeunit 6248190 "NPR NPDesigner" (Internal)
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6248190 | "NPR NPDesigner" |  | LookupDesignLayouts, ValidateDesignLayouts, CreateManifest, CreateManifest, GetManifest | — |
+| 6248654 | "NPR NPDesignerFacade" |  | LookupDesignLayouts, ValidateDesignLayouts, GetDesignsTemplates | — |
+| 6248596 | "NPR NPDesignerManifestFacade" |  | CreateManifest, CreateManifest, CreateManifest, SetPreferredRenderingLanguage, SetShowTableOfContents | — |
+| 6248595 | "NPR NPDesignerManifestWebHook" |  | OnManifestCreated, OnManifestContentAdded, OnManifestContentRemoved, OnManifestContentChange, OnManifestDeleted | — |
 
-Core management codeunit. Key procedures:
-
-**Template Management:**
-- `LookupDesignLayouts(Type, LookupCaption, var NPDesignerTemplateId, var NPDesignerTemplateLabel)` — opens template selection dialog for a given document type
-- `ValidateDesignLayouts(Type, var NPDesignerTemplateId, var NPDesignerTemplateLabel)` — validates template exists for type
-
-**Manifest Management:**
-- `CreateManifest(): Guid` — create empty manifest
-- `CreateManifest(ExternalTemplateId, LanguageCode, ShowToC): Guid` — create with master template
-- `GetManifest(ManifestId): JsonObject` — read manifest as JSON (id, languageCode, toc, assets[])
-- `SetPreferredAssetLanguage(ManifestId, PreferredAssetLanguage): Boolean`
-- `SetShowTableOfContents(ManifestId, ShowTableOfContents): Boolean`
-- `AddAssetToManifest(ManifestId, AssetTableNumber, AssetId, AssetPublicId, ExternalTemplateId): Boolean` — add single asset
-- `AddAssetToManifest(ManifestId, AssetTableNumber, Dictionary[Guid,Text[100]], ExternalTemplateId, var List[Guid]): Boolean` — batch add
-- `RemoveAssetFromManifest(ManifestId, AssetTableNumber, AssetId): Boolean` — remove single
-- `RemoveAssetFromManifest(ManifestId, AssetTableNumber, List[Guid], var List[Guid]): Boolean` — batch remove
-- `DeleteManifest(ManifestId): Boolean`
-- `GetManifestUrl(ManifestId, var Url): Boolean` — generate signed URL with SHA-256 signature
-- `GetManifestUrlForAsset(AssetTableNumber, AssetId, var Url): Boolean` — look up manifest by asset, return signed URL
-
-**Internal Helpers:**
-- `GetDesignerTemplates(Type, var DesignerTemplates)` — fetches template list from NP Designer API
-- `DesignerTemplateApi(Type, Result)` — HTTP GET to Designer URL with Bearer auth, 60s timeout
-
-**Manifest URL signing algorithm:** SHA-256 hash of `"GET|kid|gen|mid|gid"`, where kid=0, gen=current unix timestamp, mid=manifestId, gid=templateId. Base64url-encoded without padding.
 
 ## Pages
 
-| Page | Source Table | Purpose |
-|------|-------------|---------|
-| `NPR NPDesignerSetupCard` | NPR NPDesignerSetup | Setup card (URL, API auth, manifest config) |
-| `NPR NPDesignerTemplateList` | NPR NPDesignerTemplates | Template selection dialog |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6248203 | "NPR NPDesignerManifestCard" | Designer Manifest Card | "NPR NPDesignerManifest" | — |
+| 6248204 | "NPR NPDesignerManifestLine" | Designer Manifest Line | "NPR NPDesignerManifestLine" | — |
+| 6248202 | "NPR NPDesignerManifestList" | Designer Manifest | "NPR NPDesignerManifest" | — |
+| 6184929 | "NPR NPDesignerSetupCard" | NPDesigner Setup Card | "NPR NPDesignerSetup" | — |
+| 6184904 | "NPR NPDesignerTemplateList" | NPDesigner Templates | "NPR NPDesignerTemplates" | — |
 
-## Integration Events (Codeunit NPR NPDesignerManifestWebHook)
-
-| Event | Trigger |
-|-------|---------|
-| `OnManifestCreated(ManifestId)` | After manifest header insert |
-| `OnManifestDeleted(ManifestId)` | After manifest deletion |
-| `OnManifestContentAdded(ManifestId, LineSystemId, AssetTableNumber, AssetId, AssetPublicId, ExternalTemplateId)` | After asset added |
-| `OnManifestContentRemoved(ManifestId, LineSystemId, AssetTableNumber, AssetId)` | After asset removed |
-| `OnManifestContentChange(ManifestId)` | After batch content change |
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: NPDesigner.Codeunit.al, NPDesignerFacade.Codeunit.al, NPDesignerManifest.Table.al, NPDesignerManifestCard.Page.al, NPDesignerManifestFacade.Codeunit.al, NPDesignerManifestLine.Page.al, NPDesignerManifestLine.Table.al, NPDesignerManifestList.Page.al, NPDesignerManifestWebHook.Codeunit.al, NPDesignerSetup.Table.al, NPDesignerSetupCard.Page.al, NPDesignerTemplateList.Page.al, NPDesignerTemplates.Table.al

@@ -1,58 +1,62 @@
 ---
 type: reference
-tags: [np-retail, sentry, infrastructure, telemetry]
-relates: [np-retail/infrastructure/sentry/overview.md]
-updated: 2026-05-09
+tags: [infrastructure, sentry, np-retail, tables, codeunits, pages, enums]
+relates:
+  - infrastructure/sentry/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/Sentry/examples/_public/POSActionSentryExample.Codeunit.al
+  - Application/src/Sentry/_public/Sentry.Codeunit.al
+  - Application/src/Sentry/SentryError.Codeunit.al
+  - Application/src/Sentry/SentryErrorHandling.Codeunit.al
+  - Application/src/Sentry/examples/_public/SentryExample.Page.al
+  - Application/src/Sentry/SentryHttp.Codeunit.al
+  - Application/src/Sentry/SentryMetadata.Codeunit.al
+  - Application/src/Sentry/SentryScope.Codeunit.al
+  - Application/src/Sentry/examples/_public/SentrySessionExample.Codeunit.al
+  - Application/src/Sentry/examples/_public/SentrySessionRecExample.Table.al
+  - Application/src/Sentry/_public/SentrySpan.Codeunit.al
+  - Application/src/Sentry/_public/SentrySpanStatus.Enum.al
+  - Application/src/Sentry/SentryTransaction.Codeunit.al
 ---
 
-# Sentry Module — API Reference
-
-## Enums
-
-| ID | Name | Caption | Values | Description |
-|----|------|---------|--------|-------------|
-| 6248500 | "NPR Sentry Span Status" | NPR Sentry Span Status | Ok, Cancelled, Unknown, InvalidArgument, DeadlineExceeded, NotFound, AlreadyExists, PermissionDenied, ResourceExhausted, Aborted, OutOfRange, Unimplemented, InternalError, Unavailable, DataLoss, Unauthenticated | Maps to gRPC status codes for span completion state |
+# Sentry — API Reference
 
 ## Tables
 
 | ID | Name | Caption | Key Fields | Description |
-|----|------|---------|------------|-------------|
-| 6151217 | "NPR Sentry Session Rec Example" | NPR Sentry Session Rec Example | MyField (Integer, clustered) | Example table for propagating Sentry trace context across session/task boundaries |
+| --- | --- | --- | --- | --- |
+| 6151217 | "NPR Sentry Session Rec Example" |  | MyField | — |
+
 
 ## Codeunits
 
 | ID | Name | Caption | Key Procedures | Events Raised |
-|----|------|---------|---------------|---------------|
-| 6248497 | "NPR Sentry" | NPR Sentry | InitScopeAndTransaction (7 overloads), FinalizeScope, StartSpan, AddLastErrorInEnglish, AddLastErrorIfProgrammingBug, AddError (2 overloads), AddTransactionTag, AddTransactionData, SetTransactionName, HttpInvoke (3 overloads), PageRunModal (2 overloads), Confirm, StrMenu, FindSet (2 overloads), Find (2 overloads), Delete (2 overloads), DeleteAll, Next (2 overloads), IsEmpty, CodeunitRun (2 overloads), ReportRun (2 overloads), GetCurrentTraceId, GetCurrentSpanId, IsCurrentTransactionSampled, HasActiveTransaction | None |
-| 6248498 | "NPR Sentry Span" | NPR Sentry Span | Create, Finish (2 overloads), SetStartTime, SetStatus, SetStatusFromHttpCode, SetStatusFromResult, SetMetadata (2 overloads), ToJson, GetId | None |
-| 6248500 | "NPR Sentry Error" | NPR Sentry Error | Create, ToJson, GetParentId, GetExceptionType | None |
-| 6184897 | "NPR Sentry Error Handling" | NPR Sentry Error Handling | SplitErrorStacktrace, CleanStackFrame, IsLastErrorAProgrammingBug, GetCurrCallStack | None |
-| 6184896 | "NPR Sentry Http" | NPR Sentry Http | TryParseSentryTraceHeader, AddSentryTraceHeader, GetBaseUrl | None |
-| 6150966 | "NPR Sentry Metadata" | NPR Sentry Metadata | WriteFrontendMetadataJson, WriteTagsForBackendEvent, WriteSpanTags, GetEnvironment, WriteModulesJson, OnCustomMethod (subscriber) | Subscribes to `OnCustomMethod` on "NPR POS JavaScript Interface" (codeunit) for `getSentryMetadata` |
-| 6150994 | "NPR Sentry Scope" | NPR Sentry Scope | InitScopeAndTransaction (4 overloads), StartSpan, HttpInvoke, ReportRun (2 overloads), PageRunModal (2 overloads), RecordFindSet, RecordFind, RecordDelete, RecordIsEmpty, RecordNext, DeleteAll, CodeunitRun, Confirm, StrMenu, AddError, AddLastErrorInEnglish, FinalizeScope, GetCurrentTraceId, GetCurrentSpanId, IsCurrentTransactionSampled, HasActiveTransaction | None |
-| 6248499 | "NPR Sentry Transaction" | NPR Sentry Transaction | Create (2 overloads), Finish, GetRootSpanId, GetTraceId, GetSampled, GetRelease, IsActive, SetStatus, AddTag, AddData, SetDescription, SetOperation, SetSource, Log | None |
+| --- | --- | --- | --- | --- |
+| 6184892 | "NPR POS Action Sentry Example" |  | Register, RunWorkflow, FunctionWithError, GetActionScript | — |
+| 6248497 | "NPR Sentry" |  | InitScopeAndTransaction, InitScopeAndTransaction, InitScopeAndTransaction, InitScopeAndTransaction, InitScopeAndTransaction | — |
+| 6248500 | "NPR Sentry Error" |  | Create, ToJson, GetParentId, GetExceptionType | — |
+| 6184897 | "NPR Sentry Error Handling" |  | SplitErrorStacktrace, CleanStackFrame, IsLastErrorAProgrammingBug, GetCurrCallStack, RemoveLocalFunctionsFromCallStack | — |
+| 6184896 | "NPR Sentry Http" |  | TryParseSentryTraceHeader, AddSentryTraceHeader, GetBaseUrl | — |
+| 6150966 | "NPR Sentry Metadata" |  | OnCustomMethod, WriteFrontendMetadataJson, WriteTagsForBackendEvent, WriteSpanTags, GetEnvironment | — |
+| 6150994 | "NPR Sentry Scope" |  | InitScopeAndTransaction, InitScopeAndTransaction, InitScopeAndTransaction, InitScopeAndTransaction, ResetState | — |
+| 6248502 | "NPR Sentry Session Example" |  | — | — |
+| 6248498 | "NPR Sentry Span" |  | Finish, Finish, SetStartTime, SetStatus, SetStatusFromHttpCode | — |
+| 6248499 | "NPR Sentry Transaction" |  | Create, Create, Finish, GetRootSpanId, GetTraceId | — |
 
-### Pages
 
-| ID | Name | Caption | Type | Description |
-|----|------|---------|------|-------------|
-| 6185086 | "NPR Sentry Example" | NPR Sentry Example | Card | Example page demonstrating Sentry transaction/scoping in page actions |
+## Pages
 
-### Example Codeunits
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6185086 | "NPR Sentry Example" | Sentry Example Action | — | — |
 
-| ID | Name | Caption | Implements | Description |
-|----|------|---------|------------|-------------|
-| 6184892 | "NPR POS Action Sentry Example" | NPR POS Action Sentry Example | "NPR IPOS Workflow" | Example POS workflow demonstrating Sentry spans, HTTP calls, page interaction, DB queries, and error reporting |
-| 6248502 | "NPR Sentry Session Example" | NPR Sentry Session Example | — | Example codeunit for background sessions with Sentry trace continuation |
 
-## Events
+## Enums
 
-| ID | Name | Caption | Raised By | When | Parameters |
-|----|------|---------|-----------|------|------------|
-| — | OnCustomMethod | — | "NPR POS JavaScript Interface" (codeunit) | Front-end invokes `getSentryMetadata` | Method (Text), Context (JsonObject), POSSession (Codeunit "NPR POS Session"), FrontEnd (Codeunit "NPR POS Front End Management"), var Handled (Boolean) |
+| ID | Name | Caption | Values |
+| --- | --- | --- | --- |
+| 6248500 | "NPR Sentry Span Status" | ok | Ok, Cancelled, Unknown, InvalidArgument, DeadlineExceeded, NotFound, AlreadyExists, PermissionDenied |
 
-## Labels
-
-| Label Variable | Caption (EN) | Appears In | Usage Context |
-|---------------|--------------|------------|---------------|
-| ActionDescription | `Sentry Telemetry example` | "NPR POS Action Sentry Example" (6184892) | POS workflow action description |
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: POSActionSentryExample.Codeunit.al, Sentry.Codeunit.al, SentryError.Codeunit.al, SentryErrorHandling.Codeunit.al, SentryExample.Page.al, SentryHttp.Codeunit.al, SentryMetadata.Codeunit.al, SentryScope.Codeunit.al, SentrySessionExample.Codeunit.al, SentrySessionRecExample.Table.al, SentrySpan.Codeunit.al, SentrySpanStatus.Enum.al, SentryTransaction.Codeunit.al

@@ -1,54 +1,70 @@
 ---
 type: reference
-tags: [np-retail, accounts, gdpr, tables, codeunits, pages]
-relates: [accounts/gdpr/overview.md]
-updated: 2026-05-09
+tags: [accounts, gdpr, np-retail, tables, codeunits, pages]
+relates:
+  - accounts/gdpr/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/GDPR/CustomerGDPRLogEntries.Page.al
+  - Application/src/GDPR/CustomerGDPRLogEntries.Table.al
+  - Application/src/GDPR/CustomerGDPRSetup.Page.al
+  - Application/src/GDPR/CustomerGDPRSetUp.Table.al
+  - Application/src/GDPR/CustomerstoAnonList.Page.al
+  - Application/src/GDPR/CustomerstoAnonymize.Table.al
+  - Application/src/GDPR/GDPRAgreement.Table.al
+  - Application/src/GDPR/GDPRAgreementCard.Page.al
+  - Application/src/GDPR/GDPRAgreementList.Page.al
+  - Application/src/GDPR/GDPRAgreementVersion.Table.al
+  - Application/src/GDPR/GDPRAgreementVersions.Page.al
+  - Application/src/GDPR/_public/GDPRAnonReqWS.Codeunit.al
+  - Application/src/GDPR/GDPRAnonymizationReq.Page.al
+  - Application/src/GDPR/GDPRAnonymizationRequest.Table.al
+  - Application/src/GDPR/GDPRConsentLog.Page.al
+  - Application/src/GDPR/GDPRConsentLog.Table.al
+  - Application/src/GDPR/GDPRManagement.Codeunit.al
+  - Application/src/GDPR/GDPRSetup.Page.al
+  - Application/src/GDPR/GDPRSetup.Table.al
+  - Application/src/GDPR/NPGDPRManagement.Codeunit.al
 ---
 
-# GDPR — API Reference
+# Gdpr — API Reference
 
 ## Tables
 
-| Table | Purpose |
-|-------|---------|
-| `NPR GDPR Setup` | Global config — retention period, anonymization schedule, default agreement |
-| `NPR GDPR Agreement` | Agreement header — `Code`, `Description`, `Effective Date` |
-| `NPR GDPR Agreement Version` | Versioned content — `Agreement Code`, `Version No.`, `Content`, `Effective Date` |
-| `NPR GDPR Consent Log` | Audit trail — `Contact/Customer No.`, `Agreement Code`, `Version No.`, `Consent Granted`, `Date/Time`, `User ID` |
-| `NPR GDPR Anonymization Request` | Anonymization request tracking — `Status`, `Request Date`, `Completed Date`, `Customer No.` |
-| `NPR Customer to Anonymize` | Anonymization queue — customers pending anonymization |
-| `NPR Customer GDPR Log Entries` | Per-customer GDPR activity log |
-| `NPR Customer GDPR Setup` | Per-customer GDPR preferences and status |
+| ID | Name | Caption | Key Fields | Description |
+| --- | --- | --- | --- | --- |
+| 6151070 | "NPR Customer GDPR Log Entries" | Customer GDPR Log Entries | "Entry No" | — |
+| 6151060 | "NPR Customer GDPR SetUp" | Customer GDPR SetUp | "Primary key" | — |
+| 6151071 | "NPR Customers to Anonymize" | Customers to Anonymize | "Entry No" | — |
+| 6151121 | "NPR GDPR Agreement" | GDPR Agreement | "No." | — |
+| 6151122 | "NPR GDPR Agreement Version" | GDPR Agreement Version | "No.", Version | — |
+| 6151072 | "NPR GDPR Anonymization Request" | GDPR Anonymization Request | "Entry No." | — |
+| 6151123 | "NPR GDPR Consent Log" | GDPR Consent Log | "Entry No." | — |
+| 6151120 | "NPR GDPR Setup" | GDPR Setup | "Code" | — |
+
 
 ## Codeunits
 
-### "NPR GDPR Management"
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6151061 | "NPR GDPR Anon. Req. WS" |  | AnonymizationRequest, CanCustomerBeAnonymized, InsertRequestEntry | — |
+| 6151120 | "NPR GDPR Management" |  | CreateAgreementPendingEntry, CreateAgreementAcceptEntry, CreateAgreementRejectEntry, CreateAgreementDelegateToGuardianEntry, CreateConsentLogEntry | OnNewAgreementVersion |
+| 6151060 | "NPR NP GDPR Management" |  | DoAnonymization, IsCustomerValidForAnonymization, EvaluateResponseValue, AnonymizeCustomer, AnonymizePrimaryContact | — |
 
-Core GDPR management codeunit. Key procedures:
-
-- `AnonymizeCustomer(CustomerNo)` — anonymizes customer personal data
-- `ProcessAnonymizationQueue()` — batch process pending anonymization requests
-- `LogConsent(CustomerNo, AgreementCode, VersionNo, Granted)` — records consent action
-- `CheckConsent(CustomerNo, AgreementCode): Boolean` — verifies active consent
-- `GetActiveAgreementVersion(AgreementCode): Integer` — gets current effective version
-- `ScheduleAnonymization(CustomerNo)` — adds customer to anonymization queue
-
-### "NPR GDPR Management" (Member variant - in Member Module)
-
-Member-specific GDPR processing. Extends core GDPR with member data anonymization:
-- `AnonymizeMember(MemberNo)` — anonymizes member personal data
-- `AnonymizeMemberPoints(MemberNo)` — handles loyalty point data per retention policy
 
 ## Pages
 
-| Page | Source Table | Purpose |
-|------|-------------|---------|
-| `GDPRSetup` | NPR GDPR Setup | Global GDPR configuration |
-| `GDPRAgreementList` | NPR GDPR Agreement | Agreement list |
-| `GDPRAgreementCard` | NPR GDPR Agreement | Agreement editor |
-| `GDPRAgreementVersions` | NPR GDPR Agreement Version | Version list per agreement |
-| `GDPRConsentLog` | NPR GDPR Consent Log | Consent audit trail |
-| `GDPRAnonymizationReq` | NPR GDPR Anonymization Request | Anonymization request management |
-| `CustomerstoAnonList` | NPR Customer to Anonymize | Anonymization queue |
-| `CustomerGDPRLogEntries` | NPR Customer GDPR Log Entries | Per-customer GDPR log |
-| `CustomerGDPRSetup` | NPR Customer GDPR Setup | Per-customer GDPR setup |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6151151 | "NPR Customer GDPR Log Entries" | Customer GDPR Log Entries | "NPR Customer GDPR Log Entries" | — |
+| 6151150 | "NPR Customer GDPR Setup" | Customer GDPR Setup | "NPR Customer GDPR SetUp" | — |
+| 6151152 | "NPR Customers to Anon. List" | Customers to Anonymize List | "NPR Customers to Anonymize" | — |
+| 6151123 | "NPR GDPR Agreement Card" | GDPR Agreement Card | "NPR GDPR Agreement" | — |
+| 6151121 | "NPR GDPR Agreement List" | GDPR Agreement List | "NPR GDPR Agreement" | — |
+| 6151122 | "NPR GDPR Agreement Versions" | GDPR Agreement Versions | "NPR GDPR Agreement Version" | — |
+| 6151153 | "NPR GDPR Anonymization Req." | GDPR Anonymization Request | "NPR GDPR Anonymization Request" | — |
+| 6151124 | "NPR GDPR Consent Log" | GDPR Consent Log | "NPR GDPR Consent Log" | — |
+| 6151120 | "NPR GDPR Setup" | GDPR Setup | "NPR GDPR Setup" | — |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: CustomerGDPRLogEntries.Page.al, CustomerGDPRLogEntries.Table.al, CustomerGDPRSetup.Page.al, CustomerGDPRSetUp.Table.al, CustomerstoAnonList.Page.al, CustomerstoAnonymize.Table.al, GDPRAgreement.Table.al, GDPRAgreementCard.Page.al, GDPRAgreementList.Page.al, GDPRAgreementVersion.Table.al, GDPRAgreementVersions.Page.al, GDPRAnonReqWS.Codeunit.al, GDPRAnonymizationReq.Page.al, GDPRAnonymizationRequest.Table.al, GDPRConsentLog.Page.al, GDPRConsentLog.Table.al, GDPRManagement.Codeunit.al, GDPRSetup.Page.al, GDPRSetup.Table.al, NPGDPRManagement.Codeunit.al

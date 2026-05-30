@@ -1,58 +1,74 @@
 ---
 type: reference
-tags: [np-retail, infrastructure, endpoint]
-relates: [np-retail/infrastructure/endpoint/overview.md]
-updated: 2026-05-09
+tags: [infrastructure, endpoint, np-retail, tables, codeunits, pages, xmlports]
+relates:
+  - infrastructure/endpoint/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/Endpoint/Endpoint.Table.al
+  - Application/src/Endpoint/EndpointCard.Page.al
+  - Application/src/Endpoint/EndpointDataLogProcess.Codeunit.al
+  - Application/src/Endpoint/EndpointFilter.Table.al
+  - Application/src/Endpoint/EndpointFilters.Page.al
+  - Application/src/Endpoint/EndpointList.Page.al
+  - Application/src/Endpoint/EndpointManagement.Codeunit.al
+  - Application/src/Endpoint/EndpointQuery.Table.al
+  - Application/src/Endpoint/EndpointQueryFilter.Table.al
+  - Application/src/Endpoint/EndpointQueryFiltSform.Page.al
+  - Application/src/Endpoint/EndpointQueryList.Page.al
+  - Application/src/Endpoint/EndpointQueryWebImport.XmlPort.al
+  - Application/src/Endpoint/_public/EndpointQueryWebService.Codeunit.al
+  - Application/src/Endpoint/EndpointQueryWSMgr.Codeunit.al
+  - Application/src/Endpoint/EndpointReqBatchList.Page.al
+  - Application/src/Endpoint/EndpointRequest.Table.al
+  - Application/src/Endpoint/EndpointRequestBatch.Table.al
+  - Application/src/Endpoint/EndpointRequestList.Page.al
+  - Application/src/Endpoint/EndpointSendReqBatch.Codeunit.al
 ---
 
-# Endpoint Module — API Reference
+# Endpoint — API Reference
 
 ## Tables
 
 | ID | Name | Caption | Key Fields | Description |
-|----|------|---------|------------|-------------|
-| 6014674 | "NPR Endpoint" | Endpoint | Code (Code[20], Key1); Query Name (Key2) | Core endpoint configuration: source table, active flag, trigger flags (Insert/Modify/Delete/Rename), batching config (Max Requests per Batch, Send when Max, Wait to Send), cleanup settings, inbound query security (Max per Query, Allow Query from DB/Company/User/Name), FlowFields for request/query counts |
-| 6014675 | "NPR Endpoint Filter" | Endpoint Filter | Endpoint Code, Table No., Field No. (clustered) | Field-level filter rules: Endpoint Code + Table No. + Field No. + Filter Text. OnInsert auto-populates Table No. from Endpoint |
-| — | "NPR Endpoint Request" | Endpoint Request | — | Change request: type (Create/Modify/Delete), record position, PK Code 1/2 (text), PK Line 1/2 (integer), PK Option 1 (option), Data log Record No. |
-| — | "NPR Endpoint Request Batch" | Endpoint Request Batch | — | Batch: Endpoint Code, Status (Collecting/Ready to Send/Sent), Creation Date, Sent Date, No. of Requests, Table No. |
-| — | "NPR Endpoint Query" | Endpoint Query | — | Named query: Direction (Incoming/Outgoing), Name, Only New and Modified Records |
-| — | "NPR Endpoint Query Filter" | Endpoint Query Filter | — | Filter details for each query |
+| --- | --- | --- | --- | --- |
+| 6014674 | "NPR Endpoint" | Endpoint | "Code" | — |
+| 6014675 | "NPR Endpoint Filter" | Endpoint Filter | "Endpoint Code", "Table No.", "Field No." | — |
+| 6014678 | "NPR Endpoint Query" | Endpoint Query | "No." | — |
+| 6014679 | "NPR Endpoint Query Filter" | Endpoint Query Filter | "Endpoint Query No.", "Table No.", "Field No." | — |
+| 6014677 | "NPR Endpoint Request" | Endpoint Request | "No." | — |
+| 6014676 | "NPR Endpoint Request Batch" | Endpoint Request Batch | "No." | — |
+
 
 ## Codeunits
 
-| ID | Name | Caption | Key Procedures | Description |
-|----|------|---------|---------------|-------------|
-| 6014675 | "NPR Endpoint Management" | NPR Endpoint Management | GetEndpointRequestBatchNo, PopulatePKFields, CreateModifyRequests, InsertModifyRequest, MarkPreviousRequestsAsObsolete, SetBatchStatus, CreateOutboundEndpointQuery, InsertFilterRecords | Core endpoint logic for batching, request creation, PK mapping, query creation |
-| 6014680 | "NPR Endpoint Query WebService" | NPR Endpoint Query WebService | Createendpointquery | OData-exposed web service for inbound endpoint query processing. Wraps XMLport import with Nc Import Entry processing |
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6014674 | "NPR Endpoint Data Log Process." |  | CheckEndpoints, ProcessChange, CheckFilter | — |
+| 6014675 | "NPR Endpoint Management" |  | GetEndpointRequestBatchNo, PopulatePKFields, CreateModifyRequests, InsertModifyRequest, MarkPreviousRequestsAsObsolete | — |
+| 6014680 | "NPR Endpoint Query WebService" |  | Createendpointquery, InsertImportEntry, GetDocumentSequence, EndpointIntegrationSetup, CreateImportType | — |
+| 6014673 | "NPR Endpoint Query WS Mgr" |  | RunProcessImportEntry, CreateEndpointQueries, CreateEndpointQuery, CreateEndpointQueryFilter, ReadEndpointQuery | — |
+| 6014677 | "NPR Endpoint Send Req. Batch" |  | CheckWaitingRequests | — |
+
 
 ## Pages
 
-| ID | Name | Caption | Type | Description |
-|----|------|---------|------|-------------|
-| — | "NPR Endpoint Card" | Endpoint Card | Card | Endpoint configuration |
-| — | "NPR Endpoint List" | Endpoint List | List | Endpoint listing |
-| — | "NPR Endpoint Filters" | Endpoint Filters | List | Filter management per endpoint |
-| — | "NPR Endpoint Request List" | Endpoint Request List | List | Individual request listing |
-| — | "NPR Endpoint Request Batch List" | Endpoint Req Batch List | List | Batch listing |
-| — | "NPR Endpoint Query List" | Endpoint Query List | List | Query listing |
-| — | "NPR Endpoint Query Filter Form" | Endpoint QueryFiltSform | — | Query filter form |
-| — | "NPR Endpoint Query Filter" (duplicate) | — | — | Query filter page |
+| ID | Name | Caption | Source Table | Description |
+| --- | --- | --- | --- | --- |
+| 6014675 | "NPR Endpoint Card" | Endpoint Card | "NPR Endpoint" | — |
+| 6014676 | "NPR Endpoint Filters" | Endpoint Filters | "NPR Endpoint Filter" | — |
+| 6014674 | "NPR Endpoint List" | Endpoint List | "NPR Endpoint" | — |
+| 6014680 | "NPR Endpoint QueryFilt. S.form" | Endpoint Query Filter Subform | "NPR Endpoint Query Filter" | — |
+| 6014679 | "NPR Endpoint Query List" | Endpoint Query List | "NPR Endpoint Query" | — |
+| 6014677 | "NPR Endpoint Req. Batch List" | Endpoint Request Batch List | "NPR Endpoint Request Batch" | — |
+| 6014678 | "NPR Endpoint Request List" | Endpoint Request List | "NPR Endpoint Request" | — |
 
-## XMLports
 
-| Name | Description |
-|------|-------------|
-| "NPR Endpoint Query Web Import" | XMLport for importing endpoint queries from external systems via the web service |
+## XmlPorts
 
-## Key Procedures Detail
+| ID | Name | Caption | Description |
+| --- | --- | --- | --- |
+| 6014674 | "NPR Endpoint Query Web Import" | Endpoint Query Web Import | — |
 
-### NPR Endpoint Management (6014675)
-
-| Procedure | Parameters | Description |
-|-----------|------------|-------------|
-| `GetEndpointRequestBatchNo` | EndpointCode (Code[20]) | Returns BigInteger. Finds or creates a Collecting batch for the endpoint. Auto-flips to Ready to Send if max requests reached and Send when Max. Requests is enabled |
-| `PopulatePKFields` | var EndpointRequest, RecRef (RecordRef) | Maps source table PK fields to generic PK fields (Code 1/2, Line 1/2, Option 1) based on field type matching |
-| `CreateModifyRequests` | Endpoint (Record "NPR Endpoint") | Iterates all records in the source table, applies field-level filters, creates modify requests for matching records |
-| `MarkPreviousRequestsAsObsolete` | EndpointRequest | Marks or deletes earlier requests for the same record in the same batch |
-| `SetBatchStatus` | EndpointRequestBatch, NewStatus | Manages batch state transitions with confirmation dialogs |
-| `CreateOutboundEndpointQuery` | QueryName, RecordToQuery, OnlyNewAndModified | Creates a named outbound query from a filtered record set |
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: Endpoint.Table.al, EndpointCard.Page.al, EndpointDataLogProcess.Codeunit.al, EndpointFilter.Table.al, EndpointFilters.Page.al, EndpointList.Page.al, EndpointManagement.Codeunit.al, EndpointQuery.Table.al, EndpointQueryFilter.Table.al, EndpointQueryFiltSform.Page.al, EndpointQueryList.Page.al, EndpointQueryWebImport.XmlPort.al, EndpointQueryWebService.Codeunit.al, EndpointQueryWSMgr.Codeunit.al, EndpointReqBatchList.Page.al, EndpointRequest.Table.al, EndpointRequestBatch.Table.al, EndpointRequestList.Page.al, EndpointSendReqBatch.Codeunit.al

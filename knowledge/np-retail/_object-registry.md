@@ -12,156 +12,139 @@ Cross-module index of all AL objects (tables, codeunits, pages, enums, events) a
 Format per module:
 
 ```markdown
-## Module Name
-- Defines: Tables[...], Codeunits[...], Pages[...], Events[...]
-- Extends: Tables[... -> ...]
-- References: Tables[... from ...], Codeunits[... from ...]
-```
-
----
-
-## Sentry
-- Defines: Tables[6151217], Codeunits[6248497, 6248498, 6184892, 6248502, 6248500, 6184897, 6184896, 6150966, 6150994, 6248499], Pages[6185086], Enums[6248500]
-- Extends: —
-- References: Tables["NPR POS Unit" from POS], Codeunits["NPR POS JavaScript Interface" from POS, "NPR POS Session" from POS, "NPR POS Front End Management" from POS, "NPR POS Setup" from POS, "Json Text Reader/Writer" from infrastructure, "Tenant Information" from system, "Environment Information" from system, "Azure AD Tenant" from system, "Azure Key Vault Mgt." from infrastructure, "Type Helper" from system, "Regex" from system]
-
-## API
-- Defines: Tables[6151254, 6151255], Codeunits[6185051, 6185052, 6185053, 6150730, 6151009, 6150902, 6248565, 6248567], Pages[6184874, 6185107, 6185108, 6185109], Enums[6059812, 6059810, 6059813, 6059924], Interfaces["NPR API Module Resolver", "NPR API Request Handler"], PermissionSets[6014408, 6014416], EnumExtensions[6014420]
-- Extends: —
-- References: Tables["Aggregate Permission Set" from system], Codeunits["Company Triggers" from system, "Environment Information" from system, "Azure AD Tenant" from system, "Type Helper" from system, "Base64 Convert" from system, "Application System Constants" from system, "Confirm Management" from system, "NPR Json Parser" from commerce, "NPR Azure Key Vault Mgt." from infrastructure, "NPR AAD Application Mgt." from system, "NPR Sentry" from infrastructure, "NPR Sentry Span" from infrastructure, "NPR Sentry Http" from infrastructure, "NPR Feature Flags Management" from infrastructure]
 
 ## POS Core
-- Defines: Tables[6014405, 6014406, 6014487, 6014621, 6014624, 6150702, 6150725, 6150786], Codeunits[6014428, 6014451, 6014561, 6014575, 6014666, 6060078, 6060079, 6060103, 6060137, 6150636, 6150651, 6150700, 6150701, 6150703, 6150705, 6150706, 6150719, 6150729, 6150735, 6150736, 6150740, 6150741, 6150744, 6150745, 6150747, 6150748, 6150751, 6151032, 6151043, 6151432, 6248379], Pages[6150750, 6150724, 6150731, 6150725, 6014409, 6014622, 6014659], Enums[6014511, 6014448], Interfaces["NPR Framework Interface", "NPR IJsonSerializable", "NPR Font Definition", "NPR Front-End Async Request", "NPR ISubMenu"], Queries[POSCreditSalesCrMemo, POSCreditSalesInvoice, POSTurnover]
+- Defines: Tables[6150786, 6060087, 6150702, 6014405, 6014406, 6014681, 6150725, 6014487, 6014621, 6014624], Codeunits[6150768, 6150881, 6150756, 6150758, 6150760, 6150777, 6150772, 6150767, 6150761, 6150884, 6150894, 6150895, 6150893, 6150892, 6150891, 6060079, 6184502, 6184553, 6184554, 6150751, 6150755, 6014573, 6150781, 6150770, 6150752, 6014575, 6014561, 6150773, 6150883, 6014666, 6150778, 6151479, 6150744, 6248350, 6184996, 6248724, 6248351, 6248726, 6151001, 6150774, 6150885, 6150887, 6150719, 6248235, 6014428, 6150720, 6060078, 6060103, 6184501, 6150704, 6150634, 6151063, 6150701, 6014574, 6150703, 6150630, 6150890, 6150889, 6150741, 6150747, 6150740, 6150707, 6184650, 6059798, 6150636, 6150748, 6150705, 6150706, 6150729, 6059983, 6151043, 6150736, 6150700, 6150745, 6014451, 6150651, 6151032, 6248452, 6150702, 6150896, 6248379, 6150734, 6014665, 6059786, 6248234, 6150733, 6150735, 6150769, 6150753, 6150764, 6150775, 6151432, 6060137, 6150754, 6150783, 6150757, 6014659, 6150763, 6150776, 6150782, 6150771, 6150762, 6150888, 6014570, 6150766, 6150765, 6150880, 6150882, 6014572, 6150886], Pages[6151285, 6151284, 6150750, 6185112, 6185113, 6185114, 6185120, 6185121, 6151279, 6150724, 6059901, 6059900, 6150731, 6150725, 6014409, 6014622, 6014659], Enums[6150750, 6150752, 6150751, 6150754, 6014599, 6014598, 6014522, 6014511, 6014448, 6014512, 6014470, 6150755], Interfaces["NPR Font Definition", "NPR Framework Interface", "NPR Front-End Async Request", "NPR IAction", "NPR IJsonSerializable", "NPR IPOS Workflow", "NPR ISubMenu", "NPR POS DS Exten. Field Setup"], Queries[6014411, 6014412, 6014400]
 - Extends: —
 - References: Tables["NPR POS Payment Line" from POS Payment], Codeunits["NPR POS Sentry" from Sentry, "NPR API Request Handler" from API, "NPR POS Payment Line" from POS Payment, "NPR Payment Mgt." from POS Payment]
 
 ## POS Payment
-- Defines: Tables[6184495, 6184513, 6014403, 6184505, 6184485, 6184486], Codeunits[6059795, 6059796, 6059778, 6151042, 6059793, 6059938, 6151064, 6059939, 6151054, 6059789, 6059790, 6059935, 6014600, 6059860, 6184479, 6060021, 6059884], Pages[6184481], Enums[6014487, 6014507], Interfaces["NPR POS IPaymentWFHandler"]
+- Defines: Tables[6150691, 6184508, 6150913, 6059783, 6059792, 6184505, 6184511, 6151276, 6184512, 6184510, 6184520, 6184486, 6184518, 6184517, 6184519, 6060077, 6150740, 6014403, 6014630, 6014615, 6014616, 6014617, 6014619, 6014622, 6014629, 6184485, 6184507, 6184513, 6184495, 6184496, 6184516, 6184506, 6184483, 6184481, 6184482, 6184484, 6184514, 6184515, 6150755, 6150771, 6150781, 6150754, 6150780, 6150773, 6150770], Codeunits[6248335, 6150742, 6150746, 6248477, 6185001, 6151089, 6248651, 6014527, 6151605, 6184616, 6184596, 6184636, 6184595, 6184615, 6184531, 6184614, 6184522, 6184530, 6184521, 6184995, 6184592, 6184517, 6184607, 6184518, 6184600, 6184520, 6184519, 6185058, 6184612, 6184598, 6184599, 6184644, 6248277, 6184639, 6184640, 6184597, 6184613, 6185000, 6184611, 6184605, 6184529, 6184642, 6151112, 6184591, 6248386, 6185084, 6248592, 6185074, 6184589, 6184588, 6184884, 6184594, 6185112, 6184630, 6184499, 6184479, 6184741, 6184511, 6184512, 6184540, 6184541, 6184542, 6059907, 6184536, 6184537, 6184532, 6059892, 6184534, 6184538, 6184533, 6184535, 6059893, 6184510, 6184635, 6150840, 6150942, 6150844, 6150940, 6150932, 6150878, 6150949, 6014668, 6014671, 6014667, 6184507, 6184543, 6184473, 6060021, 6184506, 6184505, 6184508, 6184509, 6184526, 6184527, 6184528, 6059860, 6150750, 6059795, 6059790, 6151042, 6184651, 6248232, 6184999, 6059793, 6248387, 6150804, 6184608, 6248280, 6184637, 6184885, 6059884, 6059883, 6184742, 6059794, 6059954, 6059799, 6059894, 6150841, 6184474, 6014600, 6184632, 6059939, 6151054, 6059788, 6059787, 6059797, 6059906, 6059789, 6059796, 6059778, 6059938, 6151113, 6151114, 6184544, 6184693, 6059935, 6151064, 6184709, 6184699, 6184730, 6184692, 6184756, 6184721, 6184763, 6184715, 6184740, 6184765, 6184694, 6184710, 6184723, 6184714, 6184758, 6184717], Pages[6151296, 6184504, 6150838, 6060010, 6184474, 6184513, 6184511, 6248199, 6184512, 6184514, 6184510, 6184520, 6184483, 6184509, 6184508, 6184515, 6184475, 6150798, 6150799, 6151318, 6184480, 6059840, 6059809, 6059818, 6059819, 6059824, 6059827, 6059828, 6059835, 6059836, 6059837, 6059838, 6059839, 6184481, 6184505, 6184498, 6184499, 6184473, 6184478, 6184476, 6184477, 6184479, 6184506, 6184507, 6151351, 6151463, 6151375, 6151498, 6151497, 6151349, 6151495, 6151479, 6151488], Enums[6059794, 6014553, 6059849, 6014611, 6014606, 6014605, 6014607, 6014554, 6014508, 6014620, 6014565, 6014608, 6014507, 6014487, 6014630, 6014636, 6014635], Interfaces["NPR POS IPaymentWFHandler"], XmlPorts[6184500], PermissionSets[6014404]
 - Extends: —
 - References: Tables["NPR POS Sale" from POS Core, "NPR POS Sale Line" from POS Core, "NPR POS Payment Method" from POS Core, "NPR POS Unit" from POS Core, "NPR POS Workshift Checkpoint" from POS Core, "NPR POS Entry" from POS Core], Codeunits["NPR POS Sale" from POS Core, "NPR POS Sale Line" from POS Core, "NPR POS Payment Line" from POS Core, "NPR POS Front End Management" from POS Core, "NPR POS Session" from POS Core, "NPR POS Setup" from POS Core, "NPR Sentry" from Sentry, "NPR Sentry Span" from Sentry, "NPR HU L Audit Mgt." from HUL]
 
 ## POS Action
-- Defines: Codeunits[6014691, 6150737, 6150854]
+- Defines: —
 - Extends: —
 - References: Tables["NPR POS Action" from POS Core], Codeunits["NPR POS Session" from POS Core, "NPR POS Front End Management" from POS Core]
 
 ## POS Background Tasks
-- Defines: Codeunits[6059869], Interfaces["NPR POS Background Task"]
+- Defines: Codeunits[6059862, 6151585, 6059863, 6059869, 6059864, 6059868], Enums[6014505], Interfaces["NPR POS Background Task"]
 - Extends: —
 - References: Codeunits["NPR Sentry" from Sentry, "NPR Sentry Span" from Sentry]
 
 ## POS Billing
-- Defines: Enums[6059949], Codeunits[6248524]
+- Defines: Tables[6151278, 6151229], Codeunits[6248537, 6248524, 6248547], Pages[6248205, 6185094], Enums[6059949, 6059948]
 - Extends: —
 - References: Codeunits["Azure AD Tenant" from system, "Environment Information" from system, "Type Helper" from system, "NPR Json Parser" from commerce, "NPR Azure Key Vault Mgt." from infrastructure, "Azure AD User Management" from system]
 
 ## POS Compliance
-- Defines: Tables[6150637], Codeunits[6150619], Enums["NPR POS Audit Notification"]
+- Defines: Tables[6150844, 6150828, 6150830, 6150857, 6150856, 6150840, 6150855, 6150909, 6014682, 6060085, 6060079, 6150735, 6060088, 6151289, 6060097, 6060099, 6060089, 6184500, 6014438, 6014455, 6014454, 6150697, 6150695, 6150696, 6060038, 6151009, 6060058, 6150724, 6060059, 6060039, 6060100, 6151270, 6014529, 6059886, 6150994, 6150916, 6014531, 6014532, 6151008, 6014687, 6150746, 6150745, 6150748, 6150747, 6150749, 6150750, 6014573, 6150890, 6150838, 6150884, 6150894, 6150900, 6150887, 6184851, 6184850, 6014699, 6184852, 6151043, 6151044, 6150922, 6150995, 6151116, 6151098, 6151115, 6151066, 6151029, 6150760, 6150761, 6150914, 6150775, 6150737, 6150738, 6150741, 6150774, 6150739, 6150751, 6060060, 6060065, 6014533, 6150637, 6150650, 6248725, 6059812, 6059827, 6059828, 6059826, 6150822, 6150831, 6150832, 6150864, 6150862, 6150863, 6150865, 6150833, 6150834, 6150836, 6150804, 6150803, 6150824, 6150835, 6150823, 6150878, 6059815, 6059861, 6059817, 6059860, 6059830, 6059818, 6059824, 6059819, 6059821, 6060096, 6059834, 6059833, 6059846, 6059857, 6150827, 6150954, 6150952, 6150953, 6150687, 6059869, 6059835, 6059838, 6060164, 6150692, 6150992, 6014578, 6014545], Codeunits[6184848, 6184903, 6184861, 6184862, 6184911, 6184859, 6184909, 6059817, 6248349, 6151610, 6184476, 6014454, 6014459, 6014461, 6184500, 6014477, 6248243, 6184648, 6150984, 6151547, 6248659, 6185071, 6248213, 6151584, 6185089, 6151497, 6014444, 6059849, 6248729, 6014445, 6014442, 6014487, 6014449, 6059850, 6184669, 6184670, 6184666, 6184671, 6184672, 6184673, 6184674, 6184866, 6248600, 6184937, 6184936, 6184988, 6184987, 6184938, 6014560, 6184851, 6184850, 6184890, 6184889, 6059782, 6185037, 6248367, 6184708, 6185015, 6184647, 6184659, 6248250, 6151548, 6184788, 6184562, 6060013, 6060034, 6184906, 6184907, 6184626, 6184684, 6184641, 6184687, 6184700, 6184707, 6184604, 6184686, 6184609, 6184685, 6184606, 6184683, 6184643, 6184682, 6184734, 6184735, 6248687, 6184557, 6184556, 6184558, 6150785, 6184979, 6184980, 6248383, 6248274, 6248275, 6248344, 6248368, 6248366, 6248343, 6248254, 6248259, 6248451, 6059956, 6059952, 6060159, 6184728, 6184729, 6184745, 6184662, 6184706, 6184738, 6248438, 6248439, 6151358, 6150956, 6184602, 6184603, 6185095, 6184559, 6248197, 6150619, 6059888, 6184789, 6184737, 6248727, 6248728, 6059942, 6185069, 6184794, 6184883, 6184860, 6184888, 6184793, 6184934, 6059936, 6059934, 6059930, 6150981, 6184976, 6185003, 6184939, 6150982, 6060010, 6184504, 6184523, 6184524, 6184844, 6184843, 6184868, 6184856, 6184590, 6151546, 6150672, 6151588, 6248181, 6151587], Pages[6184596, 6184643, 6184578, 6184583, 6184584, 6184638, 6184633, 6184589, 6184632, 6184739, 6059874, 6151269, 6151268, 6151316, 6151272, 6151281, 6151288, 6151273, 6014542, 6184500, 6014543, 6014603, 6014599, 6184924, 6151214, 6151303, 6151213, 6151183, 6248194, 6014421, 6059891, 6150863, 6150889, 6184911, 6184910, 6184744, 6150756, 6014426, 6014427, 6184923, 6184913, 6059882, 6151325, 6151324, 6151326, 6151327, 6151329, 6151328, 6014459, 6184705, 6184588, 6184716, 6184702, 6184700, 6184711, 6184720, 6184703, 6184851, 6184850, 6060005, 6184852, 6184953, 6184954, 6184826, 6184912, 6184914, 6185013, 6184966, 6184942, 6151364, 6184791, 6151312, 6151313, 6151319, 6151317, 6151331, 6151363, 6151224, 6151226, 6014433, 6150673, 6150626, 6150632, 6248726, 6059906, 6184570, 6184649, 6184661, 6184547, 6184641, 6184546, 6184572, 6184585, 6184571, 6184660, 6059909, 6150853, 6059911, 6150700, 6150854, 6150855, 6059908, 6059907, 6150856, 6150715, 6150721, 6151282, 6150770, 6151280, 6151283, 6150826, 6184577, 6184893, 6150767, 6150768, 6151297, 6184907, 6014434], Enums[6014682, 6014667, 6014665, 6014678, 6014676, 6014680, 6014666, 6014675, 6014537, 6014642, 6014596, 6014641, 6014600, 6014615, 6014597, 6014402, 6014404, 6014406, 6014401, 6014405, 6014403, 6014586, 6014619, 6014583, 6059841, 6014562, 6014690, 6014502, 6014500, 6014499, 6014501, 6059845, 6059832, 6059831, 6059833, 6014498, 6014497, 6014590, 6014591, 6014592, 6014471, 6014472, 6059787, 6059775, 6059780, 6059786, 6059785, 6059778, 6059777, 6059781, 6059783, 6059779, 6059788, 6059773, 6059769, 6059770, 6014465, 6059872, 6059861, 6059859, 6059885, 6059840, 6059863, 6059886, 6059871, 6059857, 6014616, 6014621, 6014627, 6014631, 6014587, 6014550, 6014658, 6014517, 6014527, 6014695, 6014653, 6014698, 6014654, 6014659, 6014683, 6014524, 6014520, 6014530, 6014525, 6014531, 6014529, 6014523, 6014589, 6014588, 6014672, 6014533, 6014594], Interfaces["NPR CleanCash XCCSP Interface"], Queries[6014428, 6014484, 6014468, 6014478, 6014477], Reports[6014554, 6014468, 6014539, 6014531, 6014556, 6014500, 6014501], XmlPorts[6184850]
 - Extends: —
 - References: Tables["NPR POS Unit" from POS Core, "NPR POS Entry" from POS Core], Codeunits["NPR POS Session" from POS Core, "NPR POS Front End Management" from POS Core, "NPR POS Setup" from POS Core, "NPR POS Sale" from POS Core]
 
 ## POS Cross Reference
-- Defines: Tables[6014660], Codeunits[6014620]
+- Defines: Tables[6014660, 6014661], Codeunits[6059905, 6014620], Pages[6059811, 6059810]
 - Extends: —
 - References: Codeunits["NPR RegEx" from system]
 
 ## POS Data Source
-- Defines: Tables[6150708], Codeunits[6150790]
+- Defines: Tables[6150708], Codeunits[6150732, 6014669, 6150715, 6150713, 6150714, 6150711, 6150712, 6150710, 6150790, 6150791, 6150784, 6150749, 6150693], Pages[6150708]
 - Extends: —
 - References: Codeunits["NPR POS Data Management", "NPR POS View" from POS Core, "NPR POS Setup" from POS Core, "NPR POS Session" from POS Core, "NPR POS Front End Management" from POS Core]
 
 ## POS Discount
-- Defines: Tables[6014439], Codeunits[6014432, 6014433], Enums[DiscGroupingType, DiscountPeriodType, MixedDiscountType], Queries[CampaignItemsPeriod, MixedDiscItemsMix0, MixedDiscItemsMix1, MixedDiscItemsMix2, PeriodDiscountItems, RetailCampgnItemTotals, RetailCmpgnItemEntries, RetailCmpgnItemsMix0, RetailCmpgnItemsMix1, RetailCmpgnItemsMix2]
+- Defines: Tables[6060029, 6014417, 6059936, 6059938, 6060001, 6060002, 6014411, 6014427, 6014412, 6014421, 6014420, 6014413, 6014414, 6014439, 6014415, 6014610, 6014612, 6014611, 6059879, 6059878, 6059874, 6059875, 6059876], Codeunits[6014433, 6151477, 6151476, 6151124, 6151339, 6151338, 6014681, 6014416, 6014415, 6014455, 6014432, 6014614, 6151080, 6151079, 6151078, 6151077, 6151271], Pages[6059878, 6014453, 6014454, 6014455, 6059987, 6014614, 6014407, 6150958, 6150960, 6150961, 6151091, 6151093, 6151092, 6014450, 6014553, 6014451, 6014452, 6014447, 6014448, 6014466, 6014444, 6014467, 6014611, 6014610, 6014612, 6014613, 6150910, 6150909, 6151083, 6150908, 6150907, 6150899], Enums[6014567, 6014412, 6014557, 6014411, 6014559, 6014558, 6014569, 6014571, 6014556, 6014555], Queries[6014612, 6014617, 6014618, 6014619, 6014616, 6014610, 6014611, 6014613, 6014614, 6014615]
 - Extends: —
 - References: Tables["NPR POS Sale" from POS Core, "NPR POS Sale Line" from POS Core], Codeunits["NPR POS Sales Disc. Calc. Mgt." from POS Core, "NPR Sentry" from Sentry, "NPR Sentry Span" from Sentry]
 
 ## POS Info
-- Defines: Tables[6150646], Codeunits[6150640]
+- Defines: Tables[6150640, 6150642, 6150646, 6150645, 6150648, 6150647, 6150641, 6150644], Codeunits[6150640, 6059835], Pages[6150640, 6150643, 6150642, 6150645, 6150646, 6150647, 6014456, 6150641]
 - Extends: —
 - References: Tables["NPR POS Sale" from POS Core, "NPR POS Sale Line" from POS Core, "NPR POS Entry" from POS Core], Codeunits["NPR POS Session" from POS Core, "NPR POS Front End Management" from POS Core, "NPR POS Sale" from POS Core, "NPR POS Data Management" from POS Data Source]
 
 ## POS Input Box
-- Defines: Tables[6060108], Pages[6060096]
+- Defines: Tables[6060106, 6060108, 6060105, 6060107], Codeunits[6060107, 6060105], Pages[6060097, 6060099, 6060100, 6060098, 6060096]
 - Extends: —
 - References: Tables["NPR POS Action" from POS Core, "NPR POS View" from POS Core]
 
 ## POS Inventory Set
-- Defines: Pages["RISRetailInvSetSub"]
+- Defines: Tables[6151087, 6151085, 6151086], Codeunits[6151085], Pages[6151088, 6151086, 6151085, 6151087]
 - Extends: —
 - References: —
 
 ## POS Item Availability
-- Defines: Tables[6014637], Codeunits[6059785, 6059783], Pages[6014636, 6014640, 6014641], Queries[UnpostedPOSItemEntries]
+- Defines: Tables[6014637, 6014636], Codeunits[6059785, 6059959, 6059917, 6059783], Pages[6059850, 6059851, 6059852], Queries[6014407]
 - Extends: —
 - References: Tables["NPR POS Sale", "NPR POS Sale Line" from POS Core], Codeunits["NPR POS Session", "NPR POS Sale", "NPR POS Sale Line", "NPR POS Front End Management", "NPR POS Setup" from POS Core, "NPR POS Workflow Config" from POS Action, "Item-Check Avail." from inventory]
 
 ## POS Parked Sale
-- Defines: Tables[6151002], Codeunits[6151006], Pages[6151001, 6151004, 6151003, 6151005]
+- Defines: Tables[6151002, 6151003], Codeunits[6151006], Pages[6151003, 6151005, 6151002, 6151004]
 - Extends: —
 - References: Tables["NPR POS Sale", "NPR POS Sale Line" from POS Core], Codeunits["NPR POS Session", "NPR POS Sale", "NPR POS Create Entry" from POS Core, "NPR POS Action: SavePOSSvSl B", "NPR POS Action: LoadPOSSvSl B" from POS Action]
 
+## POS Payment Bin
+- Defines: Tables[6151587, 6151584, 6151586, 6014457, 6150633, 6150617, 6150628, 6151585], Codeunits[6150633, 6184649, 6150642, 6060081, 6150646, 6059843, 6150628, 6150641], Pages[6151237, 6151240, 6151238, 6151239, 6151246, 6014488, 6150622, 6150623, 6150628, 6150620, 6151243], Queries[6014418]
+- Extends: —
+- References: Tables["NPR POS Unit" from POS Core, "NPR POS Store" from POS Core, "NPR POS Sale" from POS Core, "NPR POS Entry" from POS Core], Codeunits["NPR POS Session" from POS Core, "NPR POS Front End Management" from POS Core, "NPR POS Audit Log Mgt." from POS Compliance, "NPR Sentry" from Sentry]
+
 ## POS Payment Denomination
-- Defines: Tables[6014546, 6150638], Codeunits[6059915], Pages[6014547], Enums["NPR Denomination Type", "NPR Denomination Target"]
+- Defines: Tables[6150910, 6014546, 6150638, 6059791], Codeunits[6059915, 6184981], Pages[6060033, 6060034], Enums[6014510, 6014509]
 - Extends: —
 - References: Tables["NPR POS Payment Method" from POS Core, "NPR POS Workshift Checkpoint" from POS Core, "NPR POS Payment Bin Checkp." from POS Posting], Codeunits["NPR POS Payment Bin Checkpoint" from POS Posting]
 
 ## POS Posting
-- Defines: Tables[6014694, 6059797], Codeunits[6150637, 6150627], Pages[], Enums["NPR POS Pmt. Method Item Type"], Queries[POSEntrySalesLine, POSEntryPaymentLine, WorkshiftPaymentCheckpoint]
+- Defines: Tables[6150624, 6150625, 6150652, 6150649, 6150621, 6150626, 6014680, 6150636, 6150623, 6014694, 6150680, 6150622, 6150629, 6150616, 6059797, 6150620, 6150634, 6150635, 6150653, 6150618, 6150627, 6150630], Codeunits[6014568, 6150614, 6150629, 6150635, 6150618, 6151007, 6059932, 6184983, 6150615, 6014699, 6059901, 6150637, 6150616, 6059770, 6150620, 6060166, 6151381, 6184928, 6151039, 6151038, 6184986, 6150627, 6184678, 6184677, 6184680, 6184679], Pages[6014445, 6150670, 6150752, 6150637, 6150649, 6150650, 6150675, 6150723, 6150671, 6150652, 6059872, 6059873, 6150672, 6150656, 6151006, 6150655, 6150676, 6150631, 6150619, 6150716, 6150618, 6150654, 6150651, 6150658, 6150659, 6150638, 6150657, 6150639, 6150758, 6150748, 6150653, 6150630, 6150722, 6150627, 6150629], Enums[6014513, 6150620, 6014629, 6014628], Interfaces["NPR Reference No. Assignment"], Queries[6014420, 6014474, 6014419, 6014417, 6014431], Reports[6014438]
 - Extends: —
 - References: Tables["NPR POS Sale", "NPR POS Sale Line", "NPR POS Entry" from POS Core], Codeunits["NPR POS Session", "NPR POS Sale", "NPR POS Create Entry" from POS Core, "NPR Denomination Mgt." from POS Payment Denomination, "General Ledger Setup" from system, "Dimension Management" from system]
 
-## POS RMA
-- Defines: —
+## POS Rma
+- Defines: Tables[6150639]
 - Extends: —
 - References: —
 
 ## POS Resume Sale
-- Defines: Tables[6014418], Codeunits[6150739, 6150743], Pages[]
+- Defines: Tables[6014496, 6014492, 6014491, 6014419, 6014418, 6014497, 6014494, 6014493, 6014495], Codeunits[6150739, 6150738, 6248270], Pages[6150744, 6150745, 6150746, 6150747]
 - Extends: —
 - References: Tables["NPR POS Sale" from POS Core, "NPR POS Saved Sale Entry" from POS Parked Sale], Codeunits["NPR POS Session", "NPR POS Create Entry" from POS Core, "NPR POS Saved Sale Mgt." from POS Parked Sale]
 
 ## POS Sales Document
-- Defines: Tables[6150632, 6151253], Codeunits[6014425, 6014562], Pages[], Enums["PostSalesPostingType", "SalesDocFunctionToRun"]
+- Defines: Tables[6150893, 6060070, 6150632, 6014433, 6151147, 6150895, 6150891], Codeunits[6184944, 6014430, 6014435, 6150983, 6184477, 6184955, 6014562, 6151367, 6150859, 6059913, 6150861, 6059961, 6150862, 6059914, 6150863, 6059918, 6150872, 6150867, 6059963, 6184940, 6184941, 6150870, 6150868, 6150869, 6060020, 6150871, 6060007, 6060008, 6060012, 6014410, 6151380, 6184665, 6014417, 6014425, 6014408, 6014429, 6184946, 6014407, 6060005, 6014406, 6059986], Pages[6014401, 6014493, 6184710, 6151263, 6150674, 6151289, 6014438, 6185040, 6184712, 6184713, 6184714, 6184706], Enums[6059774, 6014544, 6014528, 6014447], Interfaces["NPR EFT Doc Pay Reservation"]
 - Extends: —
 - References: Tables["NPR POS Setup" from POS Core, "NPR POS Entry" from POS Core], Codeunits["NPR POS Session" from POS Core, "Sales-Post Prepayments" from system, "Sales Header", "Sales Line" from system]
 
 ## POS Security
-- Defines: Tables[6014601], Pages[6014602, 6014603]
+- Defines: Tables[6014601], Codeunits[6059916], Pages[6014601, 6014600]
 - Extends: —
 - References: —
 
 ## POS Service
-- Defines: —
+- Defines: Codeunits[6059838]
 - Extends: —
 - References: —
 
 ## POS Setup
-- Defines: Pages[6150707, 6150708]
+- Defines: Tables[6150707], Codeunits[6150708], Pages[6150707, 6150738, 6014439]
 - Extends: —
 - References: Tables["NPR POS Setup", "NPR POS Action" from POS Core], Codeunits["NPR POS Action Management", "NPR POS Action Param. Mgt." from POS Core]
 
 ## POS Statistics
-- Defines: Tables[6014620], Codeunits[6059818], Pages[], Queries[POSTurnover, POSCreditSalesInvoice, POSCreditSalesCrMemo, POSSalespersonStats, POSSingleStatistics, CashSummary, POSEntryStats, POSSLDiscAmtType, ItemSalesPostings, RetailHeadlineSales]
+- Defines: Tables[6059847, 6014620, 6014671, 6014663], Codeunits[6184978, 6059818], Pages[6150781, 6059892, 6014669, 6059869, 6059861], Queries[6014410, 6014430, 6014479, 6014415, 6014414, 6014402, 6014429]
 - Extends: —
 - References: Tables["NPR POS Entry", "NPR POS Entry Sales Line", "NPR POS Entry Payment Line" from POS Core], Codeunits["NPR POS Unit" from POS Core, "NPR POS Payment Method" from POS Payment]
 
 ## POS Store
-- Defines: Tables[6014685, 6014686], Pages[6014687, 6014688, 6014689]
+- Defines: Tables[6150614, 6014685, 6014686], Pages[6150615, 6059879, 6059880, 6059881, 6150614]
 - Extends: —
 - References: Tables["NPR POS Store" from POS Core, "NPR Disc. Store Group", "NPR Disc. Store Group Line" from POS Discount, "NPR NpDc Coupon" from commerce, "NPR NpDc Coupon Type" from commerce]
 
-## POS Payment Bin
-- Defines: Tables[6150617], Codeunits[6059843, 6150641], Pages[], Queries["NPR POS Bin Entry Calc."]
-- Extends: —
-- References: Tables["NPR POS Unit" from POS Core, "NPR POS Store" from POS Core, "NPR POS Sale" from POS Core, "NPR POS Entry" from POS Core], Codeunits["NPR POS Session" from POS Core, "NPR POS Front End Management" from POS Core, "NPR POS Audit Log Mgt." from POS Compliance, "NPR Sentry" from Sentry]
-
 ## POS Tax Calculation
-- Defines: Tables[6014570], Codeunits[6014634], Pages[], Enums[6150756, 6150757], Interfaces["NPR POS ITaxCalc"]
+- Defines: Tables[6014570, 6014571], Codeunits[6014654, 6184989, 6014634, 6014635, 6014636, 6014638, 6014639, 6014631, 6014633, 6014632, 6014630], Pages[6014532, 6014533, 6014541], Enums[6150756, 6150758, 6150757], Interfaces["NPR POS ITaxCalc"]
 - Extends: —
 - References: Tables["NPR POS Sale Line" from POS Core], Codeunits["NPR POS Normal Tax", "NPR POS Full Tax", "NPR POS Sales Tax", "NPR No Taxable VAT", "NPR POS Sale Tax Calc."]
 
 ## POS Tax Free
-- Defines: Tables[], Codeunits[6014610, 6014434], Pages[], Enums[], Interfaces["NPR Tax Free Handler IF", "NPR Tax Free Handler Interface"]
+- Defines: Tables[6060005, 6014592, 6014643, 6014657, 6014656, 6014655, 6014654, 6014653, 6014652, 6014642, 6014641, 6014640, 6014477, 6014644], Codeunits[6014661, 6014662, 6014434, 6014613, 6014615, 6014616, 6014617, 6060032, 6014610, 6014619, 6014612, 6014611, 6060033, 6014577, 6184654], Pages[6059966, 6014644, 6014619, 6014571, 6014578, 6014573, 6014647, 6014577, 6059948, 6014646, 6014645, 6014565, 6014572], Enums[6014418, 6014446], Interfaces["NPR Tax Free Handler IF", "NPR Tax Free Handler Interface"]
 - Extends: —
 - References: Tables["NPR POS Sale" from POS Core, "NPR POS Unit" from POS Core], Codeunits["NPR POS Session" from POS Core, "NPR POS Front End Management" from POS Core, "NPR POS Setup" from POS Core]
 
@@ -171,29 +154,44 @@ Format per module:
 - References: Tables["NPR POS Sale" from POS Core, "NPR POS Sale Line" from POS Core, "Item Translation" from system], Codeunits["Data Type Management" from system]
 
 ## POS Unit
-- Defines: Tables[6014684, 6151176, 6150631], Pages[]
+- Defines: Tables[6151176, 6150709, 6150615, 6150631, 6014684, 6014683, 6150718, 6150654, 6150619], Codeunits[6059937], Pages[6185054, 6150749, 6150617, 6150739, 6059876, 6059877, 6059875, 6150616, 6151265, 6151264, 6150621]
 - Extends: —
 - References: Tables["NPR POS Unit" from POS Core, "Job" from system, "Salesperson/Purchaser" from system]
 
 ## POS View
-- Defines: Tables[6150710, 6059793, 6060098], Codeunits[6059925], Pages[]
+- Defines: Tables[6150712, 6150711, 6060098, 6059793, 6059796, 6150710, 6150651], Codeunits[6150853, 6060009, 6059925, 6248494, 6150728], Pages[6060145, 6150751, 6150712, 6151286, 6151287, 6150761, 6060102, 6150711, 6150710, 6014406, 6150636, 6150635], Enums[6014444]
 - Extends: —
 - References: Tables["NPR POS Unit" from POS Core], Codeunits["NPR POS Front End Management" from POS Core, "NPR POS JavaScript Interface" from POS Core, "NPR POS UI Management" from POS Core, "NPR POS Action Management" from POS Core, "NPR POS Session" from POS Core, "NPR POS Setup" from POS Core, "NPR Json Helper" from commerce, "Type Helper" from system, "NPR Azure Key Vault Mgt." from infrastructure]
 
 ## POS Costumer Input
-- Defines: Tables[6059810, 6151193], Pages[], Enums[6014519, 6014561]
+- Defines: Tables[6059885, 6059810, 6151193, 6059881], Pages[6150774, 6150775, 6185082, 6150862], Enums[6014561, 6014519]
 - Extends: —
 - References: Tables["NPR POS Entry" from POS Core]
 
 ## MPOS
-- Defines: Tables[6150657], Codeunits[6059984], Pages[], Enums[]
+- Defines: Tables[6014672, 6059963, 6150657, 6059964, 6014673], Codeunits[6014493, 6059825, 6059827, 6059826, 6059984, 6059976, 6059965, 6060073, 6150998, 6150996, 6151025, 6150995, 6248420, 6014563, 6014564, 6014566, 6014567], Pages[6059870, 6059962, 6185056, 6059963, 6059964], Enums[6014495, 6014494, 6059899, 6014496, 6059896], Interfaces["NPR MPOS IDataViewCategory", "NPR MPOS IDataViewType"]
 - Extends: —
 - References: —
 
 ## Mobile Emergency POS
-- Defines: Tables[6150955], Codeunits[6248184], Pages[], Enums[]
+- Defines: Tables[6150955, 6151037, 6150972], Codeunits[6248184], Pages[6184928, 6184885, 6184948, 6184887, 6184886, 6184890], Enums[6059888, 6059892]
 - Extends: —
 - References: Tables["NPR POS Unit" from POS Core, "NPR POS Payment Method" from POS Payment], Codeunits["Web Service Management" from system, "Environment Information" from system, "Azure AD Tenant" from system, "General Ledger Setup" from system]
+
+## Sentry
+- Defines: Tables[6151217], Codeunits[6184892, 6248497, 6248500, 6184897, 6184896, 6150966, 6150994, 6248502, 6248498, 6248499], Pages[6185086], Enums[6248500]
+- Extends: —
+- References: Tables["NPR POS Unit" from POS], Codeunits["NPR POS JavaScript Interface" from POS, "NPR POS Session" from POS, "NPR POS Front End Management" from POS, "NPR POS Setup" from POS, "Json Text Reader/Writer" from infrastructure, "Tenant Information" from system, "Environment Information" from system, "Azure AD Tenant" from system, "Azure Key Vault Mgt." from infrastructure, "Type Helper" from system, "Regex" from system]
+
+## API
+- Defines: Tables[6151254, 6151255], Codeunits[6150902, 6185051, 6185052, 6185053, 6150730, 6151009, 6248567, 6248565], Pages[6184874, 6185109, 6185107, 6185108], Enums[6059810, 6059813, 6059812, 6059924], Interfaces["NPR API Module Resolver", "NPR API Request Handler"], EnumExtensions[6014420], PermissionSets[6014416, 6014408]
+- Extends: "EventCategory"
+- References: Tables["Aggregate Permission Set" from system], Codeunits["Company Triggers" from system, "Environment Information" from system, "Azure AD Tenant" from system, "Type Helper" from system, "Base64 Convert" from system, "Application System Constants" from system, "Confirm Management" from system, "NPR Json Parser" from commerce, "NPR Azure Key Vault Mgt." from infrastructure, "NPR AAD Application Mgt." from system, "NPR Sentry" from infrastructure, "NPR Sentry Span" from infrastructure, "NPR Sentry Http" from infrastructure, "NPR Feature Flags Management" from infrastructure]
+
+## API Services
+- Defines: Tables[6059911, 6059934, 6151258, 6151259, 6248182, 6151260, 6059925, 6151190, 6060010, 6151264], Codeunits[6248370, 6248626, 6248371, 6248215, 6248216, 6185007, 6185055, 6248290, 6248291, 6248628, 6248620, 6150992, 6248189, 6248260, 6185056, 6248629, 6185057, 6248632, 6248630, 6150690, 6248435, 6248434, 6248641, 6248640, 6248639, 6248644, 6248642, 6248643, 6248638, 6248658, 6151083, 6150821, 6185116, 6185119, 6185117, 6248381, 6185115, 6185107, 6248681, 6248682, 6248329, 6248330, 6248328, 6151044, 6151046, 6151047, 6151048, 6248526, 6248530, 6248528, 6248529, 6248663, 6248360, 6248361, 6248646, 6151118, 6151117, 6151122, 6151119, 6151049, 6248527, 6248533, 6248534, 6248517, 6248511, 6248548, 6248549, 6248510, 6248514, 6248509, 6248518, 6151072, 6151116, 6150899, 6248560, 6248647, 6248649, 6248648, 6151069, 6151062, 6248359, 6248538, 6248656, 6248615, 6248606, 6248614, 6248603, 6248607, 6248609, 6248657, 6248610, 6248611, 6248601, 6248612, 6248613, 6248186, 6248650, 6248516, 6248551, 6248545, 6248637, 6151087, 6151088, 6248490, 6248220, 6248223, 6185123, 6185122, 6248221, 6248485, 6248219, 6248487, 6248228, 6248225, 6185113, 6185106, 6248482, 6248597, 6248598, 6151147, 6150717, 6248249, 6248253, 6248251, 6248252, 6248394, 6248357, 6248369, 6248182, 6248376, 6185040, 6185082, 6185046, 6185044, 6185041, 6248470, 6185039, 6248288, 6185083, 6185080, 6151041, 6248183, 6248416, 6248418, 6248415, 6248331], Pages[6150948, 6185130, 6248183, 6150950, 6248181, 6248182, 6248188, 6248189, 6248186, 6248187, 6150947, 6150935, 6150924, 6150949, 6185067, 6150900, 6150962, 6150963], Enums[6059826, 6059842, 6014580, 6059843, 6059868, 6059947, 6014618, 6014603, 6014624, 6014582, 6059942, 6059933, 6059944, 6059945, 6014632, 6059941, 6014581, 6059943, 6014572, 6059952, 6059918, 6014579, 6059946, 6059911, 6059912, 6059827, 6014552, 6059855, 6059873, 6059815], Interfaces["NPR MembershipApiAddProperties"], PermissionSets[6014427, 6014425, 6014440, 6014430, 6014423, 6014426, 6014417, 6014411, 6014424, 6014415, 6014431, 6014412, 6150920, 6014433, 6014422, 6014429, 6014418, 6014434, 6014414]
+- Extends: —
+- References: —
 
 ## Environment
 - Defines: Tables[6059806], Codeunits[6060025], Pages[6150762], Enums[6014516]
@@ -206,26 +204,26 @@ Format per module:
 - References: Codeunits["App Key Vault Secret Provider" from system, "In Memory Secret Provider" from system]
 
 ## Azure Function Management
-- Defines: Tables[6151574], Codeunits[6151570, 6151571, 6151572], Pages[]
+- Defines: Tables[6151572, 6151573, 6151574, 6151571], Codeunits[6151574, 6151572, 6151575, 6151571, 6150970, 6151570, 6185125], Pages[6151574, 6151573, 6151571, 6151306, 6151572, 6151042, 6151040, 6151041]
 - Extends: —
 - References: Tables["NPR POS Unit" from POS Core], Codeunits["Base64 Convert" from system, "NPR Barcode Lookup Mgt." from commerce]
 
 ## Azure AD Application Management
-- Defines: Tables[6150915 (Temporary)], Codeunits[6060060]
+- Defines: Tables[6150915], Codeunits[6060060], Pages[6184804, 6184803]
 - Extends: —
 - References: Tables["AAD Application" from system, "Access Control" from system, "Aggregate Permission Set" from system], Codeunits["Azure AD Tenant" from system, "NPR Azure Key Vault Mgt." from infrastructure, "Base64 Convert" from system, "Type Helper" from system, "OAuth2" from system, "Graph Mgt - General Tools" from system, "AAD Application Interface" from system]
 
-## CloudflareMedia
-- Defines: Tables[6151234], Codeunits[6248556, 6248557], Pages[], Enums[6059922, 6059923], Interfaces["NPR CloudflareMigrationInterface"]
+## Cloudflare Media
+- Defines: Tables[6151234, 6151245, 6151252], Codeunits[6248556, 6248557, 6151097], Pages[6185105, 6185128, 6185104, 6185103, 6185123, 6185124, 6185125, 6185126], Enums[6059923, 6059922], Interfaces["NPR CloudflareMigrationInterface"]
 - Extends: —
-- References: Codeunits["Environment Information" from system, "Azure AD Tenant" from system, "Cryptography Management" from system, "Type Helper" from system, "Base64 Convert" from system]
+- References: —
 
 ## Cognitive Services
-- Defines: Tables[6059955, 6059957, 6059958, 6059959, 6059960], Codeunits[6059955], Pages[], Enums[6014441, 6014443]
+- Defines: Tables[6059955, 6059959, 6059958, 6059961, 6059957, 6059956, 6059960], Codeunits[6059955], Pages[6059955, 6059959, 6059954, 6151307, 6059958, 6059960, 6059957, 6059956], Enums[6014441, 6014442, 6014443]
 - Extends: —
 - References: Codeunits["Image Helpers" from system]
 
-## DataStructures
+## Data Structures
 - Defines: Codeunits[6059769, 6150898]
 - Extends: —
 - References: —
@@ -236,22 +234,22 @@ Format per module:
 - References: Codeunits["Data Type Management" from system, "Base64 Convert" from system]
 
 ## Endpoint
-- Defines: Tables[6014674, 6014675], Codeunits[6014675, 6014680], Pages[], XMLports[]
+- Defines: Tables[6014674, 6014675, 6014678, 6014679, 6014677, 6014676], Codeunits[6014674, 6014675, 6014680, 6014673, 6014677], Pages[6014675, 6014676, 6014674, 6014680, 6014679, 6014677, 6014678], XmlPorts[6014674]
 - Extends: —
 - References: —
 
 ## Feature Flags
-- Defines: Tables[6060033, 6060034], Codeunits[6151495, 6184675, 6151498], Pages[6151159, 6151158, 6151160]
+- Defines: Tables[6060033, 6060034], Codeunits[6151498, 6151495, 6184675, 6151499], Pages[6151159, 6151158, 6151157]
 - Extends: —
 - References: Codeunits["NPR Job Queue Management" from Job Queue, "Environment Information" from system, "Azure AD Tenant" from system, "Base64 Convert" from system, "Confirm Management" from system, "JSON Management" from system]
 
 ## Feature Management
-- Defines: Tables[6060019], Enums[6014577], Pages[6151094], Interfaces["NPR Feature Management"]
+- Defines: Tables[6060019], Codeunits[6150657, 6151478], Pages[6151094], Enums[6014577], Interfaces["NPR Feature Management"]
 - Extends: —
 - References: Codeunits["Application Area Mgmt. Facade" from system]
 
 ## File Transfer
-- Defines: Tables[6059868], Codeunits[6151611, 6151394], Pages[]
+- Defines: Tables[6059868, 6059867], Codeunits[6151611, 6151612, 6151394], Pages[6150887, 6150888, 6150871, 6150872]
 - Extends: —
 - References: Codeunits["NPR Azure Key Vault Mgt." from infrastructure, "Base64 Convert" from system]
 
@@ -261,17 +259,17 @@ Format per module:
 - References: Tables["Company Information" from system], Codeunits["Web Service Management" from system]
 
 ## Job Queue
-- Defines: Tables[], Codeunits[6014663], Pages[], Enums[], PermissionSets["NPR Ext JQ Refresher"]
-- Extends: —
+- Defines: Tables[6014632, 6151230, 6059870, 6151290, 6151117], Codeunits[6248633, 6014664, 6248231, 6248230, 6014663, 6014501, 6014624, 6151058, 6248395, 6248478, 6184724], Pages[6059842, 6185096, 6150891, 6248219, 6185041, 6185042], Enums[6059851], Reports[6014559], TableExtensions[6014472], PageExtensions[6014413, 6014424], PermissionSets[6014420]
+- Extends: "Job Queue Entry", "Job Queue Entries", "Job Queue Entry Card"
 - References: Tables["Job Queue Entry" from system, "Job Queue Log Entry" from system], Codeunits["NPR Nc Task List Processing" from commerce, "NPR Nc Import List Processing" from commerce, "NPR Feature Flags Management" from Feature Flags, "NPR Monitored Job Queue Mgt." from Job Queue, "Environment Information" from system, "Type Helper" from system, "Session" from system, "Job Queue Dispatcher" from system]
 
 ## Reimbursement
-- Defines: Tables[6151102, 6151105], Codeunits[6151101, 6151102], Pages[], Enums[]
+- Defines: Tables[6151105, 6151104, 6151106, 6151107, 6151102, 6151103, 6151100, 6151101, 6151110, 6151111], Codeunits[6151104, 6151109, 6151108, 6151103, 6151101, 6151102, 6151105, 6151107, 6151110, 6151100, 6151106], Pages[6151105, 6151104, 6151106, 6151107, 6151102, 6151101, 6151103, 6151100, 6151110, 6151111], Enums[6151100]
 - Extends: —
 - References: Tables["Company" from system], Codeunits["Data Type Management" from system, "Filter Page Builder" from system]
 
 ## Replication
-- Defines: Tables[6014589], Codeunits[6014589, 6059774], Pages[], Enums[], Interfaces["NPR Replication IEndpoint Meth", "NPR Rep. WS IFunctions"], XmlPorts[], Reports[]
+- Defines: Tables[6014589, 6014584, 6014588, 6014634, 6014602], Codeunits[6014605, 6014672, 6014592, 6014589, 6014626, 6014622, 6014608, 6059774, 6014692], Pages[6014504, 6014500, 6014487, 6014495, 6014499, 6059849, 6014672], Enums[6014474], Interfaces["NPR Replication IEndpoint Meth", "NPR Rep. WS IFunctions"], Reports[6014415], XmlPorts[6014400, 6014402]
 - Extends: —
 - References: Tables["NPR Nc Import Type", "NPR Nc Import Entry" from commerce], Codeunits["NPR Nc Import List Processing" from commerce, "NPR Job Queue Param. Str. Mgt." from Job Queue, "NPR Job Queue Management" from Job Queue, "Temp Blob" from system, "Web Request Helper" from system, "Base64 Convert" from system, "Cryptography Management" from system]
 
@@ -280,7 +278,243 @@ Format per module:
 - Extends: —
 - References: —
 
+## Inventory
+- Defines: TableExtensions[6014404], PageExtensions[6014406]
+- Extends: "Inventory Setup", "Inventory Setup"
+- References: —
+
+## Inventory Cost Adjmt
+- Defines: Codeunits[6014683, 6014684]
+- Extends: —
+- References: Tables["Inventory Setup", "Sales & Receivables Setup", "Job Queue Entry"], Codeunits["NPR Job Queue Management", "NPR Job Queue Param. Str. Mgt."]
+
+## Item Add On
+- Defines: Tables[6059912, 6151125, 6151267, 6151268, 6151126, 6151128, 6151129, 6151143, 6151142, 6151141, 6151127], Codeunits[6151129, 6059900, 6059923, 6151125], Pages[6150931, 6248193, 6151126, 6248192, 6151128, 6151129, 6151475, 6151125, 6151119, 6150613, 6151127, 6185036, 6185037, 6185038], Queries[6014497]
+- Extends: —
+- References: —
+
+## Item Catalog
+- Defines: Tables[6060061, 6060063], Codeunits[6060063, 6060061, 6060064, 6060062], Pages[6060061]
+- Extends: —
+- References: Tables["Nonstock Item", Item, Vendor, "NPR Nc Import Entry", "NPR Attribute", "NPR Attribute Key", "NPR Attribute Value Set", "Purchase Line", "Item Reference", "CSV Buffer", "Unit of Measure", "Item Category", "Manufacturer", "Config. Template Header", "Config. Template Line"], Codeunits["File Management", "Temp Blob", "Data Compression", "NPR Job Queue Param. Str. Mgt.", "Catalog Item Management", "Config. Template Management"]
+
+## Item Category
+- Defines: Tables[6059807], Codeunits[6014456], Queries[6014426, 6014425], PageExtensions[6014446, 6014400]
+- Extends: "Item Categories", "Item Category Card"
+- References: Tables["Item Category", "Item", "Default Dimension", "Config. Template Header", "Config. Template Line", "VAT Posting Setup", "Item Ledger Entry", "NPR POS Entry Sales Line", "Number Sequence"], Codeunits["Config. Template Management", "Confirm Management", "Dimension Management", "Item Category Management"]
+
+## Item Hierarchy
+- Defines: Tables[6151050, 6151051, 6151052], Codeunits[6151050], Pages[6151051, 6151053, 6151050, 6151052]
+- Extends: —
+- References: Tables["NPR Retail Campaign Header", "NPR Retail Campaign Line", "NPR Period Discount Line", "NPR Mixed Discount Line", "NPR Retail Repl. Demand Line", "NPR Distribution Setup", "Item", "Item Variant", "AllObjWithCaption"], Codeunits["Item Hierarchy Management"]
+
+## Item Reference
+- Defines: TableExtensions[6014440], PageExtensions[6014410, 6014411]
+- Extends: "Item Reference", "Item Reference Entries", "Item Reference List"
+- References: —
+
+## Item Status
+- Defines: Tables[6060054], Codeunits[6060055], Pages[6060056]
+- Extends: —
+- References: Tables["Item", "Sales Line", "Purchase Line"], Codeunits["Item Jnl.-Check Line"]
+
+## Item Worksheet
+- Defines: Tables[6060041, 6060042, 6060051, 6060053, 6060055, 6060052, 6060040, 6060043, 6060044, 6060057, 6060050, 6060049, 6060045, 6060046, 6060047, 6060048], Codeunits[6060056, 6060058, 6060052, 6060048, 6060049, 6060053, 6060054, 6014440, 6060041, 6060040, 6060057, 6059791, 6060045, 6060047, 6060044, 6060046, 6060043], Pages[6060053, 6060052, 6060051, 6060042, 6060041, 6060040, 6060055, 6060057, 6060054, 6060049, 6060050, 6060058, 6060060, 6060043, 6060044, 6060046, 6060047, 6060048], Enums[6014564], XmlPorts[6060040, 6060041]
+- Extends: —
+- References: Tables["NPR Nc Import Entry"], Codeunits["NPR Nc Import List IProcess"]
+
+## Replenishment
+- Defines: Tables[6014474, 6151061, 6151062, 6014595], Codeunits[6151052], Pages[6014592, 6151070, 6151073, 6151071, 6014635]
+- Extends: —
+- References: Tables["NPR Item Hierarchy Line", "NPR Distrib. Group Members", "NPR Distribution Setup", "NPR Retail Repl. Demand Line", "NPR Period Discount Line", "Item", "Stockkeeping Unit"], Codeunits["NPR Retail Campaign Header"]
+
+## Accessories
+- Defines: Tables[6014506, 6014508, 6014507], Codeunits[6014506], Pages[6014510, 6014509, 6014505, 6014502, 6014548]
+- Extends: —
+- References: Tables["Item", "Item Ledger Entry", "NPR POS Entry Sales Line"], Codeunits["Item Jnl.-Post Line"]
+
+## Coupon
+- Defines: Tables[6150839, 6151597, 6151598, 6059891, 6151591, 6151592, 6151596, 6151219, 6151594, 6151599, 6151590, 6151218, 6151606, 6151605, 6151595, 6151601, 6151602, 6014502, 6151593, 6151224, 6151603, 6151600], Codeunits[6151601, 6150972, 6248505, 6248586, 6151590, 6248345, 6151591, 6248503, 6151609, 6151594, 6060085, 6151596, 6151595, 6151592, 6060028, 6151599, 6151593, 6014480, 6151597, 6151603, 6151602, 6248506, 6059889, 6059985, 6151600, 6060004], Pages[6151270, 6151600, 6151601, 6151599, 6151592, 6151594, 6151597, 6151595, 6151593, 6151602, 6151590, 6151591, 6151608, 6151596, 6151606, 6151607, 6151604, 6151605, 6151598, 6151603], Enums[6014595, 6014462], Queries[6014496, 6014495], XmlPorts[6151591, 6151590]
+- Extends: —
+- References: —
+
+## Ecommerce
+- Defines: Tables[6151305, 6151310, 6151300], Codeunits[6151327, 6151326, 6151321, 6151301, 6151305, 6151303, 6151304, 6151302, 6151300], Pages[6151305, 6151301, 6151300], XmlPorts[6151306, 6151300]
+- Extends: —
+- References: —
+
+## Magento
+- Defines: Tables[6151189, 6151426, 6151440, 6151428, 6151427, 6151429, 6151416, 6151414, 6151415, 6151433, 6151442, 6151434, 6151432, 6151445, 6151422, 6151423, 6151435, 6151436, 6151400, 6151410, 6151430, 6151431, 6151424, 6151425, 6151407, 6151413, 6151409, 6151437, 6151411, 6151412, 6151462, 6151417, 6151401, 6151418, 6151438, 6151404, 6151420, 6151408, 6151405, 6151406, 6151439, 6151402, 6151403, 6150892, 6151466, 6151472, 6151467, 6151473, 6151469, 6151470, 6059813, 6059836, 6150885, 6151471, 6150693, 6059841], Codeunits[6184956, 6248237, 6184933, 6184929, 6185118, 6248227, 6184959, 6151412, 6151406, 6151480, 6248453, 6151404, 6151400, 6151420, 6151408, 6151407, 6151421, 6151414, 6151402, 6151415, 6151454, 6151457, 6151453, 6151455, 6151448, 6151458, 6151456, 6151459, 6151450, 6151451, 6151452, 6151447, 6151449, 6151405, 6151419, 6151422, 6151472, 6151418, 6151427, 6151416, 6151424, 6151417, 6248374, 6151425, 6151426, 6151413, 6151411, 6151401, 6248468, 6151403, 6248662, 6248623, 6150650, 6151473, 6184578, 6060068, 6060066, 6060067, 6150920, 6184957], Pages[6185064, 6151458, 6151457, 6151431, 6151433, 6151434, 6151432, 6151430, 6151435, 6151419, 6151420, 6151416, 6151414, 6151418, 6151415, 6151417, 6151441, 6151459, 6151442, 6151440, 6151461, 6151425, 6151426, 6151427, 6151443, 6151444, 6151451, 6151400, 6151402, 6151436, 6151437, 6150803, 6151428, 6151447, 6151413, 6151429, 6151452, 6151453, 6151454, 6151448, 6151412, 6151411, 6151421, 6151481, 6151482, 6151401, 6151422, 6151462, 6151449, 6151439, 6151445, 6014425, 6151438, 6151406, 6151408, 6151407, 6151483, 6151484, 6151409, 6151410, 6151455, 6151405, 6151404, 6151403, 6184597, 6184709, 6151466, 6151472, 6151467, 6151473, 6151469, 6151470, 6184701, 6151471, 6151298, 6150804], Enums[6014437, 6014417, 6014420, 6014419, 6014433, 6014415, 6014436, 6014435, 6014414, 6014410, 6014432, 6014421, 6014425, 6014426, 6014431, 6014422, 6014430, 6014429, 6014434, 6014427, 6014428, 6014424, 6014423, 6151416, 6059929, 6014438], Interfaces["NPR IPaymentGateway", "NPR Pay by Link"], XmlPorts[6014404, 6151400, 6151402, 6151404, 6151403, 6151401, 6151405]
+- Extends: —
+- References: —
+
+## Magento 2
+- Defines: Tables[6151153, 6151152, 6151150, 6014572, 6059854, 6059863, 6151151, 6151145, 6059856, 6151443], Codeunits[6151463, 6151151, 6151150, 6151465, 6151152, 6151464, 6014446, 6150974, 6151386, 6150989, 6150969, 6150985, 6151462, 6151145, 6150976, 6059834, 6151153, 6151460], Pages[6014458, 6150843, 6151486], Enums[6014440, 6014534, 6014439], XmlPorts[6151157, 6151154, 6151150, 6151149, 6151153, 6151148, 6151158, 6151159, 6151138, 6151152, 6151141, 6151142, 6151144, 6151143, 6151137, 6151147, 6151146, 6151140, 6151139, 6151145, 6151151, 6184507, 6151156, 6151155]
+- Extends: —
+- References: —
+
+## Adyen Reconciliation
+- Defines: Tables[6150806, 6150829, 6150802, 6150788, 6150789, 6150800, 6150874, 6150876, 6150982, 6150801, 6150880, 6150875, 6150881, 6150805, 6150791, 6151208], Codeunits[6184865, 6184827, 6184891, 6184796, 6184943, 6184920, 6184908, 6248336, 6185038, 6185128, 6184779, 6184786, 6248332, 6184931, 6184771], Pages[6184552, 6184582, 6184535, 6184502, 6184503, 6184534, 6184536, 6184657, 6184531, 6184655, 6184669, 6184665, 6184550, 6184551, 6184533, 6184519, 6185081], Enums[6014696, 6014655, 6014674, 6059795, 6014661, 6014663, 6014668, 6014687, 6014662, 6059806, 6014673, 6014671, 6014686, 6014697, 6059768, 6059767, 6014649, 6014664, 6059910], Reports[6014562, 6014536], PageExtensions[6014517], PermissionSets[6014406]
+- Extends: "Business Manager Role Center"
+- References: —
+
+## BTwentyFour Service
+- Defines: Tables[6014524, 6014523, 6014522], Codeunits[6014645, 6014650, 6014644, 6014652, 6014643, 6014647, 6014649, 6014651, 6014640, 6014641, 6014646], Pages[6059923, 6059924, 6059921, 6059920, 6059922], Enums[6014409, 6014407, 6014416, 6014413, 6014650, 6014408], Interfaces["NPR BTF IEndPoint", "NPR BTF IFormatResponse"]
+- Extends: —
+- References: —
+
+## Entria Integration
+- Defines: Tables[6059892, 6059910, 6059942], Codeunits[6150988, 6151045, 6150987, 6151027, 6248580, 6248584], Pages[6150928, 6150929, 6150930]
+- Extends: —
+- References: —
+
+## Printnode
+- Defines: Tables[6151221, 6151220], Codeunits[6151220, 6151221], Pages[6151221, 6151222, 6151220]
+- Extends: —
+- References: —
+
+## Pacsoft
+- Defines: Tables[6014472, 6014471, 6059883, 6014470, 6059884], Codeunits[6014484], Pages[6014422, 6014415, 6014414], XmlPorts[6014485, 6014484]
+- Extends: —
+- References: —
+
+## Consignor
+- Defines: Tables[6184601], Codeunits[6248393, 6184601, 6150800]
+- Extends: —
+- References: —
+
+## NP Designer
+- Defines: Tables[6151256, 6151257, 6151022, 6150990], Codeunits[6248190, 6248654, 6248596, 6248595], Pages[6248203, 6248204, 6248202, 6184929, 6184904]
+- Extends: —
+- References: —
+
+## Description Control
+- Defines: Tables[6059969]
+- Extends: —
+- References: —
+
+## Customer Phone Lookup
+- Defines: Tables[6014432], Codeunits[6014437, 6184550], Pages[6014412, 6014413]
+- Extends: —
+- References: —
+
+## Digital Notification
+- Defines: Tables[6248184, 6248185, 6248181, 6248183], Codeunits[6150946, 6151156, 6150963, 6150961], Pages[6150918, 6150919], Enums[6151015, 6014634]
+- Extends: —
+- References: —
+
+## Digital Receipt
+- Defines: Tables[6059859, 6059853, 6150742, 6059852, 6151216, 6059926, 6059927], Codeunits[6184663], Pages[6150797, 6151320, 6150757, 6151321, 6151322, 6185080, 6150955, 6150954, 6150956], Enums[6014613, 6014617]
+- Extends: —
+- References: —
+
+## Dimensions
+- Defines: Tables[6014430, 6014527, 6150694, 6151054, 6151053], Codeunits[6059845, 6014401, 6014598, 6151053, 6150671], Pages[6150845, 6014546, 6014494, 6014556, 6151299, 6151054, 6151043], Enums[6014459]
+- Extends: —
+- References: —
+
+## Attributes
+- Defines: Tables[6014552, 6014554, 6014556, 6014557, 6014553, 6014555], Codeunits[6014597, 6014555], Pages[6014604, 6014607, 6014605, 6014606, 6014609, 6014608, 6014465], Queries[6014510, 6014555]
+- Extends: —
+- References: —
+
+## Group Codes
+- Defines: Tables[6059803], Codeunits[6150990], Pages[6059858]
+- Extends: —
+- References: —
+
+## Distribution
+- Defines: Tables[6151055, 6151056, 6151057, 6151058, 6014526, 6151059], Codeunits[6151051], Pages[6151056, 6151055, 6151068, 6151069, 6151058, 6151061, 6151057, 6151059, 6151067, 6151060, 6151063, 6151062]
+- Extends: —
+- References: —
+
+## Accounts
+- Defines: Tables[6151165, 6151166], Codeunits[6248476, 6248404], Pages[6185048, 6185049], Queries[6014508]
+- Extends: —
+- References: —
+
+## Billing
+- Defines: Tables[6059882], Codeunits[6248666, 6060051, 6248217, 6248417], Enums[6059854, 6059856]
+- Extends: —
+- References: —
+
+## Member Module
+- Defines: Tables[6151262, 6150766, 6150768, 6150764, 6150763, 6150767, 6150769, 6150964, 6150965, 6060095, 6060091, 6060092, 6060090, 6060006, 6060015, 6060143, 6150849, 6151163, 6059890, 6060141, 6150899, 6060086, 6060140, 6151161, 6059887, 6060142, 6151162, 6059889, 6060126, 6060145, 6060131, 6151187, 6151188, 6060132, 6060134, 6150971, 6060012, 6060139, 6151238, 6060137, 6150920, 6059888, 6060135, 6059871, 6059872, 6060136, 6060127, 6060148, 6060129, 6151243, 6060144, 6014690, 6060138, 6151174, 6060128, 6060124, 6059789, 6060130, 6151164, 6060125, 6060146, 6060094, 6151064, 6150859, 6150851, 6060147, 6060093, 6151160, 6151231, 6151232, 6014608, 6151186, 6151185, 6150962, 6150918, 6150925, 6150917, 6150919, 6150921, 6150923, 6150961, 6150963, 6150981, 6059921, 6150966, 6059873, 6060149, 6059790, 6059877, 6059880], Codeunits[6248200, 6248455, 6248456, 6248454, 6248562, 6248583, 6248573, 6248655, 6151440, 6014488, 6151439, 6184716, 6184713, 6184712, 6184719, 6184711, 6184722, 6184718, 6185129, 6185104, 6184894, 6060093, 6060094, 6014492, 6151383, 6060145, 6151121, 6151074, 6060132, 6060143, 6184912, 6184727, 6060139, 6184975, 6060141, 6060142, 6184653, 6151160, 6151161, 6151162, 6014439, 6248559, 6060144, 6060136, 6184768, 6060135, 6184656, 6060131, 6060148, 6014485, 6060127, 6184732, 6150825, 6150743, 6150879, 6248507, 6059912, 6248397, 6060130, 6060128, 6060129, 6060147, 6151186, 6151159, 6185075, 6060138, 6060134, 6014687, 6014656, 6151084, 6014682, 6151185, 6248464, 6185029, 6185043, 6185111, 6248669, 6185030, 6185031, 6185121, 6185036, 6185034, 6185033, 6185047, 6185102, 6248187, 6248479, 6185035, 6150805, 6185097, 6185103, 6185126, 6248294, 6185127, 6151388, 6151091, 6151092, 6185120, 6248286, 6185091, 6185092, 6151096, 6150941, 6150980, 6150979, 6150975, 6150936, 6150937, 6150965, 6150968, 6150964, 6150971, 6185064, 6185072, 6014660, 6060106, 6185024, 6185073, 6248566, 6014479, 6150947, 6151366, 6150819, 6060108, 6060140, 6150815, 6060146, 6150955, 6150688, 6248457, 6248458, 6151536, 6248258, 6248398, 6150689, 6060149, 6151535], Pages[6060080, 6060081, 6060082, 6059789, 6150916, 6150920, 6184962, 6151372, 6151373, 6151368, 6151365, 6151374, 6151371, 6151367, 6151366, 6151369, 6060069, 6060091, 6060092, 6060090, 6014557, 6151112, 6151109, 6151141, 6060139, 6059844, 6060146, 6184605, 6151163, 6150914, 6060106, 6184718, 6151271, 6151161, 6060105, 6150911, 6060107, 6151162, 6151160, 6060088, 6014633, 6014457, 6060136, 6060133, 6014634, 6060130, 6184671, 6060131, 6151187, 6151188, 6060132, 6185102, 6014623, 6060134, 6184877, 6151309, 6060138, 6060144, 6060142, 6184835, 6151308, 6151189, 6060126, 6060135, 6060073, 6184930, 6150851, 6060071, 6060070, 6060075, 6014524, 6060141, 6060137, 6014558, 6014658, 6060078, 6060087, 6059893, 6060143, 6060074, 6060063, 6060127, 6060125, 6060124, 6060032, 6060129, 6060128, 6184670, 6060104, 6151165, 6060076, 6014587, 6150912, 6150913, 6060072, 6151164, 6185043, 6184965, 6184636, 6184637, 6060140, 6184630, 6184631, 6060077, 6184828, 6059802, 6151190, 6185100, 6185099, 6185098, 6059803, 6014559, 6184909, 6151185, 6151186, 6184870, 6184871, 6184892, 6184834, 6248210, 6248221, 6184832, 6248208, 6248207, 6150940, 6150942, 6184833, 6150896, 6150897, 6184869, 6185077, 6150890, 6150952, 6184873, 6184867, 6184938, 6060148, 6060147, 6060031, 6150857, 6150861, 6150860], Enums[6059904, 6059809, 6014574, 6059818, 6059917, 6014575, 6059817, 6059875, 6014563, 6014482, 6059939, 6059907, 6059802, 6059803, 6059835, 6059771, 6059830, 6059819, 6059852, 6059807, 6059801, 6059804, 6059805, 6059821, 6059820, 6059828, 6059906, 6014610, 6014568, 6059877], Interfaces["NPR IMemberAlterationPriceHandler", "NPR MM AchActivity", "NPR MM IAdd. Info. Request", "NPR MM Subscr.Payment IHandler", "NPR MM Subs Payment IHandler", "NPR MMTimelineTypeInterface", "NPR NationalIdentifierIface"], Queries[6014514, 6014515, 6060136, 6014516, 6014513], Reports[6014494], XmlPorts[6060128, 6151185, 6060136, 6060132, 6151187, 6014415, 6014416, 6060134, 6060140, 6060137, 6060127, 6060143, 6151121, 6060139, 6151160, 6060141, 6060149, 6060145, 6060144, 6151161, 6060135, 6060129, 6060130, 6060133, 6060146, 6060147, 6060148, 6151189, 6151164, 6151188, 6060142, 6151162, 6060138, 6151163, 6151186, 6060131]
+- Extends: —
+- References: —
+
+## Intercompany
+- Defines: Codeunits[6014486, 6151066, 6060071, 6060075, 6060070], Pages[6014595]
+- Extends: —
+- References: —
+
+## Gdpr
+- Defines: Tables[6151070, 6151060, 6151071, 6151121, 6151122, 6151072, 6151123, 6151120], Codeunits[6151061, 6151120, 6151060], Pages[6151151, 6151150, 6151152, 6151123, 6151121, 6151122, 6151153, 6151124, 6151120]
+- Extends: —
+- References: —
+
+## Rapid Start Base Data
+- Defines: Tables[6014600, 6014633], Codeunits[6059792, 6014602, 6060099, 6014596, 6014594], Pages[6014615]
+- Extends: —
+- References: —
+
+## Auxiliary Tables
+- Defines: Tables[6014528, 6014593, 6014659, 6014488, 6014489], Codeunits[6014460], Pages[6059859, 6014408, 6014418]
+- Extends: —
+- References: —
+
+## Application Area
+- Defines: Codeunits[6151349]
+- Extends: —
+- References: —
+
+## Attraction Wallet
+- Defines: —
+- Extends: —
+- References: —
+
+## External POS Sale
+- Defines: Tables[6014606, 6151293, 6150988, 6014605], Codeunits[6248188, 6248222, 6014637, 6014642, 6248233, 6014625, 6248236, 6248239, 6248238, 6014648], Pages[6059801, 6184902, 6059776, 6059774]
+- Extends: —
+- References: —
+
+## Retail Item Journal
+- Defines: Codeunits[6014421], Pages[6014402, 6014403]
+- Extends: —
+- References: —
+
+## Localizations
+- Defines: —
+- Extends: —
+- References: —
+
+## Demo
+- Defines: Codeunits[6059865, 6059866]
+- Extends: —
+- References: Tables["NPR MPOS QR Codes" from MPOS, "NPR Magento Payment Gateway" from magento, "NPR PG Adyen Setup" from adyen, "NPR NpCs Store" from integration], Codeunits["NPR Web Service Auth. Helper" from infrastructure]
+
+## Data Package
+- Defines: Tables[6014598], Codeunits[6014629, 6014628], Pages[6014598]
+- Extends: —
+- References: Tables["AllObjWithCaption" from system], Codeunits["Temp Blob" from system, "NPR Convert Helper" from infrastructure, "NPR RP Template Header" from integration]
+
+## Module Name
+- Defines: Tables[...], Codeunits[...], Pages[...], Events[...]
+- Extends: Tables[... -> ...]
+- References: Tables[... from ...], Codeunits[... from ...]
+```
+
 ---
+
+## CloudflareMedia
+- Defines: Tables[6151234], Codeunits[6248556, 6248557], Pages[], Enums[6059922, 6059923], Interfaces["NPR CloudflareMigrationInterface"]
+- Extends: —
+- References: Codeunits["Environment Information" from system, "Azure AD Tenant" from system, "Cryptography Management" from system, "Type Helper" from system, "Base64 Convert" from system]
+
+## DataStructures
+- Defines: Codeunits[6059769, 6150898]
+- Extends: —
+- References: —
 
 ## Commerce — NP Designer
 - Defines: Codeunits[6248190, "NPR NPDesignerManifestWebHook"], Tables[6151022, "NPR NPDesignerManifest", "NPR NPDesignerManifestLine", "NPR NPDesignerTemplates"], Pages["NPR NPDesignerSetupCard", "NPR NPDesignerTemplateList"]
@@ -370,112 +604,10 @@ Format per module:
 
 ---
 
-## Inventory
-- Defines: TableExtensions[6014404], PageExtensions[6014406]
-- Extends: Tables["Inventory Setup"]
-- References: —
-
-## Inventory Cost Adjmt
-- Defines: Codeunits[6014683, 6014684]
-- Extends: —
-- References: Tables["Inventory Setup", "Sales & Receivables Setup", "Job Queue Entry"], Codeunits["NPR Job Queue Management", "NPR Job Queue Param. Str. Mgt."]
-
 ## Item AddOn
 - Defines: Tables[6151125, 6151126, 6151127, 6151128, 6151129, 6151141, 6151142, 6151143, 6151267, 6151268, 6059912], Codeunits[6059900, 6151125, 6151129, 6059923], Pages[6150931, 6248192, 6248193, 6185036, 6185037, 6185038], Queries["NPR NpIaPOSEntrySaleLineAddOn"]
 - Extends: —
 - References: Tables["NPR POS Sale Line", "NPR POS Sale", "NPR POS Entry Sales Line", "Item", "Item Variant", "NPR POS Info", "NPR POS Info Transaction", "NPR TM Ticket", "Language"], Codeunits["NPR POS Session", "NPR POS Sale", "NPR POS Sale Line", "NPR POS Front End Management", "NPR POS Data Management", "NPR POS Create Entry", "NPR POS Sales Disc. Calc. Mgt.", "NPR POS Action: Delete POS Line", "NPR POS Ext.: Line Format.", "NPR POS HTML Disp. Prof.", "NPR POS Proxy - Display", "NPR TM Ticket Retail Mgt.", "NPR AttractionWalletCreate", "NPR NPDesigner", "NPR Json Helper", "Event Subscription"]
-
-## Item Catalog
-- Defines: Tables[6060061, 6060063], Codeunits[6060061, 6060062, 6060063, 6060064], Pages[6060061]
-- Extends: —
-- References: Tables["Nonstock Item", Item, Vendor, "NPR Nc Import Entry", "NPR Attribute", "NPR Attribute Key", "NPR Attribute Value Set", "Purchase Line", "Item Reference", "CSV Buffer", "Unit of Measure", "Item Category", "Manufacturer", "Config. Template Header", "Config. Template Line"], Codeunits["File Management", "Temp Blob", "Data Compression", "NPR Job Queue Param. Str. Mgt.", "Catalog Item Management", "Config. Template Management"]
-
-## Item Category
-- Defines: Tables[6059807], Codeunits[6014456], PageExtensions[6014400, 6014446], Queries[6014426, 6014425]
-- Extends: Pages["Item Category Card", "Item Categories"]
-- References: Tables["Item Category", "Item", "Default Dimension", "Config. Template Header", "Config. Template Line", "VAT Posting Setup", "Item Ledger Entry", "NPR POS Entry Sales Line", "Number Sequence"], Codeunits["Config. Template Management", "Confirm Management", "Dimension Management", "Item Category Management"]
-
-## Item Hierarchy
-- Defines: Tables[6151050, 6151051, 6151052], Codeunits[6151050], Pages["NPR Item HierarchyCard", "NPR Item HierarchyList", "NPR Item HierarchyLines", "NPR Item HierarchyListpart"]
-- Extends: —
-- References: Tables["NPR Retail Campaign Header", "NPR Retail Campaign Line", "NPR Period Discount Line", "NPR Mixed Discount Line", "NPR Retail Repl. Demand Line", "NPR Distribution Setup", "Item", "Item Variant", "AllObjWithCaption"], Codeunits["Item Hierarchy Management"]
-
-## Item Reference
-- Defines: TableExtensions[6014440], PageExtensions[6014410, 6014411]
-- Extends: Tables["Item Reference"], Pages["Item Reference Entries", "Item Reference List"]
-- References: —
-
-## Item Status
-- Defines: Tables[6060054], Codeunits[6060055], Pages[6060056]
-- Extends: —
-- References: Tables["Item", "Sales Line", "Purchase Line"], Codeunits["Item Jnl.-Check Line"]
-
-## Item Worksheet
-- Defines: Tables[6060052, 6060053, 6060055, 6060057], Codeunits[6060045, 6060049], Pages[ItemWorksheetTemplates, RegistItemWorkshPage, ItemWorkshAttrFactBox, ItemWorkshFieldSetup, ItemWorkshFieldChanges, ItemWorkshFieldMapping, ItemWorkshMissingSetup, ItemWorkshVrtyMapping, ItemWorkshVrtySubpage, ItemWorkshVrtyValues, ItemWorkshSetupSubpage, ItemWorksExcelColumn, ItemWkshTemplate, ItemWorkshTemplate], XmlPorts[ItemWorkshImportExport, ItemWkshtLineWebImp]
-- Extends: —
-- References: Tables["NPR Nc Import Entry"], Codeunits["NPR Nc Import List IProcess"]
-
-## Replenishment
-- Defines: Tables[6014474, 6151062], Codeunits[6151052], Pages["Item Repl. by Store Matrix", "Retail Replenishment SKU List", "Retail Replenishment Setup", "Ret Repl Transfer Mapp."]
-- Extends: —
-- References: Tables["NPR Item Hierarchy Line", "NPR Distrib. Group Members", "NPR Distribution Setup", "NPR Retail Repl. Demand Line", "NPR Period Discount Line", "Item", "Stockkeeping Unit"], Codeunits["NPR Retail Campaign Header"]
-
-## Accessories
-- Defines: Tables[6014506, 6014507, 6014508], Codeunits[6014506], Pages["NPR Accessory List", "NPR Accessory Unfold Worksheet", "NPR Accessory Unfold Entry", "NPR Accessory Unfold Entries", "POSAccessoryAddOnSlct"]
-- Extends: —
-- References: Tables["Item", "Item Ledger Entry", "NPR POS Entry Sales Line"], Codeunits["Item Jnl.-Post Line"]
-
-## Coupon
-- Defines: Tables[6151599], Codeunits[6151599], Pages["NPR NpDc Coupons", "NPR NpDc Coupon Card", "NPR NpDc Coupon Entries", "NPR NpDc Coupon List Items", "NPR NpDc Coupon Types", "NPR NpDc Arch Coupons", "NPR NpDc Arch Coupon Card", "NPR NpDc Arch Coupon Entries", "NPR NpDc Coupon Setup", "NPR NpDc Act Coup Item List", "NPR NpDc Iss On Sale Setup", "NPR NpDc Iss On Sale Subform", "NPR NpDc Extra Coupon Item", "NPR NpDc Extra Item Qty", "NPR NpDc Extra Item Qty Subform", "NPR NpDc Coupon Modules", "NPR NpDc Ext Coupon Reserv"], Enums[6014462], XmlPorts[6151599, 6151599]
-- Extends: —
-- References: —
-
----
-
-## Ecommerce
-- Defines: Tables[NpEcStore, NpEcDocument, NpEcCustomerMapping], Codeunits[NpEcWebservice, NpEcSalesDocImpMgt, NpEcPurchDocImportMgt, NpEcSOrderImportCreate, NpEcSOrderImportPost, NpEcSOrderLookup, NpEcSOrderImpDelete, NpEcPInvoiceImpCreate, NpEcPInvoiceLook], Pages[NpEcStores, NpEcStoreCard, NpEcCustomerMapping], XmlPorts[NpEcSalesOrderImport, NpEcPurchInvoiceImport]
-- Extends: —
-- References: —
-
-## Magento
-- Defines: Tables[MagentoSetup, MagentoWebsite, MagentoStore, MagentoStoreItem, MagentoAttribute, MagentoAttributeSet, MagentoCategory, MagentoCategoryLink, MagentoBrand, MagentoDisplayConfig, MagentoDisplayGroup, MagentoCustomerMapping, MagentoContactShipToAdr, MagentoContactPmtMeth, MagentoContactShptMeth, MagentoOrderStatus, MagentoPaymentMapping, MagentoShipmentMapping, MagentoPicture, MagentoPictureLink, MagentoProductRelation, MagentoPaymentGateway, MagentoPaymentLine, MagentoInvCompany, MagentoItemAttr, MagentoItemAttrValue, MagentoCustomOption, MagentoItemCustomOption, MagentoItmCstmOptValue, MagentoCustomerGroup, MagentoAttrLabel, MagentoAttrSetValue, MagentoPostOnImportSetup, MagentoGenSetupBuffer, ExternalPaymentTypeID, PayByLinkSetup], Codeunits[MagentoMgt, MagentoSetupMgt, MagentoGenSetupMgt, MagentoFeature, MagentoFunctions, MagentoWebservice, MagentoItemMgt, MagentoCategoryMgt, MagentoChartMgt, MagentoPictureMgt, MagentoAttrSetMgt, MagentoNpXmlSetupMgt, MagentoNpXmlValueMgt, MagentoNpXmlTriggerMgt, MagentoNpXmlExtItem, MagentoNpXmlExclVat, MagentoNpXmlFIK, MagentoNpXmlFirstname, MagentoNpXmlLastname, MagentoNpXmlGenChildMgt, MagentoNpXmlQtyIncr, MagentoNpXmlStockQty, MagentoNpXmlStockStatus, MagentoNpxmlItemCrossRef, MagentoSelectFiltMgt, MagentoSalesOrderMgt, MagentoLookupSalesOrder, MagentoImpRetOrder, MagentoLookupRetOrder, MagentoOrderStatusMgt, MagentoPmtMgt, MagentoPostPaymentLine, PaymentLineMgt, MagentoProjAvailBalan, MagentoNcTaskCardMgt, MagentoInvNpXmlValue, DefaultPayByLink, UnknownPayByLink], Pages[MagentoSetup, MagentoGenSetupBuffer, MagentoDisplayConfig, MagentoWebsites, MagentoStores, MagentoStoreItems, MagentoStoreItemsCard, MagentoCategories, MagentoCategoryCard, MagentoCategoryList, MagentoCategoryLinks, MagentoChildCategories, MagentoAttributes, MagentoAttrList, MagentoAttributeGroup, MagentoAttributeSets, MagentoAttributeSetList, MagentoBrands, MagentoBrandCard, MagentoCustomerMapping, MagentoCustomerGroups, MagentoInvCompanies, MagentoOrderStatus, MagentoPaymentGateways, MagentoContPmtMethods, MagentoContShipToList, MagentoContShptMethods, MagentoPictures, MagentoItemAttr, MagentoItemAttrValues, MagentoItemPictList, MagentoItemPictFactbox, MagentoItemCOPreview, MagentoProductRelations, MagentoCustomOptionList, MagentoCustomOptionCard, MagentoCustomOptSubform, MagentoItemCstmOptions, MagentoItmCstmOptValue, MagentoDragDropPicAddin, MagentoAttrLabels, MagentoAttrSetValues, MagentoPaymentMapping, MagentoShipmentMapping, MagentoPaymentLineList, MagentoAttrGroupList, PayByLinkSetupCard, PayByLinkDialog], Enums[MagentoOrderStatus, MagentoPaymentType, MagentoApiUsernameType, MagentoCustUpdateMode, MagentoCustomerMapping, MagentoContactShipToAdr, MagDisplayConfigType, MagDisConfSalesType, MagProdRelationType, MagShipmentFeeType, MagentoItemCustomType, MagentoItemAttrValue, MagentoMiniaturePicture, MagentoPictureType, MagentoPicVarietyType, MagGiftVoucherActiv, MagCustOptPriceType, EmailRetailVouchersto, MagentoStoreItemVisibility], Interfaces[PayByLink.Interface], XmlPorts[MagentoAvailInvExp, MagentoDocumentExport, MagentoInvSetApi, ImportMagentoDescription]
-- Extends: —
-- References: —
-
-## Magento 2
-- Defines: Tables[M2AccountSetup, M2AccountComTemplate, M2ContactBuffer, M2ValueBuffer, M2PriceCalcBuffer, M2OneTimePassword, M2IntegrationRecord, AuthenticationLog], Codeunits[M2ServiceLib, M2SetupMgt, M2AccountManager, M2AccountLookupMgt, M2CategoryMgt, M2BrandMgt, M2PictureMgt, M2DemoPictureMgt2, M2SaveValues, M2AccountWebService, M2BudgetWebService, M2POSPriceWebService], Pages[M2ContactList, M2ValueBufferList, M2IntegrationRecords], Enums[M2AccComTemplateType, M2PriceCalcBufferType], XmlPorts[M2Authenticate, M2GetAccount, M2GetExtendedAccount, M2AddAccount, M2UpdateAccount, M2DeleteAccount, M2CreateCorporateAcc, M2ChangeAccountPassword, M2ResetAccountPassword, M2AddShiptoAddress, M2UpdateShiptoAddress, M2DeleteShiptoAddress, M2ShopperRecognition, M2CustomerItemByPeriod, M2ItemAvailabByPeriod, M2ItemPriceRequest, M2POSSvSalePriceReq, M2EstimateDeliveryDate, M2GetBudgetDimValues, M2GetBudgetEntries, M2GetSimpleBudget, M2ListBudgets, M2ListMailingGroups, M2GetWorkingDayCalendar]
-- Extends: —
-- References: —
-
-## Adyen Reconciliation
-- Defines: Tables[AdyenSetup, AdyenMerchantSetup, AdyenMerchantAccount, MerchantCurrencySetup, AdyenReconciliationHdr, AdyenReconciliationLine, AdyenReconciliationLog, AdyenReconciliationCue, AdyenReconLine, AdyenReconLineRelation, AdyenReconsLineRelation, AdyenWebhook, AdyenWebhookSetup, AdyenWebhookLog, AdyenWebhookEventCode, AFRecWebhookRequest], Codeunits[AdyenManagement, AdyenRecReportProcess, AdyenProcessReportReady, AdyenEFTTransPosting, AdyenFeePosting, AdyenTransMatching, AdyenTrMatchingSession, AdyenMissingTransPost, AdyenWebhookProcessing, AdyenTryWebhookProcess, AdyenRecreateRecDoc, AdyenSkipPostCheck, AdyenReconUpgrade, AdyenIntegrationEvents, AFRecAPIRequest], Pages[AdyenSetup, AdyenMerchantSetup, AdyenMerchantAccounts, MerchantCurrencySetup, AdyenReconciliation, AdyenReconciliationList, AdyenReconciliationLines, AdyenReconLineRelation, AdyenReconciliationLogs, AdyenReconciliationCue, AdyenRecActivities, AdyenWebhooks, AdyenWebhookSetupList, AdyenWebhookSetupCard, AdyenWebhookEventCodes, AdyenWebhookLogs, AdyenWHRequestFactbox, AFRecWebhookRequests], Enums[AdyenEnvironmentType, AdyenRecHeaderStatus, AdyenRecLineStatus, AdyenRecLogStatus, AdyenRecLogType, AdyenRecTransType, AdyenReconAmountType, AdyenReportType, AdyenReportProcStatus, AdyenPostingGLAccounts, AdyenMerchantFilterType, AdyenTransRecTable, AdyenWebhookType, AdyenWebhookStatus, AdyenWebhookRequestType, AdyenWebhookEventCode, AdyenWebhookLogType, AdyenWWSSecurityType, MerchantAccount], Reports[AdyenOnPremWebhookInput, AdyenSimulateWebhookReq]
-- Extends: —
-- References: —
-
-## BTwentyFour Service
-- Defines: Tables[BTFServiceSetup, BTFServiceEndPoint, BTFEndPointErrorLog], Codeunits[BTFServiceAPI, BTFRegisterService, BTFNcImportEntry, BTFGetToken, BTFProcessMessage, BTFGetOrders, BTFGetOrderResp, BTFGetInvoices, BTFGetPriCat, BTFJSONResponse, BTFXMLResponse], Pages[BTFServiceSetup, BTFServiceSetupCard, BTFServiceEndPoints, BTFServiceEndpoint, BTFEndPointsErrorLog], Enums[BTFEnvironment, BTFContentType, BTFEndPointMethod, BTFServiceMethod, BTFMessagesStatus, BTFMessagesClass], Interfaces[BTFIEndPoint, BTFIFormatResponse]
-- Extends: —
-- References: —
-
-## Entria Integration
-- Defines: Tables[EntriaIntegrationSetup, EntriaStore, EntriaStoreSyncState], Codeunits[EntriaIntegrationMgt, EntriaAPIHandler, EntriaOrderImpl, EntriaOrderImportJQ, EntriaOrderProcessor], Pages[EntriaIntegrationSetup, EntriaStores, EntriaStoreCard]
-- Extends: —
-- References: —
-
-## PrintNode
-- Defines: Tables[PrintNodeSetup, PrintNodePrinter], Codeunits[PrintNodeMgt, PrintNodeAPIMgt], Pages[PrintNodeSetup, PrintNodePrinterList, PrintNodePrinterSettings]
-- Extends: —
-- References: —
-
-## Pacsoft
-- Defines: Tables[PacsoftSetup, PacsoftPackageCode, PacsoftCustomsItemRows, PacsoftShipmentDocument, PacsoftShipmDocServ], Codeunits[PacsoftManagement], Pages[PacsoftPackageCodes, PacsoftCustomsItemRows, PacsoftShipmDocServ], XmlPorts[PacsoftResponse, PacsoftShipmentDocument]
-- Extends: —
-- References: —
-
-## Consignor
-- Defines: Tables[ConsignorEntry], Codeunits[ConsignorMgt, ConsignorTracking, ConsignorExtMgt]
-- Extends: —
-- References: —
 
 ## Attraction — AttractionWallet
 - Defines: Tables[6150937, 6150967, 6150968, 6151146, 6150930, 6150931, 6150933, 6150932], Codeunits[6185062, 6185076, 6185077, 6185068], Enums["NPR WalletPrintType", "NPR WalletLineType", "NPR WalletRole"], Queries["AttractionWalletAssetHist", "AttractionWalletAssets", "AttractionWalletExtRef", "FindAttractionWallets"], Pages["TMPWallet", "TMPAssetHeader", "TMPAssetHeaderRef", "TMPAssetLine", "TMPAssetLineRef"]
@@ -496,13 +628,3 @@ Format per module:
 - Defines: Tables["BGVisionLocalSetup", "HUEInvoiceLocalSetup", "RSLocalisationSetup", "RSBankAccLedgerEntry", "RSCustomerPostingGroup", "RSPurchaseHeader", "RSSalesHeader", "RSVATPostingSetup", "RSVendorPostingGroup", "RSRLocalizationSetup"], Codeunits["BGVISIONLocalMgt", "BGVISIONLocalSubs", "RSLocalisationMgt", "RSLocalisationSubs", "RSRLocalizationMgt"], Pages["BGVISIONLocalSetup", "HUEInvoiceLocalSetup", "RSLocalisationSetup", "RSAppAreaSetup", "RSRLocalizationSetup", "RSRetailAppAreaSetup"], Enums["RSRLocalizationCountry"], Reports["CRONivelationDocument", "CRORetPurchPriceCalc", "CRORetTransRecCalc", "RSCustomerOpenEntries", "RSVendorOpenEntries"]
 - Extends: —
 - References: —
-
-## Demo
-- Defines: Codeunits[6059866]
-- Extends: —
-- References: Tables["NPR MPOS QR Codes" from MPOS, "NPR Magento Payment Gateway" from magento, "NPR PG Adyen Setup" from adyen, "NPR NpCs Store" from integration], Codeunits["NPR Web Service Auth. Helper" from infrastructure]
-
-## Data Package
-- Defines: Tables[6014598], Codeunits[6014628, 6014629], Pages["NPR Managed Package Lookup"]
-- Extends: —
-- References: Tables["AllObjWithCaption" from system], Codeunits["Temp Blob" from system, "NPR Convert Helper" from infrastructure, "NPR RP Template Header" from integration]

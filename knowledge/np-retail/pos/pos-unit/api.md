@@ -1,34 +1,72 @@
 ---
 type: reference
-tags: [np-retail, pos, unit, pos-unit]
+tags: [pos, pos-unit, np-retail, tables, codeunits, pages]
 relates:
-  - np-retail/pos/pos-unit/overview.md
-updated: 2026-05-09
+  - pos/pos-unit/overview.md
+updated: 2026-05-30
+source_files:
+  - Application/src/POS Unit/POSHardwareProfile.Page.al
+  - Application/src/POS Unit/POSHardwareProfile.Table.al
+  - Application/src/POS Unit/_public/POSReceipt.Codeunit.al
+  - Application/src/POS Unit/POSTicketReceiptText.Page.al
+  - Application/src/POS Unit/POSTicketReceiptText.Table.al
+  - Application/src/POS Unit/_public/POSUnit.Table.al
+  - Application/src/POS Unit/_public/POSUnitCard.Page.al
+  - Application/src/POS Unit/POSUnitEvent.Table.al
+  - Application/src/POS Unit/POSUnitEventList.Page.al
+  - Application/src/POS Unit/POSUnitGroup.Table.al
+  - Application/src/POS Unit/POSUnitGroupCard.Page.al
+  - Application/src/POS Unit/POSUnitGroupLine.Table.al
+  - Application/src/POS Unit/POSUnitGroupLines.Page.al
+  - Application/src/POS Unit/POSUnitGroups.Page.al
+  - Application/src/POS Unit/POSUnitIdentityWizard.Table.al
+  - Application/src/POS Unit/_public/POSUnitList.Page.al
+  - Application/src/POS Unit/POSUnitRcptTextProfile.Page.al
+  - Application/src/POS Unit/_public/POSUnitRcptTxtProfile.Table.al
+  - Application/src/POS Unit/POSUnitRcptTxtProfiles.Page.al
+  - Application/src/POS Unit/POSUnittoBinRelation.Page.al
+  - Application/src/POS Unit/_public/POSUnittoBinRelation.Table.al
 ---
 
-# POS Unit Module — API Reference
+# POS Unit — API Reference
 
 ## Tables
 
 | ID | Name | Caption | Key Fields | Description |
-|----|------|---------|------------|-------------|
-| 6014684 | "NPR POS Unit Group" | POS Unit Group | PK: No. (Code[20]). Others: Description (Text[100]) | Logical grouping of POS units. OnDelete updates Salesperson references and deletes group lines. OnRename is blocked |
-| *(unknown)* | "NPR POS Unit Group Line" | POS Unit Group Line | PK: No. + Line No. | Membership records linking POS units to groups |
-| 6151176 | "NPR POS Hardware Profile" | POS Hardware Profile | PK: Code (Code[20]). Others: IP Address (Text[25]) | Hardware configuration for POS peripherals |
-| 6150631 | "NPR POS Unit Event" | POS Unit Event | PK: POS Unit No. (Clustered). Others: Active Event No. (Code[20], TableRelation = Job WHERE NPR Event = CONST(true)) | Links POS units to active events. Methods: FindActiveEvent(POSUnitNo): Code[20], SetActiveEvent(POSUnitNo, EventNo), DeleteActiveEvent(POSUnitNo) |
-| *(unknown)* | "NPR POS Ticket Receipt Text" | POS Ticket Receipt Text | — | Receipt text definitions (footer/header messages) |
-| *(unknown)* | "NPR POS Unit Rcpt Text Profile" | POS Unit Rcpt Text Profile | — | Profiles mapping receipt text configurations to units |
+| --- | --- | --- | --- | --- |
+| 6151176 | "NPR POS Hardware Profile" | POS Hardware Profile | "Code" | — |
+| 6150709 | "NPR POS Ticket Rcpt. Text" | POS Sales Ticket Receipt Text | "Rcpt. Txt. Profile Code", "Line No." | — |
+| 6150615 | "NPR POS Unit" | POS Unit | "No." | — |
+| 6150631 | "NPR POS Unit Event" | POS Unit Event | "POS Unit No." | — |
+| 6014684 | "NPR POS Unit Group" | POS Unit Group | "No." | — |
+| 6014683 | "NPR POS Unit Group Line" | POS Unit Group Lines | "No.", "POS Unit" | — |
+| 6150718 | "NPR POS Unit Identity Wizard" | POS Unit Identity | "Entry No." | — |
+| 6150654 | "NPR POS Unit Rcpt.Txt Profile" | POS Unit Receipt Text Profile | "Code" | — |
+| 6150619 | "NPR POS Unit to Bin Relation" | POS Unit to Bin Relation | "POS Unit No.", "POS Payment Bin No." | — |
+
+
+## Codeunits
+
+| ID | Name | Caption | Key Procedures | Events Raised |
+| --- | --- | --- | --- | --- |
+| 6059937 | "NPR POS Receipt" |  | GetReceiptText, IsReceiptTextSet, SetDefaultBreakLineNumberOfCharacters | — |
+
 
 ## Pages
 
 | ID | Name | Caption | Source Table | Description |
-|----|------|---------|-------------|-------------|
-| *(unknown)* | "NPR POS Unit Groups" | POS Unit Groups | "NPR POS Unit Group" | List of unit groups |
-| *(unknown)* | "NPR POS Unit Group Card" | POS Unit Group Card | "NPR POS Unit Group" | Unit group card with lines |
-| *(unknown)* | "NPR POS Unit Group Lines" | POS Unit Group Lines | "NPR POS Unit Group Line" | Group membership subpage |
-| *(unknown)* | "NPR POS Hardware Profile" | POS Hardware Profile | "NPR POS Hardware Profile" | Hardware profile list+card |
-| *(unknown)* | "NPR POS Unit Event List" | POS Unit Event List | "NPR POS Unit Event" | Event assignment list |
-| *(unknown)* | "NPR POS Ticket Receipt Text" | POS Ticket Receipt Text | "NPR POS Ticket Receipt Text" | Receipt text configuration |
-| *(unknown)* | "NPR POS Unit Rcpt Text Profile" | POS Unit Rcpt Text Profile | "NPR POS Unit Rcpt Text Profile" | Receipt text profile card |
-| *(unknown)* | "NPR POS Unit Rcpt Txt Profiles" | POS Unit Rcpt Txt Profiles | "NPR POS Unit Rcpt Text Profile" | Receipt text profiles list |
-| *(unknown)* | "NPR POS Unit to Bin Relation" | POS Unit to Bin Relation | — | Page linking POS units to payment bins |
+| --- | --- | --- | --- | --- |
+| 6185054 | "NPR POS Hardware Profile" | NPR POS Hardware Profile | "NPR POS Hardware Profile" | — |
+| 6150749 | "NPR POS Ticket Rcpt. Text" | POS Sales Ticket Receipt Text | "NPR POS Ticket Rcpt. Text" | — |
+| 6150617 | "NPR POS Unit Card" | POS Unit Card | "NPR POS Unit" | — |
+| 6150739 | "NPR POS Unit Event List" | POS Unit Event List | "NPR POS Unit Event" | — |
+| 6059876 | "NPR POS Unit Group Card" | POS Unit Group | "NPR POS Unit Group" | — |
+| 6059877 | "NPR POS Unit Group Lines" | POS Unit Group Lines | "NPR POS Unit Group Line" | — |
+| 6059875 | "NPR POS Unit Groups" | POS Unit Groups | "NPR POS Unit Group" | — |
+| 6150616 | "NPR POS Unit List" | POS Unit List | "NPR POS Unit" | — |
+| 6151265 | "NPR POS Unit Rcpt.Text Profile" | POS Unit Receipt Text Profile | "NPR POS Unit Rcpt.Txt Profile" | — |
+| 6151264 | "NPR POS Unit Rcpt.Txt Profiles" | POS Unit Receipt Text Profiles | "NPR POS Unit Rcpt.Txt Profile" | — |
+| 6150621 | "NPR POS Unit to Bin Relation" | POS Unit to Bin Relation | "NPR POS Unit to Bin Relation" | — |
+
+> Auto-generated by np-retail-kb-update.ps1 on 2026-05-30. Descriptions are placeholders — review manually.
+> Source files: POSHardwareProfile.Page.al, POSHardwareProfile.Table.al, POSReceipt.Codeunit.al, POSTicketReceiptText.Page.al, POSTicketReceiptText.Table.al, POSUnit.Table.al, POSUnitCard.Page.al, POSUnitEvent.Table.al, POSUnitEventList.Page.al, POSUnitGroup.Table.al, POSUnitGroupCard.Page.al, POSUnitGroupLine.Table.al, POSUnitGroupLines.Page.al, POSUnitGroups.Page.al, POSUnitIdentityWizard.Table.al, POSUnitList.Page.al, POSUnitRcptTextProfile.Page.al, POSUnitRcptTxtProfile.Table.al, POSUnitRcptTxtProfiles.Page.al, POSUnittoBinRelation.Page.al, POSUnittoBinRelation.Table.al
