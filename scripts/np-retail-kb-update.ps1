@@ -76,7 +76,7 @@ function Read-LastCommit {
     param([string]$changeFile)
     if (-not (Test-Path $changeFile)) { return $null }
     $content = Get-Content $changeFile -Raw -Encoding UTF8
-    if ($content -match 'Last Processed Commit:\s*(\S+)') {
+    if ($content -match 'Last Processed Commit:\s*(.+)') {
         $commit = $matches[1]
         if ($commit -eq '(none — initial scaffold)' -or $commit -eq '(initial build — set on first update)') { return $null }
         return $commit
